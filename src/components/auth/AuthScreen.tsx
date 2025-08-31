@@ -14,21 +14,13 @@ import {
   Users,
   Sparkles,
   ChevronDown,
-  Play
+  Play,
+  AlertCircle
 } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
+import { useAuth } from '../../contexts/AuthContext';
 import type { UserCategory } from '../../types';
-
-interface AuthScreenProps {
-  onAuth: (user: { 
-    email: string; 
-    name: string; 
-    category?: UserCategory;
-    location?: string;
-    birthYear?: number;
-  }) => void;
-}
 
 const features = [
   {
@@ -60,8 +52,9 @@ const stats = [
   { value: '4.8/5', label: { en: 'User Rating', pt: 'Avaliação dos Usuários' } }
 ];
 
-export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
+export const AuthScreen: React.FC = () => {
   const { t, language } = useLanguage();
+  const { signUp, signIn, signInWithGoogle } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -71,6 +64,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
   const [location, setLocation] = useState('');
   const [birthYear, setBirthYear] = useState('');
   const [currentFeature, setCurrentFeature] = useState(0);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Auto-rotate features
   useEffect(() => {
@@ -80,34 +75,101 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password && (isSignUp ? (name && category && location && birthYear) : true)) {
-      onAuth({ 
-        email, 
-        name: name || email.split('@')[0],
-        category: category as UserCategory || undefined,
-        location: location || undefined,
-        birthYear: birthYear ? parseInt(birthYear) : undefined
-      });
+    setError('');
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        if (!email || !password || !name || !category || !location || !birthYear) {
+          throw new Error(language === 'en' ? 'Please fill in all fields' : 'Por favor, preencha todos os campos');
+        }
+
+        // Parse location into state and city
+        const [city, state] = location.split(',').map(s => s.trim());
+        
+        await signUp(email, password, {
+          name,
+          category: category as UserCategory,
+          state: state || 'SP',
+          city: city || 'São Paulo',
+          ageRange: getAgeRange(parseInt(birthYear)),
+          language: language as 'en' | 'pt'
+        });
+      } else {
+        if (!email || !password) {
+          throw new Error(language === 'en' ? 'Please enter email and password' : 'Por favor, insira email e senha');
+        }
+
+        await signIn(email, password);
+      }
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      setError(getErrorMessage(error.code, language));
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSocialAuth = (provider: 'google' | 'apple') => {
-    onAuth({ 
-      email: `user@${provider}.com`, 
-      name: `${provider} User` 
-    });
+  const handleSocialAuth = async (provider: 'google' | 'apple') => {
+    setError('');
+    setLoading(true);
+
+    try {
+      if (provider === 'google') {
+        await signInWithGoogle();
+      } else {
+        // Apple auth would be implemented here
+        throw new Error(language === 'en' ? 'Apple sign-in not implemented yet' : 'Login com Apple ainda não implementado');
+      }
+    } catch (error: any) {
+      console.error('Social auth error:', error);
+      setError(getErrorMessage(error.code, language));
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAdminAccess = () => {
-    onAuth({ 
-      email: 'admin@passaportevivo.com', 
-      name: 'Admin',
-      category: 'government',
-      location: 'Brasília, DF',
-      birthYear: 1980
-    });
+  const getAgeRange = (birthYear: number): string => {
+    const age = new Date().getFullYear() - birthYear;
+    if (age < 18) return 'under-18';
+    if (age < 25) return '18-25';
+    if (age < 35) return '26-35';
+    if (age < 45) return '36-45';
+    if (age < 55) return '46-55';
+    return '55+';
+  };
+
+  const getErrorMessage = (code: string, language: string): string => {
+    const messages: Record<string, Record<string, string>> = {
+      'auth/user-not-found': {
+        en: 'No account found with this email',
+        pt: 'Nenhuma conta encontrada com este email'
+      },
+      'auth/wrong-password': {
+        en: 'Incorrect password',
+        pt: 'Senha incorreta'
+      },
+      'auth/email-already-in-use': {
+        en: 'An account with this email already exists',
+        pt: 'Uma conta com este email já existe'
+      },
+      'auth/weak-password': {
+        en: 'Password should be at least 6 characters',
+        pt: 'A senha deve ter pelo menos 6 caracteres'
+      },
+      'auth/invalid-email': {
+        en: 'Invalid email address',
+        pt: 'Endereço de email inválido'
+      },
+      'auth/too-many-requests': {
+        en: 'Too many failed attempts. Please try again later',
+        pt: 'Muitas tentativas falhadas. Tente novamente mais tarde'
+      }
+    };
+
+    return messages[code]?.[language] || (language === 'en' ? 'An error occurred. Please try again.' : 'Ocorreu um erro. Tente novamente.');
   };
 
   const currentYear = new Date().getFullYear();
@@ -213,15 +275,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                         {language === 'en' ? 'Start Your Journey' : 'Comece Sua Jornada'}
                         <ArrowRight className="w-6 h-6" />
                       </motion.button>
-                      
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleAdminAccess}
-                        className="bg-gray-800/50 backdrop-blur-sm text-white px-6 py-4 rounded-2xl font-medium border border-gray-700/50 hover:border-emerald-500/50 transition-all duration-300"
-                      >
-                        {language === 'en' ? 'Admin Access' : 'Acesso Admin'}
-                      </motion.button>
                     </motion.div>
                   </motion.div>
 
@@ -291,6 +344,18 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className="bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-emerald-500/20"
                 >
+                  {/* Error Message */}
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-6 bg-red-500/20 border border-red-500/30 rounded-xl p-4 flex items-center gap-3"
+                    >
+                      <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                      <span className="text-red-400 text-sm">{error}</span>
+                    </motion.div>
+                  )}
+
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <AnimatePresence>
                       {isSignUp && (
@@ -313,7 +378,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
                                 placeholder={language === 'en' ? 'Enter your full name' : 'Digite seu nome completo'}
-                                required
+                                required={isSignUp}
                               />
                             </div>
                           </div>
@@ -326,7 +391,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                               value={category}
                               onChange={(e) => setCategory(e.target.value as UserCategory)}
                               className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
-                              required
+                              required={isSignUp}
                             >
                               <option value="">{language === 'en' ? 'Select your role...' : 'Selecione seu papel...'}</option>
                               <option value="student">{t('category.student')}</option>
@@ -348,7 +413,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                                 onChange={(e) => setLocation(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
                                 placeholder="e.g., São Paulo, SP"
-                                required
+                                required={isSignUp}
                               />
                             </div>
                           </div>
@@ -363,7 +428,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                                 value={birthYear}
                                 onChange={(e) => setBirthYear(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
-                                required
+                                required={isSignUp}
                               >
                                 <option value="">{language === 'en' ? 'Select birth year...' : 'Selecione o ano...'}</option>
                                 {years.map(year => (
@@ -414,9 +479,17 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       type="submit"
-                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSignUp ? t('auth.signup') : t('auth.signin')}
+                      {loading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          {language === 'en' ? 'Processing...' : 'Processando...'}
+                        </div>
+                      ) : (
+                        isSignUp ? t('auth.signup') : t('auth.signin')
+                      )}
                     </motion.button>
                   </form>
 
@@ -429,7 +502,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleSocialAuth('google')}
-                      className="w-full bg-white/10 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-white/20 transition-all duration-200 flex items-center justify-center gap-3"
+                      disabled={loading}
+                      className="w-full bg-white/10 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-white/20 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <div className="w-5 h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full"></div>
                       {t('auth.google')}
@@ -439,7 +513,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleSocialAuth('apple')}
-                      className="w-full bg-black/50 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-black/70 transition-all duration-200 flex items-center justify-center gap-3"
+                      disabled={loading}
+                      className="w-full bg-black/50 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-black/70 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <div className="w-5 h-5 bg-white rounded-sm"></div>
                       {t('auth.apple')}
@@ -448,6 +523,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
 
                   <div className="text-center space-y-3">
                     <button
+                      type="button"
                       onClick={() => setIsSignUp(!isSignUp)}
                       className="text-emerald-400 text-sm hover:text-emerald-300 transition-colors"
                     >
@@ -459,6 +535,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
                     
                     <div className="pt-4 border-t border-gray-700/50">
                       <button
+                        type="button"
                         onClick={() => setShowAuth(false)}
                         className="text-xs text-gray-500 hover:text-gray-400 transition-colors"
                       >
