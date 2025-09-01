@@ -215,13 +215,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getSurveyQuestions = async (): Promise<SurveyQuestion[]> => {
     try {
       const questionsRef = collection(db, 'surveyQuestions');
-      const q = query(questionsRef, where('isActive', '==', true), orderBy('priority', 'desc'));
+      const q = query(questionsRef, where('isActive', '==', true));
       const querySnapshot = await getDocs(q);
       
       const questions: SurveyQuestion[] = [];
       querySnapshot.forEach((doc) => {
         questions.push({ id: doc.id, ...doc.data() } as SurveyQuestion);
       });
+      
+      // Sort by priority in memory to avoid index requirements
+      questions.sort((a, b) => (b.priority || 0) - (a.priority || 0));
       
       return questions;
     } catch (error) {
@@ -251,16 +254,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getUserSurveyHistory = async (userId: string): Promise<SurveySession[]> => {
     try {
       const sessionsRef = collection(db, 'surveySessions');
-      const q = query(
-        sessionsRef, 
-        where('userId', '==', userId), 
-        orderBy('completedAt', 'desc')
-      );
+      const q = query(sessionsRef, where('userId', '==', userId));
       const querySnapshot = await getDocs(q);
       
       const sessions: SurveySession[] = [];
       querySnapshot.forEach((doc) => {
         sessions.push({ id: doc.id, ...doc.data() } as SurveySession);
+      });
+      
+      // Sort by completedAt in memory to avoid index requirements
+      sessions.sort((a, b) => {
+        const dateA = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
+        const dateB = b.completedAt instanceof Date ? b.completedAt : new Date(b.completedAt);
+        return dateB.getTime() - dateA.getTime();
       });
       
       return sessions;

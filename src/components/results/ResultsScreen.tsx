@@ -247,7 +247,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         
         // Update user's survey results
         console.log('Updating user survey results...');
-        await updateUserSurveyResults(currentUser!.uid, surveyScore, level, badge);
+        await updateUserSurveyResults(currentUser!.uid, score, level, badge);
         
         // Save certificate data
         console.log('Saving certificate data...');
@@ -259,7 +259,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           city: currentUser!.city,
           state: currentUser!.state,
           ageRange: currentUser!.ageRange,
-          score: surveyScore,
+          score: score,
           level,
           badge,
           grade,
