@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
@@ -17,8 +17,10 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [showFact, setShowFact] = useState(false);
 
-  // Use local questions for now to avoid database connection issues
-  const questions = currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
+  // Use memoized questions to ensure consistency throughout the survey
+  const questions = useMemo(() => {
+    return currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
+  }, [currentUser?.id, currentUser?.category, currentUser?.industry, currentUser?.state, currentUser?.city, currentUser?.sustainabilityInterests]);
 
   const question = questions[currentQuestion];
   const currentResponse = responses.find(r => r.questionId === question.id);

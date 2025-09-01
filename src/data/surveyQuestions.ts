@@ -1096,18 +1096,24 @@ export const getPersonalizedQuestions = (user: User, count: number = 10): Survey
     });
   }
 
-  // Step 5: Remove duplicates and sort by priority
-  const uniqueQuestions = relevantQuestions.filter((q, index, self) => 
-    index === self.findIndex(question => question.id === q.id)
-  );
+  // Step 5: Remove duplicates using a more robust method
+  const questionMap = new Map<string, SurveyQuestion>();
+  relevantQuestions.forEach(question => {
+    if (!questionMap.has(question.id)) {
+      questionMap.set(question.id, question);
+    }
+  });
+  
+  const uniqueQuestions = Array.from(questionMap.values());
 
+  // Step 6: Sort by priority and then shuffle for variety
   const sortedQuestions = uniqueQuestions.sort((a, b) => b.priority - a.priority);
-
-  // Step 6: Ensure we have at least 10 questions
+  
+  // Step 7: Ensure we have at least the requested number of questions
   if (sortedQuestions.length < count) {
     // Add more general questions to reach the minimum
     const generalQuestions = sampleSurveyQuestions.filter(q => 
-      !sortedQuestions.find(existing => existing.id === q.id)
+      !questionMap.has(q.id) // Only add questions not already included
     );
     const additionalQuestions = generalQuestions
       .sort((a, b) => b.priority - a.priority)
@@ -1116,8 +1122,36 @@ export const getPersonalizedQuestions = (user: User, count: number = 10): Survey
     sortedQuestions.push(...additionalQuestions);
   }
 
-  // Return exactly the requested number of questions
-  return sortedQuestions.slice(0, count);
+  // Step 8: Shuffle the questions for variety but ensure no duplicates
+  const shuffledQuestions = [...sortedQuestions];
+  for (let i = shuffledQuestions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
+  }
+
+  // Step 9: Return exactly the requested number of questions
+  const finalQuestions = shuffledQuestions.slice(0, count);
+  
+  // Debug: Check for duplicates in final questions
+  const questionIds = finalQuestions.map(q => q.id);
+  const uniqueIds = new Set(questionIds);
+  if (questionIds.length !== uniqueIds.size) {
+    console.warn('Duplicate questions detected in survey:', {
+      totalQuestions: questionIds.length,
+      uniqueQuestions: uniqueIds.size,
+      duplicateIds: questionIds.filter((id, index) => questionIds.indexOf(id) !== index)
+    });
+  }
+  
+  console.log('Survey questions generated:', {
+    userCategory: user.category,
+    userIndustry: user.industry,
+    userLocation: `${user.state}, ${user.city}`,
+    totalQuestions: finalQuestions.length,
+    questionIds: finalQuestions.map(q => q.id)
+  });
+  
+  return finalQuestions;
 };
 
 // Function to get questions by difficulty
