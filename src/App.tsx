@@ -74,9 +74,8 @@ function AppContentWithRouter({
     const initDB = async () => {
       try {
         console.log('Starting automatic database initialization...');
-        // Temporarily disable database initialization to avoid connection issues
-        // await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
-        console.log('Database initialization disabled for now - using local questions');
+        await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
+        console.log('Database initialization completed');
       } catch (error) {
         console.error('Error initializing database:', error);
         // App continues to work with local questions

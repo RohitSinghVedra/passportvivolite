@@ -196,4 +196,12 @@ export const translations: Record<string, Record<Language, string>> = {
   'level.active': { en: 'Climate Active', pt: 'Ativo Climático' },
   'level.leader': { en: 'Climate Leader', pt: 'Líder Climático' },
   'level.champion': { en: 'Climate Champion', pt: 'Campeão Climático' },
+  
+  // Results
+  'results.saving': { en: 'Saving results...', pt: 'Salvando resultados...' },
+  'results.saved': { en: 'Results saved!', pt: 'Resultados salvos!' },
+  'results.certificate_code': { en: 'Certificate Code', pt: 'Código do Certificado' },
+  'results.generate_certificate': { en: 'Generate Certificate', pt: 'Gerar Certificado' },
+  'results.download_certificate': { en: 'Download Certificate', pt: 'Baixar Certificado' },
+  'results.share_certificate': { en: 'Share Certificate', pt: 'Compartilhar Certificado' },
 };
