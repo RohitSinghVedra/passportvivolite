@@ -188,22 +188,41 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                 )}
               </div>
               
-              <div className="bg-gray-800/50 rounded-xl p-6 text-center">
+              <div className="bg-gradient-to-br from-yellow-800/50 to-orange-800/50 rounded-xl p-6 text-center border border-yellow-500/30">
+                <div className="text-4xl mb-2">
+                  🏆
+                </div>
                 <div className="text-3xl font-bold text-yellow-400 mb-2">
                   {loading ? '...' : certificates.length}
                 </div>
-                <div className="text-sm text-gray-400">
+                <div className="text-sm text-yellow-300 mb-3">
                   Certificates Earned
                 </div>
+                {certificates.length > 0 && (
+                  <div className="text-xs text-yellow-400 font-medium">
+                    {certificates.length === 1 ? 'First Achievement!' : `${certificates.length} Milestones!`}
+                  </div>
+                )}
               </div>
               
-              <div className="bg-gray-800/50 rounded-xl p-6 text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">
+              <div className="bg-gradient-to-br from-blue-800/50 to-indigo-800/50 rounded-xl p-6 text-center border border-blue-500/30">
+                <div className="text-4xl mb-2">
+                  ⭐
+                </div>
+                <div className="text-2xl font-bold text-blue-400 mb-1">
                   {currentUser?.level ? t(`level.${currentUser.level}`) : 'Beginner'}
                 </div>
-                <div className="text-sm text-gray-400">
+                <div className="text-sm text-blue-300 mb-3">
                   Current Level
                 </div>
+                {currentUser?.level && (
+                  <div className="text-xs text-blue-400 font-medium">
+                    {currentUser.level === 'champion' ? 'Elite Status!' : 
+                     currentUser.level === 'leader' ? 'Leading the Way!' :
+                     currentUser.level === 'active' ? 'Active Participant!' :
+                     currentUser.level === 'aware' ? 'Climate Conscious!' : 'Getting Started!'}
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
