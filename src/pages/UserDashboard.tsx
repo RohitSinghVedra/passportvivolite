@@ -85,6 +85,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   // Get real user data
   const latestRun = userRuns[0];
   
+  // Get achievement message based on latest score
+  const getAchievementMessage = (score: number) => {
+    if (score >= 45) return { en: 'Climate Champion!', pt: 'Campeão Climático!' };
+    if (score >= 35) return { en: 'Great Progress!', pt: 'Ótimo Progresso!' };
+    if (score >= 25) return { en: 'Well Done!', pt: 'Muito Bem!' };
+    if (score >= 15) return { en: 'Getting There!', pt: 'Chegando Lá!' };
+    return { en: 'Keep Going!', pt: 'Continue Assim!' };
+  };
+  
   // Load personalized fact
   useEffect(() => {
     if (user) {
@@ -151,13 +160,32 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gray-800/50 rounded-xl p-6 text-center">
-                <div className="text-3xl font-bold text-emerald-400 mb-2">
-                  {loading ? '...' : userRuns.length}
+              <div className="bg-gradient-to-br from-emerald-800/50 to-teal-800/50 rounded-xl p-6 text-center border border-emerald-500/30">
+                <div className="text-4xl mb-2">
+                  {loading ? '...' : latestRun ? latestRun.badge || '🌱' : '🌱'}
                 </div>
-                <div className="text-sm text-gray-400">
-                  Surveys Completed
+                <div className="text-2xl font-bold text-emerald-400 mb-1">
+                  {loading ? '...' : latestRun ? `${latestRun.score}/50` : '0/50'}
                 </div>
+                <div className="text-sm text-emerald-300 mb-2">
+                  {loading ? 'Loading...' : latestRun ? t(`level.${latestRun.level}`) : 'Beginner'}
+                </div>
+                <div className="text-xs text-gray-400 mb-3">
+                  Latest Assessment
+                </div>
+                {latestRun && (
+                  <>
+                    <div className="text-xs text-emerald-400 font-medium mb-2">
+                      {getAchievementMessage(latestRun.score)[language]}
+                    </div>
+                    <div className="w-full bg-gray-700/50 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${(latestRun.score / 50) * 100}%` }}
+                      ></div>
+                    </div>
+                  </>
+                )}
               </div>
               
               <div className="bg-gray-800/50 rounded-xl p-6 text-center">
