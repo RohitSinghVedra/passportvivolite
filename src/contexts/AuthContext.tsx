@@ -1,28 +1,43 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
-  User as FirebaseUser,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail
+  User as FirebaseUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { 
+  doc, 
+  setDoc, 
+  getDoc, 
+  updateDoc, 
+  collection, 
+  addDoc,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit
+} from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
-import type { User, UserCategory } from '../types';
+import type { User, SurveyQuestion, SurveySession, SurveyResponse } from '../types';
 
 interface AuthContextType {
   currentUser: User | null;
-  firebaseUser: FirebaseUser | null;
   loading: boolean;
   signUp: (email: string, password: string, userData: Partial<User>) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
   updateUserProfile: (updates: Partial<User>) => Promise<void>;
+  // Survey database functions
+  saveSurveyQuestions: (questions: SurveyQuestion[]) => Promise<void>;
+  getSurveyQuestions: () => Promise<SurveyQuestion[]>;
+  saveSurveySession: (session: Omit<SurveySession, 'id'>) => Promise<string>;
+  getUserSurveyHistory: (userId: string) => Promise<SurveySession[]>;
+  updateUserSurveyResults: (userId: string, score: number, level: string, badge: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,69 +50,52 @@ export const useAuth = () => {
   return context;
 };
 
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Create user document in Firestore
-  const createUserDocument = async (firebaseUser: FirebaseUser, userData: Partial<User>) => {
-    const userRef = doc(db, 'users', firebaseUser.uid);
+  const createUserDocument = async (user: FirebaseUser, userData: Partial<User>) => {
+    const userRef = doc(db, 'users', user.uid);
     
-    // Base user object with required fields
-    const baseUser = {
-      id: firebaseUser.uid,
-      email: firebaseUser.email!,
-      name: userData.name || firebaseUser.displayName || firebaseUser.email!.split('@')[0],
-      category: userData.category || 'student',
-      state: userData.state || 'SP',
-      city: userData.city || 'São Paulo',
-      ageRange: userData.ageRange || '18-25',
-      language: userData.language || 'pt',
-      completedOnboarding: userData.completedOnboarding || false,
-      surveyCompleted: userData.surveyCompleted || false,
+    // Filter out undefined values
+    const filteredUserData = Object.fromEntries(
+      Object.entries(userData).filter(([_, value]) => value !== undefined)
+    );
+
+    const userDoc = {
+      id: user.uid,
+      email: user.email!,
       createdAt: new Date(),
       lastActivity: new Date(),
-      certificateVisibility: userData.certificateVisibility || 'private',
-      role: userData.role || 'user',
-      signUpMethod: userData.signUpMethod || 'email'
+      completedOnboarding: false,
+      surveyCompleted: false,
+      certificateVisibility: 'private' as const,
+      role: 'user' as const,
+      ...filteredUserData
     };
 
-    // Add optional fields only if they have values
-    const optionalFields: Partial<User> = {};
-    if (userData.organizationName) optionalFields.organizationName = userData.organizationName;
-    if (userData.position) optionalFields.position = userData.position;
-    if (userData.companySize) optionalFields.companySize = userData.companySize;
-    if (userData.industry) optionalFields.industry = userData.industry;
-    if (userData.educationLevel) optionalFields.educationLevel = userData.educationLevel;
-    if (userData.governmentLevel) optionalFields.governmentLevel = userData.governmentLevel;
-    if (userData.sustainabilityInterests && userData.sustainabilityInterests.length > 0) {
-      optionalFields.sustainabilityInterests = userData.sustainabilityInterests;
-    }
-
-    const user = { ...baseUser, ...optionalFields } as User;
-
-    await setDoc(userRef, user);
-    return user;
+    await setDoc(userRef, userDoc);
+    return userDoc;
   };
 
-  // Sign up function
+  // Sign up with email and password
   const signUp = async (email: string, password: string, userData: Partial<User>) => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      const user = await createUserDocument(result.user, userData);
-      setCurrentUser(user);
+      const userDoc = await createUserDocument(result.user, {
+        ...userData,
+        completedOnboarding: true,
+        signUpMethod: 'email'
+      });
+      setCurrentUser(userDoc as User);
     } catch (error) {
       console.error('Error signing up:', error);
       throw error;
     }
   };
 
-  // Sign in function
+  // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -115,18 +113,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Check if user document exists
       const userRef = doc(db, 'users', result.user.uid);
-      const userDoc = await getDoc(userRef);
+      const userSnap = await getDoc(userRef);
       
-      if (!userDoc.exists()) {
-        // Create new user document for Google sign-in with basic data
-        // User will need to complete profile later
-        const basicUser = await createUserDocument(result.user, {
-          name: result.user.displayName || result.user.email!.split('@')[0],
+      if (!userSnap.exists()) {
+        // Create new user document for Google sign-in
+        await createUserDocument(result.user, {
+          name: result.user.displayName || '',
           email: result.user.email!,
-          completedOnboarding: false, // Mark as needing profile completion
+          completedOnboarding: false,
           signUpMethod: 'google'
         });
-        setCurrentUser(basicUser);
       }
     } catch (error) {
       console.error('Error signing in with Google:', error);
@@ -134,7 +130,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Logout function
+  // Sign out
   const logout = async () => {
     try {
       await signOut(auth);
@@ -145,61 +141,163 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Reset password function
-  const resetPassword = async (email: string) => {
-    try {
-      await sendPasswordResetEmail(auth, email);
-    } catch (error) {
-      console.error('Error resetting password:', error);
-      throw error;
-    }
-  };
-
   // Update user profile
   const updateUserProfile = async (updates: Partial<User>) => {
     if (!currentUser) throw new Error('No user logged in');
     
     try {
+      // Filter out undefined values
+      const filteredUpdates = Object.fromEntries(
+        Object.entries(updates).filter(([_, value]) => value !== undefined)
+      );
+
       const userRef = doc(db, 'users', currentUser.id);
-      
-      // Filter out undefined values to prevent Firestore errors
-      const filteredUpdates: Partial<User> = {};
-      Object.entries(updates).forEach(([key, value]) => {
-        if (value !== undefined) {
-          filteredUpdates[key as keyof User] = value;
-        }
-      });
-      
       await updateDoc(userRef, {
         ...filteredUpdates,
         lastActivity: new Date()
       });
-      
+
+      // Update local state
       setCurrentUser(prev => prev ? { ...prev, ...filteredUpdates } : null);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('Error updating user profile:', error);
       throw error;
     }
   };
 
-  // Listen for auth state changes
+  // Survey database functions
+
+  // Save survey questions to Firestore
+  const saveSurveyQuestions = async (questions: SurveyQuestion[]) => {
+    try {
+      const questionsRef = collection(db, 'surveyQuestions');
+      
+      // Clear existing questions (optional - you might want to keep them)
+      // const existingQuestions = await getDocs(questionsRef);
+      // existingQuestions.forEach(async (doc) => {
+      //   await deleteDoc(doc.ref);
+      // });
+
+      // Add new questions
+      const promises = questions.map(question => 
+        addDoc(questionsRef, {
+          ...question,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+      );
+
+      await Promise.all(promises);
+      console.log('Survey questions saved successfully');
+    } catch (error) {
+      console.error('Error saving survey questions:', error);
+      throw error;
+    }
+  };
+
+  // Get survey questions from Firestore
+  const getSurveyQuestions = async (): Promise<SurveyQuestion[]> => {
+    try {
+      const questionsRef = collection(db, 'surveyQuestions');
+      const q = query(questionsRef, where('isActive', '==', true), orderBy('priority', 'desc'));
+      const querySnapshot = await getDocs(q);
+      
+      const questions: SurveyQuestion[] = [];
+      querySnapshot.forEach((doc) => {
+        questions.push({ id: doc.id, ...doc.data() } as SurveyQuestion);
+      });
+      
+      return questions;
+    } catch (error) {
+      console.error('Error getting survey questions:', error);
+      throw error;
+    }
+  };
+
+  // Save survey session
+  const saveSurveySession = async (session: Omit<SurveySession, 'id'>): Promise<string> => {
+    try {
+      const sessionsRef = collection(db, 'surveySessions');
+      const docRef = await addDoc(sessionsRef, {
+        ...session,
+        createdAt: new Date()
+      });
+      
+      console.log('Survey session saved with ID:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error saving survey session:', error);
+      throw error;
+    }
+  };
+
+  // Get user survey history
+  const getUserSurveyHistory = async (userId: string): Promise<SurveySession[]> => {
+    try {
+      const sessionsRef = collection(db, 'surveySessions');
+      const q = query(
+        sessionsRef, 
+        where('userId', '==', userId), 
+        orderBy('completedAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      
+      const sessions: SurveySession[] = [];
+      querySnapshot.forEach((doc) => {
+        sessions.push({ id: doc.id, ...doc.data() } as SurveySession);
+      });
+      
+      return sessions;
+    } catch (error) {
+      console.error('Error getting user survey history:', error);
+      throw error;
+    }
+  };
+
+  // Update user survey results
+  const updateUserSurveyResults = async (userId: string, score: number, level: string, badge: string) => {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        score,
+        level,
+        badge,
+        surveyCompleted: true,
+        lastActivity: new Date()
+      });
+
+      // Update local state if it's the current user
+      if (currentUser && currentUser.id === userId) {
+        setCurrentUser(prev => prev ? { 
+          ...prev, 
+          score, 
+          level, 
+          badge, 
+          surveyCompleted: true 
+        } : null);
+      }
+    } catch (error) {
+      console.error('Error updating user survey results:', error);
+      throw error;
+    }
+  };
+
+  // Auth state listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
-      setFirebaseUser(firebaseUser);
+      console.log('Auth state changed:', firebaseUser ? 'User logged in' : 'User logged out');
       
       if (firebaseUser) {
         try {
-          // Get user data from Firestore
           const userRef = doc(db, 'users', firebaseUser.uid);
-          const userDoc = await getDoc(userRef);
+          const userSnap = await getDoc(userRef);
           
-          if (userDoc.exists()) {
-            const userData = userDoc.data() as User;
+          if (userSnap.exists()) {
+            const userData = userSnap.data() as User;
             console.log('User data loaded:', userData);
             setCurrentUser(userData);
           } else {
-            console.log('User document does not exist in Firestore');
+            console.log('User document not found');
             setCurrentUser(null);
           }
         } catch (error) {
@@ -218,14 +316,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     currentUser,
-    firebaseUser,
     loading,
     signUp,
     signIn,
     signInWithGoogle,
     logout,
-    resetPassword,
-    updateUserProfile
+    updateUserProfile,
+    saveSurveyQuestions,
+    getSurveyQuestions,
+    saveSurveySession,
+    getUserSurveyHistory,
+    updateUserSurveyResults
   };
 
   return (

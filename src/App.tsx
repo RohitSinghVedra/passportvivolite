@@ -21,6 +21,7 @@ import { AdminCertificates } from './pages/AdminCertificates';
 import { AdminAnalytics } from './pages/AdminAnalytics';
 import { AdminSettings } from './pages/AdminSettings';
 import { calculateLevel, getBadgeEmoji } from './utils/scoring';
+import { initializeDatabase } from './utils/databaseSetup';
 import type { SurveyResponse } from './types';
 
 function App() {
@@ -59,7 +60,20 @@ function AppContent({
   onSurveyComplete: (responses: SurveyResponse[], score: number) => void;
   onRetakeSurvey: () => void;
 }) {
-  const { currentUser, loading, logout } = useAuth();
+  const { currentUser, loading, logout, getSurveyQuestions, saveSurveyQuestions } = useAuth();
+  
+  // Initialize database when app starts
+  React.useEffect(() => {
+    const initDB = async () => {
+      try {
+        await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
+      } catch (error) {
+        console.error('Error initializing database:', error);
+      }
+    };
+    
+    initDB();
+  }, [getSurveyQuestions, saveSurveyQuestions]);
   
   console.log('AppContent render:', { 
     currentUser: currentUser ? 'exists' : 'null', 

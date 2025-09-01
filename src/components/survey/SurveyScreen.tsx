@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
-import { sampleSurveyQuestions, getPersonalizedQuestions, calculateSurveyScore } from '../../data/surveyQuestions';
+import { sampleSurveyQuestions, getPersonalizedQuestions, calculateSurveyScore, getLevelFromScore } from '../../data/surveyQuestions';
 import { useAuth } from '../../contexts/AuthContext';
 import type { SurveyResponse } from '../../types';
 
@@ -12,13 +12,42 @@ interface SurveyScreenProps {
 
 export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
   const { t, language } = useLanguage();
-  const { currentUser } = useAuth();
+  const { currentUser, saveSurveySession, updateUserSurveyResults } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [showFact, setShowFact] = useState(false);
+  const [questions, setQuestions] = useState<SurveyQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get personalized questions for the current user
-  const questions = currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
+  // Load questions from database or fallback to local questions
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        if (currentUser) {
+          const personalizedQuestions = getPersonalizedQuestions(currentUser, 10);
+          setQuestions(personalizedQuestions);
+        } else {
+          setQuestions(sampleSurveyQuestions);
+        }
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        setQuestions(sampleSurveyQuestions);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [currentUser]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 flex items-center justify-center">
+        <div className="text-white text-lg">Loading survey...</div>
+      </div>
+    );
+  }
+
   const question = questions[currentQuestion];
   const currentResponse = responses.find(r => r.questionId === question.id);
 
@@ -33,14 +62,40 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
     setShowFact(true);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setShowFact(false);
     } else {
-      // Calculate personalized score
-      const score = calculateSurveyScore(responses, currentUser!);
-      onComplete(responses, score);
+      try {
+        // Calculate personalized score
+        const score = calculateSurveyScore(responses, currentUser!);
+        const { level, badge } = getLevelFromScore(score);
+        
+        // Save survey session to database
+        if (currentUser) {
+          const sessionData = {
+            userId: currentUser.id,
+            questions: questions.map(q => q.id),
+            responses,
+            score,
+            level,
+            badge,
+            completedAt: new Date(),
+            personalizedFacts: questions.map(q => q.fact[language])
+          };
+          
+          await saveSurveySession(sessionData);
+          await updateUserSurveyResults(currentUser.id, score, level, badge);
+        }
+        
+        onComplete(responses, score);
+      } catch (error) {
+        console.error('Error saving survey results:', error);
+        // Still complete the survey even if saving fails
+        const score = calculateSurveyScore(responses, currentUser!);
+        onComplete(responses, score);
+      }
     }
   };
 
