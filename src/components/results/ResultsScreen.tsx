@@ -51,6 +51,15 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
     const saveResults = async () => {
       if (!currentUser || isSaved) return;
       
+      console.log('Starting to save survey results...', {
+        currentUser: currentUser.id,
+        responses: responses.length,
+        score,
+        level,
+        badge,
+        isSaved
+      });
+      
       setIsSaving(true);
       try {
         // Generate certificate code
@@ -70,13 +79,17 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           certificateCode: code
         };
         
+        console.log('Saving survey session...', sessionData);
         await saveSurveySession(sessionData);
+        
+        console.log('Updating user survey results...', { userId: currentUser.id, score, level, badge });
         await updateUserSurveyResults(currentUser.id, score, level, badge);
         
         setIsSaved(true);
         console.log('Survey results saved successfully!');
       } catch (error) {
         console.error('Error saving survey results:', error);
+        // Don't set isSaved to false, let user retry
       } finally {
         setIsSaving(false);
       }
@@ -130,6 +143,18 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
               <div className="mt-4 flex items-center justify-center gap-2 text-emerald-600">
                 <CheckCircle className="w-5 h-5" />
                 {t('results.saved')}
+              </div>
+            )}
+            
+            {!isSaved && !isSaving && (
+              <div className="mt-4 flex items-center justify-center gap-2 text-red-600">
+                <div className="text-sm">Failed to save. Please try again.</div>
+                <button
+                  onClick={() => setIsSaved(false)}
+                  className="text-sm underline hover:no-underline"
+                >
+                  Retry
+                </button>
               </div>
             )}
           </div>
