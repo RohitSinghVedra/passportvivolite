@@ -154,16 +154,46 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
          </div>
 
          {/* Company Logos */}
-         <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200">
-           <div className="text-center">
-             <div className="text-lg font-bold text-emerald-600">3agro</div>
-             <p className="text-xs text-gray-500">Product Owner</p>
-           </div>
-           <div className="text-center">
-             <div className="text-sm font-semibold text-blue-600">Vedra Labs</div>
-             <p className="text-xs text-gray-500">Developed by</p>
-           </div>
-         </div>
+                         <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-1">
+                      <img 
+                        src="/logos/3agro-logo.png" 
+                        alt="3Agro" 
+                        className="h-6 w-auto"
+                        onError={(e) => {
+                          // Fallback to text if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling!.style.display = 'block';
+                        }}
+                      />
+                      <div className="text-lg font-bold text-emerald-600" style={{ display: 'none' }}>
+                        3agro
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500">Product Owner</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-1">
+                      <img 
+                        src="/logos/vedra-labs-logo.png" 
+                        alt="Vedra Labs" 
+                        className="h-6 w-auto"
+                        onError={(e) => {
+                          // Fallback to text if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling!.style.display = 'block';
+                        }}
+                      />
+                      <div className="text-sm font-semibold text-blue-600" style={{ display: 'none' }}>
+                        Vedra Labs
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500">Developed by</p>
+                  </div>
+                </div>
       </div>
 
       {/* Action Buttons */}

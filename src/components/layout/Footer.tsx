@@ -28,27 +28,57 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Right side - Logos */}
-          <div className="flex items-center gap-6">
-            {/* 3agro Logo */}
-            <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-400 mb-1">3agro</div>
-              <p className="text-xs text-gray-400">
-                {language === 'en' ? 'Product Owner' : 'Proprietário do Produto'}
-              </p>
-            </div>
+                            {/* Right side - Logos */}
+                  <div className="flex items-center gap-6">
+                    {/* 3agro Logo */}
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <img 
+                          src="/logos/3agro-logo.png" 
+                          alt="3Agro" 
+                          className="h-8 w-auto"
+                          onError={(e) => {
+                            // Fallback to text if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling!.style.display = 'block';
+                          }}
+                        />
+                        <div className="text-2xl font-bold text-emerald-400" style={{ display: 'none' }}>
+                          3agro
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        {language === 'en' ? 'Product Owner' : 'Proprietário do Produto'}
+                      </p>
+                    </div>
 
-            {/* Separator */}
-            <div className="w-px h-8 bg-gray-600"></div>
+                    {/* Separator */}
+                    <div className="w-px h-8 bg-gray-600"></div>
 
-            {/* Vedra Labs Logo */}
-            <div className="text-center">
-              <div className="text-lg font-semibold text-blue-400 mb-1">Vedra Labs</div>
-              <p className="text-xs text-gray-400">
-                {language === 'en' ? 'Developed by' : 'Desenvolvido por'}
-              </p>
-            </div>
-          </div>
+                    {/* Vedra Labs Logo */}
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <img 
+                          src="/logos/vedra-labs-logo.png" 
+                          alt="Vedra Labs" 
+                          className="h-8 w-auto"
+                          onError={(e) => {
+                            // Fallback to text if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling!.style.display = 'block';
+                          }}
+                        />
+                        <div className="text-lg font-semibold text-blue-400" style={{ display: 'none' }}>
+                          Vedra Labs
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        {language === 'en' ? 'Developed by' : 'Desenvolvido por'}
+                      </p>
+                    </div>
+                  </div>
         </div>
       </div>
     </footer>
