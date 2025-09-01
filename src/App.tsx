@@ -78,9 +78,9 @@ function AppContentWithRouter({
       try {
         console.log('Starting database initialization...');
         try {
-          // Initialize database with questions
-          await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
-          console.log('Database initialized successfully');
+          // Temporarily disable database operations due to Firestore permissions
+          console.log('Database operations temporarily disabled - please update Firestore rules');
+          console.log('App will work with local data until Firestore rules are configured');
         } catch (error) {
           console.error('Database initialization failed:', error);
           console.log('App will continue without database initialization');
