@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 import { useAuth } from '../contexts/AuthContext';
 import { getRandomPersonalizedFact, getContextualFacts } from '../data/personalizedFacts';
+import { NewsSection } from '../components/NewsSection';
 import type { User, PersonalizedFact } from '../types';
 
 interface UserDashboardProps {
@@ -175,58 +176,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
               >
                 Your climate action journey continues with every step forward
               </motion.p>
-              
-              {/* Company Logos Section */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="flex items-center justify-center gap-8 mb-6"
-              >
-                <div className="text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <img 
-                      src="/logos/3agro-logo.png" 
-                      alt="3Agro" 
-                      className="h-8 w-auto"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.nextElementSibling!.style.display = 'block';
-                      }}
-                    />
-                    <div className="text-xl font-bold text-emerald-400" style={{ display: 'none' }}>
-                      3agro
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    Product Owner
-                  </p>
-                </div>
-                
-                <div className="w-px h-8 bg-gray-600"></div>
-                
-                <div className="text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <img 
-                      src="/logos/vedra-labs-logo.png" 
-                      alt="Vedra Labs" 
-                      className="h-8 w-auto"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.nextElementSibling!.style.display = 'block';
-                      }}
-                    />
-                    <div className="text-lg font-semibold text-blue-400" style={{ display: 'none' }}>
-                      Vedra Labs
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    Developed by
-                  </p>
-                </div>
-              </motion.div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -449,6 +398,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
               )}
             </motion.div>
           )}
+
+          {/* News Section */}
+          <NewsSection />
 
         </>
       )}
