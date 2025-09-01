@@ -213,20 +213,28 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           <!-- Company Logos -->
           <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 2px solid #bbf7d0; background-color: #111827; padding: 20px; border-radius: 12px; margin-top: auto; min-height: 100px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             <div style="text-align: center; flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px; background-color: #1f2937; padding: 12px; border-radius: 8px; border: 1px solid #374151;">
-                <div style="font-size: 28px; font-weight: bold; color: #34d399; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">
-                  3agro
-                </div>
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px;">
+                <img 
+                  src="/logos/3agro-logo.png" 
+                  alt="3Agro" 
+                  style="height: 50px; width: auto; max-width: 150px; display: block;"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="font-size: 28px; font-weight: bold; color: #34d399; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); display: none;">3agro</div>
               </div>
               <p style="font-size: 14px; color: #9ca3af; font-weight: 500; margin: 0;">
                 Product Owner
               </p>
             </div>
             <div style="text-align: center; flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px; background-color: #1f2937; padding: 12px; border-radius: 8px; border: 1px solid #374151;">
-                <div style="font-size: 22px; font-weight: 600; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">
-                  Vedra Labs
-                </div>
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px;">
+                <img 
+                  src="/logos/vedra-labs-logo.png" 
+                  alt="Vedra Labs" 
+                  style="height: 50px; width: auto; max-width: 150px; display: block;"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="font-size: 22px; font-weight: 600; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); display: none;">Vedra Labs</div>
               </div>
               <p style="font-size: 14px; color: #9ca3af; font-weight: 500; margin: 0;">
                 Developed by

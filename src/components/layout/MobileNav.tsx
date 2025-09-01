@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, ClipboardList, Award, User } from 'lucide-react';
+import { Home, ClipboardList, Award, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../hooks/useLanguage';
 
@@ -12,7 +12,7 @@ export const MobileNav: React.FC = () => {
     { path: '/', icon: Home, label: t('nav.home') },
     { path: '/survey', icon: ClipboardList, label: t('nav.survey') },
     { path: '/me/certificates', icon: Award, label: t('nav.certificates') },
-    { path: '/me', icon: User, label: t('nav.me') }
+    { path: '/me/settings', icon: Settings, label: t('nav.settings') }
   ];
 
   return (
