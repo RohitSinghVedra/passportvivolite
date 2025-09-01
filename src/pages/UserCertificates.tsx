@@ -97,10 +97,10 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       tempDiv.style.position = 'absolute';
       tempDiv.style.left = '-9999px';
       tempDiv.style.top = '-9999px';
-      tempDiv.style.width = '1000px';
-      tempDiv.style.height = '1000px';
+      tempDiv.style.width = '800px';
+      tempDiv.style.height = 'auto';
       tempDiv.style.backgroundColor = '#f0fdf4';
-      tempDiv.style.padding = '40px';
+      tempDiv.style.padding = '32px';
       tempDiv.style.borderRadius = '24px';
       tempDiv.style.border = '8px solid #bbf7d0';
       tempDiv.style.fontFamily = 'Inter, system-ui, -apple-system, sans-serif';
@@ -153,12 +153,12 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       
       const text = getCertificateText();
       
-      tempDiv.innerHTML = `
-        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 8px solid #bbf7d0; border-radius: 24px; padding: 40px; max-width: 1000px; margin: 0 auto; height: 1000px; display: flex; flex-direction: column; justify-content: space-between;">
+            tempDiv.innerHTML = `
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 8px solid #bbf7d0; border-radius: 24px; padding: 32px; max-width: 800px; margin: 0 auto;">
           <!-- Header -->
-          <div style="text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 40px; margin-bottom: 12px;">🌱</div>
-            <h1 style="font-size: 32px; font-weight: bold; color: #065f46; margin-bottom: 8px;">
+          <div style="text-align: center; margin-bottom: 32px;">
+            <div style="font-size: 40px; margin-bottom: 8px;">🌱</div>
+            <h1 style="font-size: 30px; font-weight: bold; color: #065f46; margin-bottom: 8px;">
               ${text.subtitle}
             </h1>
             <p style="color: #059669; font-weight: 500; font-size: 18px;">
@@ -167,21 +167,21 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           </div>
 
           <!-- Main Content -->
-          <div style="text-align: center; margin-bottom: 24px; flex: 1;">
-            <div style="font-size: 64px; margin-bottom: 20px;">${getBadgeEmoji(cert.level)}</div>
-            <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 12px;">
+          <div style="text-align: center; margin-bottom: 32px;">
+            <div style="font-size: 64px; margin-bottom: 16px;">${getBadgeEmoji(cert.level)}</div>
+            <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 8px;">
               ${t(`level.${cert.level}`)}
             </h2>
             <p style="color: #6b7280; margin-bottom: 16px; font-size: 16px;">
               ${text.awardedTo}
             </p>
-            <p style="font-size: 20px; font-weight: bold; color: #047857; margin-bottom: 12px;">
+            <p style="font-size: 20px; font-weight: bold; color: #047857; margin-bottom: 8px;">
               ${cert.userName || cert.user?.name || 'Unknown'}
             </p>
-            <p style="font-size: 14px; color: #6b7280; margin-bottom: 6px;">
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">
               ${getCategoryLabel(cert.category)}
             </p>
-            <p style="font-size: 14px; color: #6b7280; margin-bottom: 6px;">
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">
               ${cert.city}, ${cert.state} • Age: ${cert.ageRange}
             </p>
             <p style="color: #6b7280; margin-bottom: 16px; font-size: 16px;">
@@ -195,7 +195,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           </div>
 
           <!-- Footer -->
-          <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 32px;">
             <div style="font-size: 14px; color: #6b7280;">
               <p>${text.issued}: ${formatDate(cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt))}</p>
               <p>${text.code}: ${cert.certificateCode}</p>
@@ -204,39 +204,39 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
               <img 
                 src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`${window.location.origin}/certificate/${cert.certificateCode}`)}"
                 alt="QR Code"
-                style="width: 80px; height: 80px;"
+                style="width: 64px; height: 64px;"
               />
               <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">${text.scanToVerify}</p>
             </div>
           </div>
 
           <!-- Company Logos -->
-          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 2px solid #bbf7d0; background-color: #111827; padding: 20px; border-radius: 12px; margin-top: auto; min-height: 100px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-            <div style="text-align: center; flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px;">
+            <div style="text-align: center;">
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
                 <img 
                   src="/logos/3agro-logo.png" 
                   alt="3Agro" 
-                  style="height: 50px; width: auto; max-width: 150px; display: block;"
+                  style="height: 32px; width: auto;"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
                 />
-                <div style="font-size: 28px; font-weight: bold; color: #34d399; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); display: none;">3agro</div>
+                <div style="font-size: 18px; font-weight: bold; color: #34d399; display: none;">3agro</div>
               </div>
-              <p style="font-size: 14px; color: #9ca3af; font-weight: 500; margin: 0;">
+              <p style="font-size: 12px; color: #9ca3af; font-weight: 500;">
                 Product Owner
               </p>
             </div>
-            <div style="text-align: center; flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px;">
+            <div style="text-align: center;">
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
                 <img 
                   src="/logos/vedra-labs-logo.png" 
                   alt="Vedra Labs" 
-                  style="height: 50px; width: auto; max-width: 150px; display: block;"
+                  style="height: 32px; width: auto;"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
                 />
-                <div style="font-size: 22px; font-weight: 600; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); display: none;">Vedra Labs</div>
+                <div style="font-size: 14px; font-weight: 600; color: #60a5fa; display: none;">Vedra Labs</div>
               </div>
-              <p style="font-size: 14px; color: #9ca3af; font-weight: 500; margin: 0;">
+              <p style="font-size: 12px; color: #9ca3af; font-weight: 500;">
                 Developed by
               </p>
             </div>
@@ -250,8 +250,8 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       const canvas = await html2canvas.default(tempDiv, {
         backgroundColor: '#f0fdf4',
         scale: 2,
-        width: 1000,
-        height: 1000,
+        width: 800,
+        height: undefined,
         useCORS: true,
         allowTaint: true,
         logging: false,
