@@ -186,7 +186,7 @@ export const CertificateVerification: React.FC = () => {
           </div>
 
           {/* Company Logos */}
-          <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200 bg-gray-100 p-4 rounded-lg">
+          <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200 bg-gray-900 p-4 rounded-lg">
             <div className="text-center">
               <div className="flex items-center justify-center mb-1">
                 <img 
@@ -199,11 +199,11 @@ export const CertificateVerification: React.FC = () => {
                     target.nextElementSibling!.style.display = 'block';
                   }}
                 />
-                <div className="text-lg font-bold text-emerald-600" style={{ display: 'none' }}>
+                <div className="text-lg font-bold text-emerald-400" style={{ display: 'none' }}>
                   3agro
                 </div>
               </div>
-              <p className="text-xs text-gray-600 font-medium">Product Owner</p>
+              <p className="text-xs text-gray-400 font-medium">Product Owner</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-1">
@@ -217,11 +217,11 @@ export const CertificateVerification: React.FC = () => {
                     target.nextElementSibling!.style.display = 'block';
                   }}
                 />
-                <div className="text-sm font-semibold text-blue-600" style={{ display: 'none' }}>
+                <div className="text-sm font-semibold text-blue-400" style={{ display: 'none' }}>
                   Vedra Labs
                 </div>
               </div>
-              <p className="text-xs text-gray-600 font-medium">Developed by</p>
+              <p className="text-xs text-gray-400 font-medium">Developed by</p>
             </div>
           </div>
         </div>
