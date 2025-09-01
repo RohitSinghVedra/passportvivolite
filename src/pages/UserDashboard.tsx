@@ -150,18 +150,94 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-gradient-to-br from-emerald-800/50 to-teal-800/50 backdrop-blur-sm rounded-2xl p-8 border border-emerald-500/30"
           >
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-white mb-2">
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-6xl mb-4"
+              >
+                🌱
+              </motion.div>
+              <motion.h1
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-4xl font-bold text-white mb-3"
+              >
                 Welcome back, {currentUser?.name}!
-              </h1>
-              <p className="text-emerald-200">
-                Your climate action journey continues
-              </p>
+              </motion.h1>
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-emerald-200 text-lg mb-6"
+              >
+                Your climate action journey continues with every step forward
+              </motion.p>
+              
+              {/* Company Logos Section */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="flex items-center justify-center gap-8 mb-6"
+              >
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <img 
+                      src="/logos/3agro-logo.png" 
+                      alt="3Agro" 
+                      className="h-8 w-auto"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.nextElementSibling!.style.display = 'block';
+                      }}
+                    />
+                    <div className="text-xl font-bold text-emerald-400" style={{ display: 'none' }}>
+                      3agro
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    Product Owner
+                  </p>
+                </div>
+                
+                <div className="w-px h-8 bg-gray-600"></div>
+                
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <img 
+                      src="/logos/vedra-labs-logo.png" 
+                      alt="Vedra Labs" 
+                      className="h-8 w-auto"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.nextElementSibling!.style.display = 'block';
+                      }}
+                    />
+                    <div className="text-lg font-semibold text-blue-400" style={{ display: 'none' }}>
+                      Vedra Labs
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    Developed by
+                  </p>
+                </div>
+              </motion.div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-emerald-800/50 to-teal-800/50 rounded-xl p-6 text-center border border-emerald-500/30">
-                <div className="text-4xl mb-2">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                whileHover={{ scale: 1.02 }}
+                className="bg-gradient-to-br from-emerald-800/50 to-teal-800/50 rounded-xl p-6 text-center border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-300"
+              >
+                <div className="text-4xl mb-2 animate-pulse">
                   {loading ? '...' : latestRun ? latestRun.badge || '🌱' : '🌱'}
                 </div>
                 <div className="text-2xl font-bold text-emerald-400 mb-1">
@@ -179,17 +255,25 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                       {getAchievementMessage(latestRun.score)[language]}
                     </div>
                     <div className="w-full bg-gray-700/50 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(latestRun.score / 50) * 100}%` }}
-                      ></div>
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(latestRun.score / 50) * 100}%` }}
+                        transition={{ duration: 1, delay: 0.8 }}
+                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full"
+                      ></motion.div>
                     </div>
                   </>
                 )}
-              </div>
+              </motion.div>
               
-              <div className="bg-gradient-to-br from-yellow-800/50 to-orange-800/50 rounded-xl p-6 text-center border border-yellow-500/30">
-                <div className="text-4xl mb-2">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                whileHover={{ scale: 1.02 }}
+                className="bg-gradient-to-br from-yellow-800/50 to-orange-800/50 rounded-xl p-6 text-center border border-yellow-500/30 hover:border-yellow-400/50 transition-all duration-300"
+              >
+                <div className="text-4xl mb-2 animate-bounce">
                   🏆
                 </div>
                 <div className="text-3xl font-bold text-yellow-400 mb-2">
@@ -203,10 +287,16 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                     {certificates.length === 1 ? 'First Achievement!' : `${certificates.length} Milestones!`}
                   </div>
                 )}
-              </div>
+              </motion.div>
               
-              <div className="bg-gradient-to-br from-blue-800/50 to-indigo-800/50 rounded-xl p-6 text-center border border-blue-500/30">
-                <div className="text-4xl mb-2">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                whileHover={{ scale: 1.02 }}
+                className="bg-gradient-to-br from-blue-800/50 to-indigo-800/50 rounded-xl p-6 text-center border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300"
+              >
+                <div className="text-4xl mb-2 animate-pulse">
                   ⭐
                 </div>
                 <div className="text-2xl font-bold text-blue-400 mb-1">
@@ -223,7 +313,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                      currentUser.level === 'aware' ? 'Climate Conscious!' : 'Getting Started!'}
                   </div>
                 )}
-              </div>
+              </motion.div>
             </div>
           </motion.div>
 
@@ -360,26 +450,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             </motion.div>
           )}
 
-          {/* Start New Survey */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-gradient-to-br from-emerald-800/50 to-teal-800/50 backdrop-blur-sm rounded-2xl p-8 border border-emerald-500/30 text-center"
-          >
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Ready for Your Next Assessment?
-            </h2>
-            <p className="text-emerald-200 mb-6">
-              Take a new survey to track your progress and earn new certificates
-            </p>
-            <Link
-              to="/survey"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 inline-block"
-            >
-              Start New Survey
-            </Link>
-          </motion.div>
         </>
       )}
     </div>
