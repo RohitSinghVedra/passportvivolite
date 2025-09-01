@@ -12,7 +12,7 @@ interface UserDashboardProps {
 }
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { currentUser } = useAuth();
   const [personalizedFact, setPersonalizedFact] = useState<PersonalizedFact | null>(null);
   const [isLoadingFact, setIsLoadingFact] = useState(false);
