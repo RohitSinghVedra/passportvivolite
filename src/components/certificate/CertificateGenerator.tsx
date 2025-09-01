@@ -124,8 +124,17 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
           <p className="text-gray-600 mb-4">
             This certificate is awarded to
           </p>
-          <p className="text-xl font-bold text-emerald-700 mb-4">
+          <p className="text-xl font-bold text-emerald-700 mb-2">
             {user.name}
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            {user.category === 'company_owner' ? 'Company Owner' : 
+             user.category === 'student' ? 'Student' : 
+             user.category === 'government' ? 'Government Official' : 
+             user.category === 'individual' ? 'Individual' : 'Professional'}
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            {user.city}, {user.state} • Age: {user.ageRange}
           </p>
           <p className="text-gray-600 mb-4">
             for completing the Climate Action Assessment
@@ -154,46 +163,46 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
          </div>
 
          {/* Company Logos */}
-                         <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200">
-                  <div className="text-center">
-                    <div className="flex items-center justify-center mb-1">
-                      <img 
-                        src="/logos/3agro-logo.png" 
-                        alt="3Agro" 
-                        className="h-6 w-auto"
-                        onError={(e) => {
-                          // Fallback to text if PNG fails
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling!.style.display = 'block';
-                        }}
-                      />
-                      <div className="text-lg font-bold text-emerald-600" style={{ display: 'none' }}>
-                        3agro
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500">Product Owner</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="flex items-center justify-center mb-1">
-                      <img 
-                        src="/logos/vedra-labs-logo.png" 
-                        alt="Vedra Labs" 
-                        className="h-6 w-auto"
-                        onError={(e) => {
-                          // Fallback to text if PNG fails
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling!.style.display = 'block';
-                        }}
-                      />
-                      <div className="text-sm font-semibold text-blue-600" style={{ display: 'none' }}>
-                        Vedra Labs
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500">Developed by</p>
-                  </div>
-                </div>
+                                 <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200 bg-gray-100 p-4 rounded-lg">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-1">
+              <img 
+                src="/logos/3agro-logo.png" 
+                alt="3Agro" 
+                className="h-8 w-auto"
+                onError={(e) => {
+                  // Fallback to text if PNG fails
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling!.style.display = 'block';
+                }}
+              />
+              <div className="text-lg font-bold text-emerald-600" style={{ display: 'none' }}>
+                3agro
+              </div>
+            </div>
+            <p className="text-xs text-gray-600 font-medium">Product Owner</p>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-1">
+              <img 
+                src="/logos/vedra-labs-logo.png" 
+                alt="Vedra Labs" 
+                className="h-8 w-auto"
+                onError={(e) => {
+                  // Fallback to text if PNG fails
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling!.style.display = 'block';
+                }}
+              />
+              <div className="text-sm font-semibold text-blue-600" style={{ display: 'none' }}>
+                Vedra Labs
+              </div>
+            </div>
+            <p className="text-xs text-gray-600 font-medium">Developed by</p>
+          </div>
+        </div>
       </div>
 
       {/* Action Buttons */}

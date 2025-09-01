@@ -21,6 +21,7 @@ import { AdminAnalytics } from './pages/AdminAnalytics';
 import { AdminSettings } from './pages/AdminSettings';
 import { Layout } from './components/layout/Layout';
 import { initializeDatabase } from './utils/databaseSetup';
+import { CertificateVerification } from './components/certificate/CertificateVerification';
 import type { SurveyResponse } from './types';
 
 function App() {
@@ -262,6 +263,9 @@ function AppContentWithRouter({
           </Layout>
         </ProtectedRoute>
       } />
+
+      {/* Certificate Verification Route (Public) */}
+      <Route path="/certificate/:code" element={<CertificateVerification />} />
 
       {/* Default Routes */}
       <Route path="/" element={<Navigate to="/me" replace />} />
