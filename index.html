@@ -54,16 +54,19 @@
         const path = window.location.pathname;
         if (path.startsWith('/certificate/')) {
           // Show certificate-specific loading immediately
-          document.body.innerHTML = `
-            <div class="certificate-loading">
-              <div class="certificate-loading-content">
-                <div style="font-size: 48px; margin-bottom: 16px;">🌱</div>
-                <div class="certificate-loading-spinner"></div>
-                <p style="font-weight: 500; margin-bottom: 8px;">Verifying certificate...</p>
-                <p style="font-size: 14px; color: #6b7280;">Please wait while we load your certificate</p>
+          const root = document.getElementById('root');
+          if (root) {
+            root.innerHTML = `
+              <div class="certificate-loading">
+                <div class="certificate-loading-content">
+                  <div style="font-size: 48px; margin-bottom: 16px;">🌱</div>
+                  <div class="certificate-loading-spinner"></div>
+                  <p style="font-weight: 500; margin-bottom: 8px;">Verifying certificate...</p>
+                  <p style="font-size: 14px; color: #6b7280;">Please wait while we load your certificate</p>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          }
         }
         
         // Mark root as loaded when React takes over

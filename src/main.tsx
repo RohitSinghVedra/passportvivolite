@@ -6,10 +6,10 @@ import './index.css';
 // Immediately check if this is a certificate route and prepare the DOM
 const path = window.location.pathname;
 if (path.startsWith('/certificate/')) {
-  // Remove any certificate loading screen that was added by the HTML script
-  const certificateLoading = document.querySelector('.certificate-loading');
-  if (certificateLoading) {
-    certificateLoading.remove();
+  // Clear any certificate loading screen that was added by the HTML script
+  const root = document.getElementById('root');
+  if (root && root.querySelector('.certificate-loading')) {
+    root.innerHTML = '';
   }
 }
 
