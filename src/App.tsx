@@ -127,7 +127,7 @@ function AppContent({
           {/* Survey Flow */}
           <Route path="/survey" element={
             <Layout>
-              <SurveyScreen onComplete={handleSurveyComplete} />
+              <SurveyScreen onComplete={onSurveyComplete} />
             </Layout>
           } />
           
