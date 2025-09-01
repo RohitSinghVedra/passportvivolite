@@ -21,7 +21,7 @@ import {
   governmentLevels,
   ageRanges
 } from '../../data/profileOptions';
-import type { UserCategory } from '../../types';
+import type { User, UserCategory } from '../../types';
 
 export const ProfileCompletionScreen: React.FC = () => {
   const { t, language } = useLanguage();
@@ -90,20 +90,25 @@ export const ProfileCompletionScreen: React.FC = () => {
         throw new Error(validationError);
       }
 
-      await updateUserProfile({
+      // Build update object, only including fields with values
+      const updates: Partial<User> = {
         category: category as UserCategory,
         state: selectedState,
         city: selectedCity,
         ageRange,
-        organizationName: organizationName.trim() || undefined,
-        position: position.trim() || undefined,
-        companySize: companySize || undefined,
-        industry: industry || undefined,
-        educationLevel: educationLevel || undefined,
-        governmentLevel: governmentLevel || undefined,
-        sustainabilityInterests: selectedSustainabilityInterests.length > 0 ? selectedSustainabilityInterests : undefined,
         completedOnboarding: true
-      });
+      };
+
+      // Add optional fields only if they have values
+      if (organizationName.trim()) updates.organizationName = organizationName.trim();
+      if (position.trim()) updates.position = position.trim();
+      if (companySize) updates.companySize = companySize;
+      if (industry) updates.industry = industry;
+      if (educationLevel) updates.educationLevel = educationLevel;
+      if (governmentLevel) updates.governmentLevel = governmentLevel;
+      if (selectedSustainabilityInterests.length > 0) updates.sustainabilityInterests = selectedSustainabilityInterests;
+
+      await updateUserProfile(updates);
 
       setSuccess(true);
     } catch (error: any) {

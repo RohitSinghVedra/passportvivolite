@@ -33,7 +33,7 @@ import {
   governmentLevels,
   ageRanges
 } from '../../data/profileOptions';
-import type { UserCategory } from '../../types';
+import type { User, UserCategory } from '../../types';
 
 const features = [
   {
@@ -149,21 +149,26 @@ export const AuthScreen: React.FC = () => {
           throw new Error(validationError);
         }
         
-        await signUp(email, password, {
+        // Build user data object, only including fields with values
+        const userData: Partial<User> = {
           name: name.trim(),
           category: category as UserCategory,
           state: selectedState,
           city: selectedCity,
           ageRange,
-          language: language as 'en' | 'pt',
-          organizationName: organizationName.trim() || undefined,
-          position: position.trim() || undefined,
-          companySize: companySize || undefined,
-          industry: industry || undefined,
-          educationLevel: educationLevel || undefined,
-          governmentLevel: governmentLevel || undefined,
-          sustainabilityInterests: selectedSustainabilityInterests.length > 0 ? selectedSustainabilityInterests : undefined
-        });
+          language: language as 'en' | 'pt'
+        };
+
+        // Add optional fields only if they have values
+        if (organizationName.trim()) userData.organizationName = organizationName.trim();
+        if (position.trim()) userData.position = position.trim();
+        if (companySize) userData.companySize = companySize;
+        if (industry) userData.industry = industry;
+        if (educationLevel) userData.educationLevel = educationLevel;
+        if (governmentLevel) userData.governmentLevel = governmentLevel;
+        if (selectedSustainabilityInterests.length > 0) userData.sustainabilityInterests = selectedSustainabilityInterests;
+
+        await signUp(email, password, userData);
       } else {
         if (!email || !password) {
           throw new Error(language === 'en' ? 'Please enter email and password' : 'Por favor, insira email e senha');

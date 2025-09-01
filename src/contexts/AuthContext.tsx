@@ -48,7 +48,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const createUserDocument = async (firebaseUser: FirebaseUser, userData: Partial<User>) => {
     const userRef = doc(db, 'users', firebaseUser.uid);
     
-    const user: User = {
+    // Base user object with required fields
+    const baseUser = {
       id: firebaseUser.uid,
       email: firebaseUser.email!,
       name: userData.name || firebaseUser.displayName || firebaseUser.email!.split('@')[0],
@@ -62,16 +63,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       createdAt: new Date(),
       lastActivity: new Date(),
       certificateVisibility: userData.certificateVisibility || 'private',
-      role: userData.role || 'user',
-      // Enhanced profile fields
-      organizationName: userData.organizationName,
-      position: userData.position,
-      companySize: userData.companySize,
-      industry: userData.industry,
-      educationLevel: userData.educationLevel,
-      governmentLevel: userData.governmentLevel,
-      sustainabilityInterests: userData.sustainabilityInterests
+      role: userData.role || 'user'
     };
+
+    // Add optional fields only if they have values
+    const optionalFields: Partial<User> = {};
+    if (userData.organizationName) optionalFields.organizationName = userData.organizationName;
+    if (userData.position) optionalFields.position = userData.position;
+    if (userData.companySize) optionalFields.companySize = userData.companySize;
+    if (userData.industry) optionalFields.industry = userData.industry;
+    if (userData.educationLevel) optionalFields.educationLevel = userData.educationLevel;
+    if (userData.governmentLevel) optionalFields.governmentLevel = userData.governmentLevel;
+    if (userData.sustainabilityInterests && userData.sustainabilityInterests.length > 0) {
+      optionalFields.sustainabilityInterests = userData.sustainabilityInterests;
+    }
+
+    const user = { ...baseUser, ...optionalFields } as User;
 
     await setDoc(userRef, user);
     return user;
@@ -152,12 +159,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     try {
       const userRef = doc(db, 'users', currentUser.id);
+      
+      // Filter out undefined values to prevent Firestore errors
+      const filteredUpdates: Partial<User> = {};
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value !== undefined) {
+          filteredUpdates[key as keyof User] = value;
+        }
+      });
+      
       await updateDoc(userRef, {
-        ...updates,
+        ...filteredUpdates,
         lastActivity: new Date()
       });
       
-      setCurrentUser(prev => prev ? { ...prev, ...updates } : null);
+      setCurrentUser(prev => prev ? { ...prev, ...filteredUpdates } : null);
     } catch (error) {
       console.error('Error updating profile:', error);
       throw error;
