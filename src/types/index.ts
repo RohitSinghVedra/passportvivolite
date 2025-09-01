@@ -16,6 +16,14 @@ export interface User {
   lastActivity: Date;
   certificateVisibility: 'public' | 'private';
   role: 'user' | 'admin';
+  // Enhanced profile fields
+  companySize?: string;
+  industry?: string;
+  educationLevel?: string;
+  governmentLevel?: string;
+  sustainabilityInterests?: string[];
+  organizationName?: string;
+  position?: string;
 }
 
 export type UserCategory = 'student' | 'employee' | 'company_owner' | 'government';

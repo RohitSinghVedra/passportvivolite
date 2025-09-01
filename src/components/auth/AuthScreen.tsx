@@ -15,11 +15,24 @@ import {
   Sparkles,
   ChevronDown,
   Play,
-  AlertCircle
+  AlertCircle,
+  Building,
+  GraduationCap,
+  Briefcase,
+  Heart
 } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
 import { useAuth } from '../../contexts/AuthContext';
+import { brazilianStates, getCitiesByState } from '../../data/brazilianStates';
+import { 
+  companySizes, 
+  industries, 
+  sustainabilityInterests, 
+  educationLevels, 
+  governmentLevels,
+  ageRanges
+} from '../../data/profileOptions';
 import type { UserCategory } from '../../types';
 
 const features = [
@@ -61,11 +74,24 @@ export const AuthScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [category, setCategory] = useState<UserCategory | ''>('');
-  const [location, setLocation] = useState('');
-  const [birthYear, setBirthYear] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [ageRange, setAgeRange] = useState('');
   const [currentFeature, setCurrentFeature] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // Enhanced profile fields
+  const [organizationName, setOrganizationName] = useState('');
+  const [position, setPosition] = useState('');
+  const [companySize, setCompanySize] = useState('');
+  const [industry, setIndustry] = useState('');
+  const [educationLevel, setEducationLevel] = useState('');
+  const [governmentLevel, setGovernmentLevel] = useState('');
+  const [selectedSustainabilityInterests, setSelectedSustainabilityInterests] = useState<string[]>([]);
+  
+  // Available cities based on selected state
+  const availableCities = selectedState ? getCitiesByState(selectedState) : [];
 
   // Auto-rotate features
   useEffect(() => {
@@ -75,6 +101,42 @@ export const AuthScreen: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleSustainabilityInterestToggle = (interest: string) => {
+    setSelectedSustainabilityInterests(prev => 
+      prev.includes(interest) 
+        ? prev.filter(i => i !== interest)
+        : [...prev, interest]
+    );
+  };
+
+  const validateSignUpForm = (): string | null => {
+    if (!name.trim()) return language === 'en' ? 'Name is required' : 'Nome é obrigatório';
+    if (!email.trim()) return language === 'en' ? 'Email is required' : 'E-mail é obrigatório';
+    if (!password) return language === 'en' ? 'Password is required' : 'Senha é obrigatória';
+    if (!category) return language === 'en' ? 'Please select your role' : 'Por favor, selecione seu papel';
+    if (!selectedState) return language === 'en' ? 'Please select your state' : 'Por favor, selecione seu estado';
+    if (!selectedCity) return language === 'en' ? 'Please select your city' : 'Por favor, selecione sua cidade';
+    if (!ageRange) return language === 'en' ? 'Please select your age range' : 'Por favor, selecione sua faixa etária';
+    
+    // Category-specific validations
+    if (category === 'employee' || category === 'company_owner') {
+      if (!industry) return language === 'en' ? 'Please select your industry' : 'Por favor, selecione seu setor';
+      if (category === 'company_owner' && !companySize) {
+        return language === 'en' ? 'Please select company size' : 'Por favor, selecione o tamanho da empresa';
+      }
+    }
+    
+    if (category === 'student' && !educationLevel) {
+      return language === 'en' ? 'Please select your education level' : 'Por favor, selecione seu nível de educação';
+    }
+    
+    if (category === 'government' && !governmentLevel) {
+      return language === 'en' ? 'Please select government level' : 'Por favor, selecione o nível governamental';
+    }
+    
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -82,20 +144,25 @@ export const AuthScreen: React.FC = () => {
 
     try {
       if (isSignUp) {
-        if (!email || !password || !name || !category || !location || !birthYear) {
-          throw new Error(language === 'en' ? 'Please fill in all fields' : 'Por favor, preencha todos os campos');
+        const validationError = validateSignUpForm();
+        if (validationError) {
+          throw new Error(validationError);
         }
-
-        // Parse location into state and city
-        const [city, state] = location.split(',').map(s => s.trim());
         
         await signUp(email, password, {
-          name,
+          name: name.trim(),
           category: category as UserCategory,
-          state: state || 'SP',
-          city: city || 'São Paulo',
-          ageRange: getAgeRange(parseInt(birthYear)),
-          language: language as 'en' | 'pt'
+          state: selectedState,
+          city: selectedCity,
+          ageRange,
+          language: language as 'en' | 'pt',
+          organizationName: organizationName.trim() || undefined,
+          position: position.trim() || undefined,
+          companySize: companySize || undefined,
+          industry: industry || undefined,
+          educationLevel: educationLevel || undefined,
+          governmentLevel: governmentLevel || undefined,
+          sustainabilityInterests: selectedSustainabilityInterests.length > 0 ? selectedSustainabilityInterests : undefined
         });
       } else {
         if (!email || !password) {
@@ -131,15 +198,10 @@ export const AuthScreen: React.FC = () => {
     }
   };
 
-  const getAgeRange = (birthYear: number): string => {
-    const age = new Date().getFullYear() - birthYear;
-    if (age < 18) return 'under-18';
-    if (age < 25) return '18-25';
-    if (age < 35) return '26-35';
-    if (age < 45) return '36-45';
-    if (age < 55) return '46-55';
-    return '55+';
-  };
+  // Reset city when state changes
+  useEffect(() => {
+    setSelectedCity('');
+  }, [selectedState]);
 
   const getErrorMessage = (code: string, language: string): string => {
     const messages: Record<string, Record<string, string>> = {
@@ -172,8 +234,154 @@ export const AuthScreen: React.FC = () => {
     return messages[code]?.[language] || (language === 'en' ? 'An error occurred. Please try again.' : 'Ocorreu um erro. Tente novamente.');
   };
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 80 }, (_, i) => currentYear - 15 - i);
+  // Helper function to render category-specific fields
+  const renderCategorySpecificFields = () => {
+    switch (category) {
+      case 'student':
+        return (
+          <div>
+            <label className="block text-sm font-medium text-emerald-300 mb-2">
+              <GraduationCap className="inline w-4 h-4 mr-2" />
+              {language === 'en' ? 'Education Level' : 'Nível de Educação'}
+            </label>
+            <select
+              value={educationLevel}
+              onChange={(e) => setEducationLevel(e.target.value)}
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+              required={isSignUp}
+            >
+              <option value="">{language === 'en' ? 'Select education level...' : 'Selecione o nível...'}</option>
+              {educationLevels.map(level => (
+                <option key={level.value} value={level.value}>{level.label[language]}</option>
+              ))}
+            </select>
+          </div>
+        );
+      
+      case 'employee':
+      case 'company_owner':
+        return (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-emerald-300 mb-2">
+                <Building className="inline w-4 h-4 mr-2" />
+                {language === 'en' ? 'Organization Name' : 'Nome da Organização'}
+              </label>
+              <input
+                type="text"
+                value={organizationName}
+                onChange={(e) => setOrganizationName(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                placeholder={language === 'en' ? 'Your company/organization' : 'Sua empresa/organização'}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-emerald-300 mb-2">
+                <Briefcase className="inline w-4 h-4 mr-2" />
+                {language === 'en' ? 'Position/Role' : 'Cargo/Função'}
+              </label>
+              <input
+                type="text"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                placeholder={language === 'en' ? 'Your position' : 'Seu cargo'}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-emerald-300 mb-2">
+                {language === 'en' ? 'Industry Sector' : 'Setor Industrial'}
+              </label>
+              <select
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                required={isSignUp}
+              >
+                <option value="">{language === 'en' ? 'Select industry...' : 'Selecione o setor...'}</option>
+                {industries.map(ind => (
+                  <option key={ind.value} value={ind.value}>{ind.label[language]}</option>
+                ))}
+              </select>
+            </div>
+            
+            {category === 'company_owner' && (
+              <div>
+                <label className="block text-sm font-medium text-emerald-300 mb-2">
+                  {language === 'en' ? 'Company Size' : 'Tamanho da Empresa'}
+                </label>
+                <select
+                  value={companySize}
+                  onChange={(e) => setCompanySize(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                  required={isSignUp}
+                >
+                  <option value="">{language === 'en' ? 'Select company size...' : 'Selecione o tamanho...'}</option>
+                  {companySizes.map(size => (
+                    <option key={size.value} value={size.value}>{size.label[language]}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </>
+        );
+      
+      case 'government':
+        return (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-emerald-300 mb-2">
+                <Building className="inline w-4 h-4 mr-2" />
+                {language === 'en' ? 'Government Institution' : 'Instituição Governamental'}
+              </label>
+              <input
+                type="text"
+                value={organizationName}
+                onChange={(e) => setOrganizationName(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                placeholder={language === 'en' ? 'Ministry, secretariat, etc.' : 'Ministério, secretaria, etc.'}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-emerald-300 mb-2">
+                {language === 'en' ? 'Government Level' : 'Nível Governamental'}
+              </label>
+              <select
+                value={governmentLevel}
+                onChange={(e) => setGovernmentLevel(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                required={isSignUp}
+              >
+                <option value="">{language === 'en' ? 'Select level...' : 'Selecione o nível...'}</option>
+                {governmentLevels.map(level => (
+                  <option key={level.value} value={level.value}>{level.label[language]}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-emerald-300 mb-2">
+                <Briefcase className="inline w-4 h-4 mr-2" />
+                {language === 'en' ? 'Position/Role' : 'Cargo/Função'}
+              </label>
+              <input
+                type="text"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                placeholder={language === 'en' ? 'Your position' : 'Seu cargo'}
+              />
+            </div>
+          </>
+        );
+      
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 relative overflow-hidden">
@@ -403,38 +611,79 @@ export const AuthScreen: React.FC = () => {
 
                           <div>
                             <label className="block text-sm font-medium text-emerald-300 mb-2">
-                              {language === 'en' ? 'Location (City, State)' : 'Localização (Cidade, Estado)'}
+                              <MapPin className="inline w-4 h-4 mr-2" />
+                              {language === 'en' ? 'State' : 'Estado'}
                             </label>
-                            <div className="relative">
-                              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-emerald-400" />
-                              <input
-                                type="text"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
-                                placeholder="e.g., São Paulo, SP"
-                                required={isSignUp}
-                              />
-                            </div>
+                            <select
+                              value={selectedState}
+                              onChange={(e) => setSelectedState(e.target.value)}
+                              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                              required={isSignUp}
+                            >
+                              <option value="">{language === 'en' ? 'Select your state...' : 'Selecione seu estado...'}</option>
+                              {brazilianStates.map(state => (
+                                <option key={state.code} value={state.code}>{state.name}</option>
+                              ))}
+                            </select>
                           </div>
 
                           <div>
                             <label className="block text-sm font-medium text-emerald-300 mb-2">
-                              {language === 'en' ? 'Birth Year' : 'Ano de Nascimento'}
+                              {language === 'en' ? 'City' : 'Cidade'}
                             </label>
-                            <div className="relative">
-                              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-emerald-400" />
-                              <select
-                                value={birthYear}
-                                onChange={(e) => setBirthYear(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
-                                required={isSignUp}
-                              >
-                                <option value="">{language === 'en' ? 'Select birth year...' : 'Selecione o ano...'}</option>
-                                {years.map(year => (
-                                  <option key={year} value={year}>{year}</option>
-                                ))}
-                              </select>
+                            <select
+                              value={selectedCity}
+                              onChange={(e) => setSelectedCity(e.target.value)}
+                              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                              required={isSignUp}
+                              disabled={!selectedState}
+                            >
+                              <option value="">{language === 'en' ? 'Select your city...' : 'Selecione sua cidade...'}</option>
+                              {availableCities.map(city => (
+                                <option key={city} value={city}>{city}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-emerald-300 mb-2">
+                              <Calendar className="inline w-4 h-4 mr-2" />
+                              {language === 'en' ? 'Age Range' : 'Faixa Etária'}
+                            </label>
+                            <select
+                              value={ageRange}
+                              onChange={(e) => setAgeRange(e.target.value)}
+                              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                              required={isSignUp}
+                            >
+                              <option value="">{language === 'en' ? 'Select age range...' : 'Selecione a faixa etária...'}</option>
+                              {ageRanges.map(range => (
+                                <option key={range.value} value={range.value}>{range.label[language]}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Category-specific fields */}
+                          {renderCategorySpecificFields()}
+
+                          {/* Sustainability Interests */}
+                          <div>
+                            <label className="block text-sm font-medium text-emerald-300 mb-3">
+                              <Heart className="inline w-4 h-4 mr-2" />
+                              {language === 'en' ? 'Sustainability Interests (Optional)' : 'Interesses em Sustentabilidade (Opcional)'}
+                            </label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {sustainabilityInterests.map(interest => (
+                                <label key={interest.value} className="flex items-center space-x-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedSustainabilityInterests.includes(interest.value)}
+                                    onChange={() => handleSustainabilityInterestToggle(interest.value)}
+                                    className="rounded border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0"
+                                  />
+                                  <span className="text-sm text-gray-300">{interest.label[language]}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
                         </motion.div>
