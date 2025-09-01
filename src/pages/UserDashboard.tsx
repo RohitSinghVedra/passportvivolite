@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Award, BarChart3, History, TrendingUp, Eye, Download, Share2 } from 'lucide-react';
+import { Award, BarChart3, History, TrendingUp, Eye, Download, Share2, Lightbulb, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
-import { mockCertificates, mockSurveyRuns } from '../data/mockData';
-import type { User } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { getRandomPersonalizedFact, getContextualFacts } from '../data/personalizedFacts';
+import type { User, PersonalizedFact } from '../types';
 
 interface UserDashboardProps {
   user: User;
@@ -12,10 +13,31 @@ interface UserDashboardProps {
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   const { t } = useLanguage();
+  const { currentUser } = useAuth();
+  const [personalizedFact, setPersonalizedFact] = useState<PersonalizedFact | null>(null);
+  const [isLoadingFact, setIsLoadingFact] = useState(false);
   
-  const userCertificates = mockCertificates.filter(cert => cert.userId === user.id);
-  const userRuns = mockSurveyRuns.filter(run => run.userId === user.id);
+  // Get real user data (for now, we'll use the user prop but this will be replaced with real Firestore data)
+  const userCertificates = currentUser?.certificates || [];
+  const userRuns = currentUser?.surveyRuns || [];
   const latestRun = userRuns[0];
+  
+  // Load personalized fact
+  useEffect(() => {
+    if (user) {
+      const fact = getRandomPersonalizedFact(user);
+      setPersonalizedFact(fact);
+    }
+  }, [user]);
+  
+  const refreshFact = () => {
+    setIsLoadingFact(true);
+    setTimeout(() => {
+      const newFact = getRandomPersonalizedFact(user);
+      setPersonalizedFact(newFact);
+      setIsLoadingFact(false);
+    }, 500);
+  };
 
   const handleShare = () => {
     const text = `I completed my climate assessment with Passaporte VIVO and earned ${user.badge} ${user.level ? t(`level.${user.level}`) : ''} level!`;
@@ -91,6 +113,53 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           </div>
         </div>
       </motion.div>
+
+      {/* Personalized Climate Fact */}
+      {personalizedFact && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="bg-gradient-to-br from-emerald-800/50 to-teal-800/50 backdrop-blur-sm rounded-2xl p-6 border border-emerald-500/30"
+        >
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-emerald-500/20 rounded-lg p-2">
+                <Lightbulb className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">
+                  {t('dashboard.personalized_insight')}
+                </h3>
+                <p className="text-sm text-emerald-300">
+                  {t('dashboard.based_on_your_profile')}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={refreshFact}
+              disabled={isLoadingFact}
+              className="p-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-lg transition-all duration-200 disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoadingFact ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            <h4 className="text-lg font-medium text-white">
+              {personalizedFact.title}
+            </h4>
+            <p className="text-emerald-100 leading-relaxed">
+              {personalizedFact.content}
+            </p>
+            {personalizedFact.source && (
+              <p className="text-xs text-emerald-300/70">
+                Source: {personalizedFact.source}
+              </p>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

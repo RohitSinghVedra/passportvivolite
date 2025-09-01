@@ -33,6 +33,8 @@ export const translations: Record<string, Record<Language, string>> = {
   'dashboard.view_all': { en: 'View All', pt: 'Ver Todos' },
   'dashboard.no_certificates': { en: 'No certificates yet', pt: 'Ainda sem certificados' },
   'dashboard.no_certificates_desc': { en: 'Complete your climate assessment to earn your first certificate', pt: 'Complete sua avaliação climática para ganhar seu primeiro certificado' },
+  'dashboard.personalized_insight': { en: 'Personalized Insight', pt: 'Insight Personalizado' },
+  'dashboard.based_on_your_profile': { en: 'Based on your profile', pt: 'Baseado no seu perfil' },
 
   // Certificates
   'certificate.public': { en: 'Public', pt: 'Público' },

@@ -32,6 +32,16 @@ export type UserCategory = 'student' | 'employee' | 'company_owner' | 'governmen
 
 export type Language = 'en' | 'pt';
 
+export interface PersonalizedFact {
+  id: string;
+  category: string;
+  title: string;
+  content: string;
+  source?: string;
+  relevance: string[];
+  priority: number;
+}
+
 export interface SurveyQuestion {
   id: string;
   question: Record<Language, string>;
