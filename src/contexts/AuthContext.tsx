@@ -326,10 +326,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Populate survey sessions from existing certificates
+  const populateSurveySessionsFromCertificates = async (userId: string) => {
+    try {
+      console.log('Populating survey sessions from certificates for user:', userId);
+      
+      const certificatesRef = collection(db, 'certificates');
+      const q = query(certificatesRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.size > 0) {
+        console.log(`Found ${querySnapshot.size} certificates to convert to survey sessions`);
+        
+        const surveySessionsRef = collection(db, 'surveySessions');
+        
+        for (const certDoc of querySnapshot.docs) {
+          const certData = certDoc.data();
+          
+          // Check if this certificate already has a corresponding survey session
+          const existingSessionQuery = query(
+            surveySessionsRef, 
+            where('userId', '==', userId),
+            where('certificateCode', '==', certData.certificateCode)
+          );
+          const existingSession = await getDocs(existingSessionQuery);
+          
+          if (existingSession.size === 0) {
+            // Create survey session from certificate data
+            await addDoc(surveySessionsRef, {
+              userId,
+              score: certData.score,
+              level: certData.level,
+              badge: certData.badge,
+              completedAt: certData.completedAt?.toDate() || new Date(),
+              responses: [],
+              certificateCode: certData.certificateCode
+            });
+            console.log('Created survey session from certificate:', certData.certificateCode);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error populating survey sessions from certificates:', error);
+    }
+  };
+
   // Get user survey history
   const getUserSurveyHistory = async (userId: string): Promise<SurveySession[]> => {
     try {
       console.log('Fetching survey history for user:', userId);
+      
+      // First, try to populate survey sessions from existing certificates
+      await populateSurveySessionsFromCertificates(userId);
       
       // Try multiple collections where survey data might be stored
       const collections = ['surveySessions', 'survey_results', 'surveys', 'userSurveys', 'certificates'];
@@ -418,6 +466,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Update user survey results
   const updateUserSurveyResults = async (userId: string, score: number, level: string, badge: string) => {
     try {
+      console.log('Updating user survey results:', { userId, score, level, badge });
+      
+      // Update user document
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
         score,
@@ -426,6 +477,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         surveyCompleted: true,
         lastActivity: new Date()
       });
+
+      // Also save survey session data for dashboard display
+      const surveySessionsRef = collection(db, 'surveySessions');
+      await addDoc(surveySessionsRef, {
+        userId,
+        score,
+        level,
+        badge,
+        completedAt: new Date(),
+        responses: [], // We don't store individual responses for privacy
+        certificateCode: `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      });
+
+      console.log('Survey session saved to surveySessions collection');
 
       // Update local state if it's the current user
       if (currentUser && currentUser.id === userId) {
