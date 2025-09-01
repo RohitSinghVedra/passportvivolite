@@ -1,5 +1,9 @@
-# Handle certificate verification routes first
+# Handle certificate verification routes first with no redirect
 /certificate/*    /index.html   200
 
 # Handle all other routes
 /*    /index.html   200
+
+# Force HTTPS (optional)
+# https://docs.netlify.com/routing/redirects/redirect-options/#force-https
+# /*    https://:host/:splat  301
