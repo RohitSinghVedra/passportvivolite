@@ -28,6 +28,8 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           const runs = await getUserSurveyHistory(currentUser.id);
           const userCerts = await getUserCertificates(currentUser.id);
           
+          console.log('Dashboard data:', { runs: runs.length, certificates: userCerts.length });
+          
           // Filter and validate survey runs
           const validRuns = runs.filter(run => {
             return run && 

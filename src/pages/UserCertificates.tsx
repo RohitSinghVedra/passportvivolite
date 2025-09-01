@@ -58,37 +58,53 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
     setShowMenu(null);
   };
 
+  const handleView = (cert: any) => {
+    // Open certificate in new tab with the same styling as generated certificate
+    const certificateUrl = `${window.location.origin}/certificate/${cert.certificateCode}`;
+    window.open(certificateUrl, '_blank');
+  };
+
   const handleDownload = (cert: any) => {
-    // Create certificate image
+    // Create certificate image with same styling as generated certificate
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = 800;
-    canvas.height = 600;
+    canvas.width = 1200;
+    canvas.height = 800;
 
-    const gradient = ctx.createLinearGradient(0, 0, 800, 600);
-    gradient.addColorStop(0, '#10B981');
-    gradient.addColorStop(1, '#14B8A6');
+    // Create gradient background (same as generated certificate)
+    const gradient = ctx.createLinearGradient(0, 0, 1200, 800);
+    gradient.addColorStop(0, '#0f2a19');
+    gradient.addColorStop(1, '#081a10');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 800, 600);
+    ctx.fillRect(0, 0, 1200, 800);
 
-    ctx.fillStyle = 'white';
+    // Add certificate content
+    ctx.fillStyle = '#e6fff0';
     ctx.font = 'bold 48px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Climate Role Certificate', 400, 100);
+    ctx.fillText('Climate Role Certificate', 600, 100);
 
     ctx.font = '32px Arial';
-    ctx.fillText(cert.userName, 400, 200);
+    ctx.fillText(cert.userName, 600, 180);
 
     ctx.font = '24px Arial';
-    ctx.fillText(`${cert.badge} ${t(`level.${cert.level}`)}`, 400, 250);
+    ctx.fillText(`${cert.badge} ${t(`level.${cert.level}`)}`, 600, 230);
 
     ctx.font = '20px Arial';
-    ctx.fillText(`Score: ${cert.score}/50`, 400, 300);
+    ctx.fillText(`Score: ${cert.score}/50`, 600, 280);
 
     ctx.font = '16px Arial';
-    ctx.fillText(`Code: ${cert.certificateCode}`, 400, 350);
+    ctx.fillText(`Code: ${cert.certificateCode}`, 600, 330);
+
+    ctx.font = '14px Arial';
+    ctx.fillText(`Issued: ${cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}`, 600, 360);
+
+    // Add logos (placeholder for now)
+    ctx.fillStyle = '#00c853';
+    ctx.font = '12px Arial';
+    ctx.fillText('Passaporte VIVO', 600, 750);
 
     const link = document.createElement('a');
     link.download = `passaporte-vivo-${cert.certificateCode}.png`;
@@ -98,19 +114,24 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
 
   const handleShare = (cert: any) => {
     const text = `Check out my climate certificate from Passaporte VIVO! ${cert.badge} ${t(`level.${cert.level}`)} - Code: ${cert.certificateCode}`;
+    const shareUrl = `${window.location.origin}/certificate/${cert.certificateCode}`;
     
     if (navigator.share) {
       navigator.share({
         title: t('certificate.title'),
         text,
-        url: `${window.location.origin}/certificate/${cert.certificateCode}`
+        url: shareUrl
       }).catch(() => {
-        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-        window.open(shareUrl, '_blank');
+        // Fallback to copying link
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('Certificate link copied to clipboard!');
+        });
       });
     } else {
-      const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-      window.open(shareUrl, '_blank');
+      // Fallback to copying link
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert('Certificate link copied to clipboard!');
+      });
     }
   };
 
@@ -240,6 +261,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => handleView(cert)}
                   className="flex-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <Eye className="w-4 h-4" />

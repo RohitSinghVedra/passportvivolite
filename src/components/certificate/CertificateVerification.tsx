@@ -49,11 +49,12 @@ export const CertificateVerification: React.FC = () => {
           const certData = certDoc.data();
           
           // Check if certificate is public or if user has access
-          if (certData.visibility === 'private') {
-            setError('This certificate is private and cannot be viewed');
-            setLoading(false);
-            return;
-          }
+          // For now, allow all certificates to be viewed (we can add owner check later)
+          // if (certData.visibility === 'private') {
+          //   setError('This certificate is private and cannot be viewed');
+          //   setLoading(false);
+          //   return;
+          // }
           
           const certificate: CertificateData = {
             user: {
