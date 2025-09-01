@@ -27,10 +27,16 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
     const loadUserData = async () => {
       if (currentUser) {
         try {
+          console.log('Loading dashboard data for user:', currentUser.id);
           const runs = await getUserSurveyHistory(currentUser.id);
           const userCerts = await getUserCertificates(currentUser.id);
           
-          console.log('Dashboard data:', { runs: runs.length, certificates: userCerts.length });
+          console.log('Raw dashboard data:', { 
+            runs: runs.length, 
+            certificates: userCerts.length,
+            runsData: runs,
+            certificatesData: userCerts
+          });
           
           // Filter and validate survey runs
           const validRuns = runs.filter(run => {
@@ -55,6 +61,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             completedAt: cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt),
             createdAt: cert.createdAt instanceof Date ? cert.createdAt : new Date(cert.createdAt || Date.now())
           }));
+          
+          console.log('Processed dashboard data:', { 
+            validRuns: validRuns.length, 
+            validCertificates: validCertificates.length,
+            latestRun: validRuns[0],
+            firstCertificate: validCertificates[0]
+          });
           
           setUserRuns(validRuns);
           setCertificates(validCertificates);

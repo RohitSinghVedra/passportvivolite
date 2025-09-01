@@ -391,18 +391,17 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
             </div>
             
             <CertificateGenerator
-              user={currentUser!}
-              score={safeScore}
-              level={safeLevel}
-              badge={safeBadge}
-              certificateCode={certificateCode}
-              completedAt={new Date()}
-              onDownload={() => {
-                console.log('Certificate downloaded');
+              certificate={{
+                user: currentUser!,
+                score: safeScore,
+                level: safeLevel,
+                badge: safeBadge,
+                grade,
+                percentage,
+                completedAt: new Date(),
+                certificateCode
               }}
-              onShare={() => {
-                console.log('Certificate shared');
-              }}
+              language={language}
             />
           </div>
         </div>
