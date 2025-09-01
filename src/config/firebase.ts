@@ -4,12 +4,13 @@ import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration from your Firebase console
 const firebaseConfig = {
-  apiKey: "AIzaSyBTvRj5xqoWUavaa5UZZyYgSbRDWZENf0U",
+  apiKey: "AIzaSyBTvRj5xqoWUavaa5UZZyYgSbRDWzENf0U",
   authDomain: "passportvivolite.firebaseapp.com",
   projectId: "passportvivolite",
-  storageBucket: "passportvivolite.appspot.com",
-  messagingSenderId: "377863015660",
-  appId: "1:377863015660:web:23726dbb7044acfc9d9be5"
+  storageBucket: "passportvivolite.firebasestorage.app",
+  messagingSenderId: "377863010560",
+  appId: "1:377863010560:web:2372d6bb7044acfc9d9be5",
+  measurementId: "G-N25R5XQBW8"
 };
 
 // Initialize Firebase
