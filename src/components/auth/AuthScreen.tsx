@@ -13,7 +13,6 @@ import {
   BarChart3,
   Users,
   Sparkles,
-  ChevronDown,
   Play,
   AlertCircle,
   Building,
@@ -537,25 +536,6 @@ export const AuthScreen: React.FC = () => {
                         <Play className="w-6 h-6" />
                         {language === 'en' ? 'Start Your Journey' : 'Comece Sua Jornada'}
                       </motion.button>
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Scroll Indicator */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.8 }}
-                    className="mt-16"
-                  >
-                    <motion.div
-                      animate={{ y: [0, 10, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="flex flex-col items-center text-emerald-300"
-                    >
-                      <span className="text-sm mb-2">
-                        {language === 'en' ? 'Get Started' : 'Comece Agora'}
-                      </span>
-                      <ChevronDown className="w-6 h-6" />
                     </motion.div>
                   </motion.div>
                 </div>
