@@ -143,7 +143,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
             <div style="font-size: 96px; margin-bottom: 16px;">${getBadgeEmoji(cert.level)}</div>
             <h2 style="font-size: 32px; font-weight: bold; color: #1f2937; margin-bottom: 8px;">${t(`level.${cert.level}`)}</h2>
             <p style="color: #6b7280; margin-bottom: 16px;">${text.awardedTo}</p>
-            <p style="font-size: 24px; font-weight: bold; color: #047857; margin-bottom: 8px;">${cert.userName}</p>
+            <p style="font-size: 24px; font-weight: bold; color: #047857; margin-bottom: 8px;">${cert.userName || cert.user?.name || 'Unknown'}</p>
             <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">${getCategoryLabel(cert.category)}</p>
             <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">${cert.city}, ${cert.state} • Age: ${cert.ageRange}</p>
             <p style="color: #6b7280; margin-bottom: 16px;">${text.forCompleting}</p>

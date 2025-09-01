@@ -52,7 +52,7 @@ export const CertificateVerification: React.FC = () => {
           
           const certificate: CertificateData = {
             user: {
-              name: certData.userName || "Unknown",
+              name: certData.userName || certData.user?.name || "Unknown",
               category: certData.category || "individual",
               city: certData.city || "Unknown",
               state: certData.state || "Unknown",
@@ -79,6 +79,7 @@ export const CertificateVerification: React.FC = () => {
       }
     };
 
+    // Start fetching immediately
     fetchCertificate();
   }, [code]);
 
