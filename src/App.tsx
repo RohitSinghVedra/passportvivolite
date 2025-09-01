@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider } from './components/LanguageProvider';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -26,26 +26,15 @@ import type { SurveyResponse } from './types';
 
 function App() {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
-
-  const handleSurveyComplete = (surveyResponses: SurveyResponse[], score: number) => {
-    setResponses(surveyResponses);
-    // Update user with survey results
-    if (currentUser) {
-      // This would typically update the user in the database
-      console.log('Survey completed with score:', score);
-    }
-  };
-
-  const handleRetakeSurvey = () => {
-    setResponses([]);
-  };
+  const [surveyScore, setSurveyScore] = useState<number>(0);
 
   return (
     <AuthProvider>
       <AppContent 
         responses={responses}
-        onSurveyComplete={handleSurveyComplete}
-        onRetakeSurvey={handleRetakeSurvey}
+        setResponses={setResponses}
+        surveyScore={surveyScore}
+        setSurveyScore={setSurveyScore}
       />
     </AuthProvider>
   );
@@ -53,13 +42,29 @@ function App() {
 
 function AppContent({ 
   responses, 
-  onSurveyComplete, 
-  onRetakeSurvey 
+  setResponses, 
+  surveyScore, 
+  setSurveyScore 
 }: { 
   responses: SurveyResponse[];
-  onSurveyComplete: (responses: SurveyResponse[], score: number) => void;
-  onRetakeSurvey: () => void;
+  setResponses: (responses: SurveyResponse[]) => void;
+  surveyScore: number;
+  setSurveyScore: (score: number) => void;
 }) {
+  const navigate = useNavigate();
+  
+  const handleSurveyComplete = (surveyResponses: SurveyResponse[], score: number) => {
+    console.log('Survey completed with score:', score);
+    setResponses(surveyResponses);
+    setSurveyScore(score);
+    // Navigate to results page
+    navigate('/results');
+  };
+
+  const handleRetakeSurvey = () => {
+    setResponses([]);
+    setSurveyScore(0);
+  };
   const { currentUser, loading, logout, getSurveyQuestions, saveSurveyQuestions } = useAuth();
   
   // Initialize database when app starts (non-blocking)
@@ -151,7 +156,7 @@ function AppContent({
           {/* Survey Flow */}
           <Route path="/survey" element={
             <Layout>
-              <SurveyScreen onComplete={onSurveyComplete} />
+              <SurveyScreen onComplete={handleSurveyComplete} />
             </Layout>
           } />
           
