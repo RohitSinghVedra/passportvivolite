@@ -29,8 +29,24 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   // Calculate personalized score using the proper scoring mechanism
   const score = calculateSurveyScore(responses, currentUser!);
   const { level, badge } = getLevelFromScore(score);
-  const maxScore = responses.length * 5;
-  const percentage = Math.round((score / maxScore) * 100);
+  
+  // Calculate max possible score (assuming each question has max 6 points)
+  const maxPossibleScore = responses.length * 6;
+  const percentage = Math.min(Math.round((score / maxPossibleScore) * 100), 100);
+  
+  // Get grade based on percentage
+  const getGrade = (percentage: number) => {
+    if (percentage >= 90) return 'A+';
+    if (percentage >= 80) return 'A';
+    if (percentage >= 70) return 'B+';
+    if (percentage >= 60) return 'B';
+    if (percentage >= 50) return 'C+';
+    if (percentage >= 40) return 'C';
+    if (percentage >= 30) return 'D';
+    return 'F';
+  };
+  
+  const grade = getGrade(percentage);
 
   const getBadgeEmoji = (level: string) => {
     const badges = {
@@ -45,15 +61,17 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
 
   const badgeEmoji = getBadgeEmoji(level);
   
-  // Get dynamic recommendations based on score and responses
+  // Get dynamic recommendations based on actual responses and score
   const getDynamicRecommendations = () => {
-    const baseRecommendations = recommendations[category].slice(0, 2);
+    let recommendations = [];
     
-    // Add score-based recommendations
-    let scoreBasedRecommendations = [];
+    // Analyze responses to determine areas of improvement
+    const lowScoreResponses = responses.filter(r => r.points <= 2);
+    const highScoreResponses = responses.filter(r => r.points >= 4);
     
+    // Score-based recommendations
     if (score < 30) {
-      scoreBasedRecommendations.push({
+      recommendations.push({
         id: 'score-low-1',
         title: { en: 'Start with Basic Actions', pt: 'Comece com Ações Básicas' },
         description: { 
@@ -64,7 +82,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         category: [category]
       });
     } else if (score < 50) {
-      scoreBasedRecommendations.push({
+      recommendations.push({
         id: 'score-medium-1',
         title: { en: 'Expand Your Impact', pt: 'Expanda Seu Impacto' },
         description: { 
@@ -75,7 +93,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         category: [category]
       });
     } else {
-      scoreBasedRecommendations.push({
+      recommendations.push({
         id: 'score-high-1',
         title: { en: 'Lead by Example', pt: 'Lidere pelo Exemplo' },
         description: { 
@@ -87,25 +105,117 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
       });
     }
     
-    return [...baseRecommendations, ...scoreBasedRecommendations];
+    // Response-based recommendations
+    if (lowScoreResponses.length > highScoreResponses.length) {
+      recommendations.push({
+        id: 'improvement-1',
+        title: { en: 'Focus on Improvement Areas', pt: 'Foque nas Áreas de Melhoria' },
+        description: { 
+          en: `You have ${lowScoreResponses.length} areas that need attention. Consider taking specific actions in these areas.`,
+          pt: `Você tem ${lowScoreResponses.length} áreas que precisam de atenção. Considere tomar ações específicas nessas áreas.`
+        },
+        priority: 'high',
+        category: [category]
+      });
+    } else if (highScoreResponses.length > lowScoreResponses.length) {
+      recommendations.push({
+        id: 'excellence-1',
+        title: { en: 'Maintain Excellence', pt: 'Mantenha a Excelência' },
+        description: { 
+          en: `Great job! You're doing well in ${highScoreResponses.length} areas. Keep up the good work and share your knowledge.`,
+          pt: `Ótimo trabalho! Você está indo bem em ${highScoreResponses.length} áreas. Continue o bom trabalho e compartilhe seu conhecimento.`
+        },
+        priority: 'medium',
+        category: [category]
+      });
+    }
+    
+    // Category-specific recommendations
+    if (category === 'company_owner') {
+      recommendations.push({
+        id: 'business-1',
+        title: { en: 'Business Sustainability', pt: 'Sustentabilidade Empresarial' },
+        description: { 
+          en: 'Consider implementing ESG policies, sustainable supply chains, and green business practices.',
+          pt: 'Considere implementar políticas ESG, cadeias de suprimentos sustentáveis e práticas empresariais verdes.'
+        },
+        priority: 'high',
+        category: [category]
+      });
+    } else if (category === 'student') {
+      recommendations.push({
+        id: 'education-1',
+        title: { en: 'Educational Impact', pt: 'Impacto Educacional' },
+        description: { 
+          en: 'Join environmental clubs, take sustainability courses, and organize campus green initiatives.',
+          pt: 'Participe de clubes ambientais, faça cursos de sustentabilidade e organize iniciativas verdes no campus.'
+        },
+        priority: 'high',
+        category: [category]
+      });
+    }
+    
+    return recommendations.slice(0, 3); // Return top 3 recommendations
   };
   
   const categoryRecommendations = getDynamicRecommendations();
 
-  // Temporarily disable database saving to fix performance issues
+  // Save survey results to database with proper error handling
   useEffect(() => {
     if (!currentUser || isSaved) return;
     
-    console.log('Survey completed - skipping database save for now');
+    console.log('Starting to save survey results...', {
+      currentUser: currentUser.id,
+      responses: responses.length,
+      score,
+      level,
+      badge,
+      grade
+    });
     
-    // Generate certificate code
-    const code = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    setCertificateCode(code);
+    setIsSaving(true);
     
-    // Mark as saved immediately to enable certificate generation
-    setIsSaved(true);
-    console.log('Survey results ready for certificate generation!');
-  }, [currentUser, isSaved]);
+    const saveResults = async () => {
+      try {
+        // Generate certificate code
+        const code = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        setCertificateCode(code);
+
+        // Save survey session and update user results
+        const sessionData = {
+          userId: currentUser.id,
+          questions: responses.map(r => r.questionId),
+          responses,
+          score,
+          level,
+          badge,
+          grade,
+          percentage,
+          completedAt: new Date(),
+          personalizedFacts: [],
+          certificateCode: code
+        };
+        
+        console.log('Saving survey session...');
+        await saveSurveySession(sessionData);
+        
+        console.log('Updating user survey results...');
+        await updateUserSurveyResults(currentUser.id, score, level, badge);
+        
+        setIsSaved(true);
+        console.log('Survey results saved successfully!');
+      } catch (error) {
+        console.error('Error saving survey results:', error);
+        // Still mark as saved to allow certificate generation
+        setIsSaved(true);
+        console.log('Survey results ready for certificate generation (database save failed)');
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+    saveResults();
+  }, [currentUser, responses, score, level, badge, grade, percentage, saveSurveySession, updateUserSurveyResults, isSaved]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
@@ -128,7 +238,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
                 {score}
               </div>
               <div className="text-gray-400">/</div>
-              <div className="text-xl text-gray-600">{maxScore}</div>
+              <div className="text-xl text-gray-600">{maxPossibleScore}</div>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
               <div 
@@ -136,8 +246,11 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
                 style={{ width: `${percentage}%` }}
               />
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-lg text-gray-600 mb-2">
               {percentage}% {t('results.score')}
+            </div>
+            <div className="text-2xl font-bold text-emerald-600">
+              Grade: {grade}
             </div>
             
             {/* Survey Completion Status */}
