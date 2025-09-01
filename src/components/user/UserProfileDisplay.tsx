@@ -32,7 +32,7 @@ interface UserProfileDisplayProps {
 }
 
 export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const getStateName = (code: string) => {
     const state = brazilianStates.find(s => s.code === code);
@@ -56,8 +56,8 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
 
   const getVisibilityLabel = (visibility: string) => {
     return visibility === 'public' 
-      ? (language === 'en' ? 'Public' : 'Público')
-      : (language === 'en' ? 'Private' : 'Privado');
+      ? t('profile.public')
+      : t('profile.private');
   };
 
   return (
@@ -70,14 +70,14 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
       >
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <User className="w-5 h-5 text-emerald-400" />
-          {language === 'en' ? 'Basic Information' : 'Informações Básicas'}
+          {t('profile.basic_info')}
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
             <User className="w-5 h-5 text-emerald-400" />
             <div>
-              <p className="text-sm text-gray-400">{language === 'en' ? 'Name' : 'Nome'}</p>
+              <p className="text-sm text-gray-400">{t('profile.name')}</p>
               <p className="text-white font-medium">{user.name}</p>
             </div>
           </div>
@@ -85,7 +85,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
           <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
             <Mail className="w-5 h-5 text-emerald-400" />
             <div>
-              <p className="text-sm text-gray-400">{language === 'en' ? 'Email' : 'E-mail'}</p>
+              <p className="text-sm text-gray-400">{t('profile.email')}</p>
               <p className="text-white font-medium">{user.email}</p>
             </div>
           </div>
@@ -93,7 +93,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
           <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
             <Award className="w-5 h-5 text-emerald-400" />
             <div>
-              <p className="text-sm text-gray-400">{language === 'en' ? 'Role' : 'Papel'}</p>
+              <p className="text-sm text-gray-400">{t('profile.role')}</p>
               <p className="text-white font-medium">{getCategoryLabel(user.category)}</p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
           <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
             <Calendar className="w-5 h-5 text-emerald-400" />
             <div>
-              <p className="text-sm text-gray-400">{language === 'en' ? 'Age Range' : 'Faixa Etária'}</p>
+              <p className="text-sm text-gray-400">{t('profile.age_range')}</p>
               <p className="text-white font-medium">{getLabel(user.ageRange, ageRanges)}</p>
             </div>
           </div>
@@ -109,7 +109,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
           <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
             <MapPin className="w-5 h-5 text-emerald-400" />
             <div>
-              <p className="text-sm text-gray-400">{language === 'en' ? 'Location' : 'Localização'}</p>
+              <p className="text-sm text-gray-400">{t('profile.location')}</p>
               <p className="text-white font-medium">{user.city}, {getStateName(user.state)}</p>
             </div>
           </div>
@@ -117,7 +117,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
           <div className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg">
             <Globe className="w-5 h-5 text-emerald-400" />
             <div>
-              <p className="text-sm text-gray-400">{language === 'en' ? 'Language' : 'Idioma'}</p>
+              <p className="text-sm text-gray-400">{t('profile.language')}</p>
               <p className="text-white font-medium">{language === 'en' ? 'English' : 'Português'}</p>
             </div>
           </div>
@@ -134,7 +134,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
         >
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Building className="w-5 h-5 text-emerald-400" />
-            {language === 'en' ? 'Professional Information' : 'Informações Profissionais'}
+            {t('profile.professional_info')}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -143,7 +143,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
                 <Building className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-sm text-gray-400">
-                    {language === 'en' ? 'Organization' : 'Organização'}
+                    {t('profile.organization')}
                   </p>
                   <p className="text-white font-medium">{user.organizationName}</p>
                 </div>
@@ -155,7 +155,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
                 <Briefcase className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-sm text-gray-400">
-                    {language === 'en' ? 'Position' : 'Cargo'}
+                    {t('profile.position')}
                   </p>
                   <p className="text-white font-medium">{user.position}</p>
                 </div>
@@ -167,7 +167,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
                 <Building className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-sm text-gray-400">
-                    {language === 'en' ? 'Industry' : 'Setor'}
+                    {t('profile.industry')}
                   </p>
                   <p className="text-white font-medium">{getLabel(user.industry, industries)}</p>
                 </div>
@@ -179,7 +179,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
                 <Users className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-sm text-gray-400">
-                    {language === 'en' ? 'Company Size' : 'Tamanho da Empresa'}
+                    {t('profile.company_size')}
                   </p>
                   <p className="text-white font-medium">{getLabel(user.companySize, companySizes)}</p>
                 </div>
@@ -191,7 +191,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
                 <GraduationCap className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-sm text-gray-400">
-                    {language === 'en' ? 'Education Level' : 'Nível de Educação'}
+                    {t('profile.education_level')}
                   </p>
                   <p className="text-white font-medium">{getLabel(user.educationLevel, educationLevels)}</p>
                 </div>
@@ -203,7 +203,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
                 <Building className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-sm text-gray-400">
-                    {language === 'en' ? 'Government Level' : 'Nível Governamental'}
+                    {t('profile.government_level')}
                   </p>
                   <p className="text-white font-medium">{getLabel(user.governmentLevel, governmentLevels)}</p>
                 </div>
@@ -223,7 +223,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
         >
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Heart className="w-5 h-5 text-emerald-400" />
-            {language === 'en' ? 'Sustainability Interests' : 'Interesses em Sustentabilidade'}
+            {t('profile.sustainability_interests')}
           </h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -248,7 +248,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
       >
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
-          {language === 'en' ? 'Account Information' : 'Informações da Conta'}
+          {t('profile.account_info')}
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -256,7 +256,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
             <Shield className="w-5 h-5 text-emerald-400" />
             <div>
               <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Certificate Visibility' : 'Visibilidade do Certificado'}
+                {t('profile.certificate_visibility')}
               </p>
               <p className="text-white font-medium">{getVisibilityLabel(user.certificateVisibility)}</p>
             </div>
@@ -266,7 +266,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
             <Calendar className="w-5 h-5 text-emerald-400" />
             <div>
               <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Member Since' : 'Membro Desde'}
+                {t('profile.member_since')}
               </p>
               <p className="text-white font-medium">
                 {user.createdAt instanceof Date 
@@ -281,7 +281,7 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
             <Calendar className="w-5 h-5 text-emerald-400" />
             <div>
               <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Last Activity' : 'Última Atividade'}
+                {t('profile.last_activity')}
               </p>
               <p className="text-white font-medium">
                 {user.lastActivity instanceof Date 
@@ -296,12 +296,12 @@ export const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ user }) 
             <Award className="w-5 h-5 text-emerald-400" />
             <div>
               <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Account Status' : 'Status da Conta'}
+                {t('profile.account_status')}
               </p>
               <p className="text-white font-medium">
                 {user.completedOnboarding 
-                  ? (language === 'en' ? 'Profile Complete' : 'Perfil Completo')
-                  : (language === 'en' ? 'Profile Incomplete' : 'Perfil Incompleto')
+                  ? t('profile.complete')
+                  : t('profile.incomplete')
                 }
               </p>
             </div>

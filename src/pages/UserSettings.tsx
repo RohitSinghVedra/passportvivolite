@@ -60,7 +60,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, 
               : 'text-gray-400 hover:text-white'
           }`}
         >
-          {language === 'en' ? 'Profile' : 'Perfil'}
+          {t('settings.profile')}
         </button>
         <button
           onClick={() => setActiveTab('settings')}
@@ -70,7 +70,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, 
               : 'text-gray-400 hover:text-white'
           }`}
         >
-          {language === 'en' ? 'Settings' : 'Configurações'}
+          {t('settings.settings')}
         </button>
       </div>
 
