@@ -30,9 +30,14 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   const score = calculateSurveyScore(responses, currentUser!);
   const { level, badge } = getLevelFromScore(score);
   
+  // Add safety checks for undefined values
+  const safeScore = score || 0;
+  const safeLevel = level || 'beginner';
+  const safeBadge = badge || '🌿';
+  
   // Calculate max possible score (each question has max 6 points)
   const maxPossibleScore = responses.length * 6;
-  const percentage = Math.min(Math.round((score / maxPossibleScore) * 100), 100);
+  const percentage = Math.min(Math.round((safeScore / maxPossibleScore) * 100), 100);
   
   // Get grade based on percentage
   const getGrade = (percentage: number) => {
@@ -59,7 +64,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
     return badges[level as keyof typeof badges];
   };
 
-  const badgeEmoji = getBadgeEmoji(level);
+  const badgeEmoji = getBadgeEmoji(safeLevel);
   
   // Get dynamic recommendations based on actual responses and score
   const getDynamicRecommendations = () => {
@@ -201,9 +206,9 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
     console.log('Starting to save survey results...', {
       currentUser: currentUser.id,
       responses: responses.length,
-      score,
-      level,
-      badge,
+      score: safeScore,
+      level: safeLevel,
+      badge: safeBadge,
       grade
     });
     
@@ -220,9 +225,9 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           userId: currentUser.id,
           questions: responses.map(r => r.questionId),
           responses,
-          score,
-          level,
-          badge,
+          score: safeScore,
+          level: safeLevel,
+          badge: safeBadge,
           grade,
           percentage,
           completedAt: new Date(),
@@ -235,9 +240,9 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         await saveSurveySession({
           userId: currentUser.id,
           responses,
-          score: score,
-          level,
-          badge,
+          score: safeScore,
+          level: safeLevel,
+          badge: safeBadge,
           grade,
           percentage,
           certificateCode: code,
@@ -247,7 +252,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         
         // Update user's survey results
         console.log('Updating user survey results...');
-        await updateUserSurveyResults(currentUser.id, score, level, badge);
+        await updateUserSurveyResults(currentUser.id, safeScore, safeLevel, safeBadge);
         
         // Save certificate data
         console.log('Saving certificate data...');
@@ -259,9 +264,9 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           city: currentUser.city,
           state: currentUser.state,
           ageRange: currentUser.ageRange,
-          score: score,
-          level,
-          badge,
+          score: safeScore,
+          level: safeLevel,
+          badge: safeBadge,
           grade,
           percentage,
           completedAt: new Date(),
@@ -281,7 +286,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
     };
 
     saveResults();
-  }, [currentUser, responses, score, level, badge, grade, percentage, saveSurveySession, updateUserSurveyResults, isSaved]);
+  }, [currentUser, responses, safeScore, safeLevel, safeBadge, grade, percentage, saveSurveySession, updateUserSurveyResults, isSaved]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
@@ -297,7 +302,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">{badgeEmoji}</div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              {t(`level.${level}`)}
+              {t(`level.${safeLevel}`)}
             </h2>
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="text-3xl font-bold text-emerald-600">
