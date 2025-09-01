@@ -30,7 +30,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   const score = calculateSurveyScore(responses, currentUser!);
   const { level, badge } = getLevelFromScore(score);
   
-  // Calculate max possible score (assuming each question has max 6 points)
+  // Calculate max possible score (each question has max 6 points)
   const maxPossibleScore = responses.length * 6;
   const percentage = Math.min(Math.round((score / maxPossibleScore) * 100), 100);
   
@@ -196,11 +196,13 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           certificateCode: code
         };
         
-        console.log('Saving survey session...');
+        console.log('Saving survey session...', sessionData);
         await saveSurveySession(sessionData);
         
-        console.log('Updating user survey results...');
+        console.log('Updating user survey results...', { userId: currentUser.id, score, level, badge });
         await updateUserSurveyResults(currentUser.id, score, level, badge);
+        
+        console.log('Survey results saved successfully!');
         
         setIsSaved(true);
         console.log('Survey results saved successfully!');

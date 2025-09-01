@@ -35,7 +35,20 @@ export const Footer: React.FC = () => {
                     {/* 3agro Logo */}
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
-                        <Ag3roLogo className="h-8 w-auto" />
+                        <img 
+                          src="/logos/3agro-logo.png" 
+                          alt="3Agro" 
+                          className="h-8 w-auto"
+                          onError={(e) => {
+                            // Fallback to SVG if PNG fails
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling!.style.display = 'block';
+                          }}
+                        />
+                        <div style={{ display: 'none' }}>
+                          <Ag3roLogo className="h-8 w-auto" />
+                        </div>
                       </div>
                       <p className="text-xs text-gray-400">
                         {language === 'en' ? 'Product Owner' : 'Proprietário do Produto'}
@@ -48,7 +61,20 @@ export const Footer: React.FC = () => {
                     {/* Vedra Labs Logo */}
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
-                        <VedraLabsLogo className="h-8 w-auto" />
+                        <img 
+                          src="/logos/vedra-labs-logo.png" 
+                          alt="Vedra Labs" 
+                          className="h-8 w-auto"
+                          onError={(e) => {
+                            // Fallback to SVG if PNG fails
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling!.style.display = 'block';
+                          }}
+                        />
+                        <div style={{ display: 'none' }}>
+                          <VedraLabsLogo className="h-8 w-auto" />
+                        </div>
                       </div>
                       <p className="text-xs text-gray-400">
                         {language === 'en' ? 'Developed by' : 'Desenvolvido por'}

@@ -2,7 +2,7 @@ import type { SurveyResponse } from '../types';
 
 export const calculateLevel = (responses: SurveyResponse[]): string => {
   const totalScore = responses.reduce((sum, response) => sum + response.points, 0);
-  const maxScore = responses.length * 5;
+  const maxScore = responses.length * 6; // Maximum points per question is 6
   const percentage = (totalScore / maxScore) * 100;
 
   if (percentage >= 90) return 'champion';
