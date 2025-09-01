@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Award, Eye, Download, Share2, Globe, Lock, MoreVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
-import { mockCertificates } from '../data/mockData';
+import { useAuth } from '../contexts/AuthContext';
 import type { User, Certificate } from '../types';
 
 interface UserCertificatesProps {
@@ -11,10 +11,28 @@ interface UserCertificatesProps {
 
 export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
   const { t } = useLanguage();
-  const [certificates, setCertificates] = useState(
-    mockCertificates.filter(cert => cert.userId === user.id)
-  );
+  const { currentUser, getUserCertificates } = useAuth();
+  const [certificates, setCertificates] = useState<any[]>([]);
   const [showMenu, setShowMenu] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Load real certificates from database
+  useEffect(() => {
+    const loadCertificates = async () => {
+      if (currentUser) {
+        try {
+          const userCerts = await getUserCertificates(currentUser.id);
+          setCertificates(userCerts);
+        } catch (error) {
+          console.error('Error loading certificates:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    loadCertificates();
+  }, [currentUser, getUserCertificates]);
 
   const toggleVisibility = (certId: string) => {
     setCertificates(prev => prev.map(cert => 

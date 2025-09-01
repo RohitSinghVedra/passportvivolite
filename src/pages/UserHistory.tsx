@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, BarChart3, Eye, RotateCcw, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
-import { mockSurveyRuns } from '../data/mockData';
+import { useAuth } from '../contexts/AuthContext';
 import type { User, SurveyRun } from '../types';
 
 interface UserHistoryProps {
@@ -12,10 +12,29 @@ interface UserHistoryProps {
 
 export const UserHistory: React.FC<UserHistoryProps> = ({ user, onRetakeSurvey }) => {
   const { t } = useLanguage();
+  const { currentUser, getUserSurveyHistory } = useAuth();
   const [showRetakeModal, setShowRetakeModal] = useState(false);
   const [selectedRun, setSelectedRun] = useState<SurveyRun | null>(null);
-  
-  const userRuns = mockSurveyRuns.filter(run => run.userId === user.id);
+  const [userRuns, setUserRuns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load real survey history from database
+  useEffect(() => {
+    const loadHistory = async () => {
+      if (currentUser) {
+        try {
+          const runs = await getUserSurveyHistory(currentUser.id);
+          setUserRuns(runs);
+        } catch (error) {
+          console.error('Error loading survey history:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    loadHistory();
+  }, [currentUser, getUserSurveyHistory]);
 
   const handleRetake = () => {
     setShowRetakeModal(false);

@@ -37,6 +37,7 @@ interface AuthContextType {
   getSurveyQuestions: () => Promise<SurveyQuestion[]>;
   saveSurveySession: (session: Omit<SurveySession, 'id'>) => Promise<string>;
   getUserSurveyHistory: (userId: string) => Promise<SurveySession[]>;
+  getUserCertificates: (userId: string) => Promise<any[]>;
   updateUserSurveyResults: (userId: string, score: number, level: string, badge: string) => Promise<void>;
   saveCertificate: (certificateData: {
     userId: string;
@@ -250,6 +251,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Get user certificates
+  const getUserCertificates = async (userId: string) => {
+    try {
+      const certificatesRef = collection(db, 'certificates');
+      const q = query(certificatesRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      
+      const certificates: any[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        certificates.push({ 
+          id: doc.id, 
+          ...data,
+          completedAt: data.completedAt?.toDate() || new Date(),
+          createdAt: data.createdAt?.toDate() || new Date()
+        });
+      });
+      
+      // Sort by completedAt in memory to avoid index requirements
+      certificates.sort((a, b) => {
+        const dateA = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
+        const dateB = b.completedAt instanceof Date ? b.completedAt : new Date(b.completedAt);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      return certificates;
+    } catch (error) {
+      console.error('Error getting user certificates:', error);
+      throw error;
+    }
+  };
+
   // Get user survey history
   const getUserSurveyHistory = async (userId: string): Promise<SurveySession[]> => {
     try {
@@ -387,6 +420,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSurveyQuestions,
     saveSurveySession,
     getUserSurveyHistory,
+    getUserCertificates,
     updateUserSurveyResults,
     saveCertificate
   };

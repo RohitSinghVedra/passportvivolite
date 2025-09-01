@@ -13,7 +13,7 @@ interface UserDashboardProps {
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   const { t, language } = useLanguage();
-  const { currentUser, getUserSurveyHistory } = useAuth();
+  const { currentUser, getUserSurveyHistory, getUserCertificates } = useAuth();
   const [personalizedFact, setPersonalizedFact] = useState<PersonalizedFact | null>(null);
   const [isLoadingFact, setIsLoadingFact] = useState(false);
   const [userRuns, setUserRuns] = useState<any[]>([]);
@@ -25,9 +25,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
       if (currentUser) {
         try {
           const runs = await getUserSurveyHistory(currentUser.id);
+          const userCerts = await getUserCertificates(currentUser.id);
           setUserRuns(runs);
-          // For now, we'll assume certificates are the same as runs
-          setCertificates(runs);
+          setCertificates(userCerts);
         } catch (error) {
           console.error('Error loading user data:', error);
         }
@@ -35,7 +35,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
     };
     
     loadUserData();
-  }, [currentUser, getUserSurveyHistory]);
+  }, [currentUser, getUserSurveyHistory, getUserCertificates]);
   
   // Get real user data
   const latestRun = userRuns[0];
