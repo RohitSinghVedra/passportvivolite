@@ -245,7 +245,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
       </div>
 
       {/* Recent Certificates */}
-      {userCertificates.length > 0 && (
+      {certificates.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -265,7 +265,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           </div>
           
           <div className="space-y-3">
-            {userCertificates.slice(0, 2).map((cert) => (
+            {certificates.slice(0, 2).map((cert) => (
               <div
                 key={cert.id}
                 className="bg-gray-700/30 rounded-lg p-4 border border-gray-600/30"
@@ -274,9 +274,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{cert.badge}</span>
                     <div>
-                      <div className="font-medium text-white">{cert.code}</div>
+                      <div className="font-medium text-white">{cert.certificateCode}</div>
                       <div className="text-sm text-gray-400">
-                        {cert.issuedAt.toLocaleDateString()}
+                        {cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
@@ -313,7 +313,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
       )}
 
       {/* Empty State */}
-      {userCertificates.length === 0 && (
+      {certificates.length === 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
