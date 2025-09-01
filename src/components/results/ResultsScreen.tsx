@@ -392,9 +392,9 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
             
             <CertificateGenerator
               user={currentUser!}
-              score={score}
-              level={level}
-              badge={badge}
+              score={safeScore}
+              level={safeLevel}
+              badge={safeBadge}
               certificateCode={certificateCode}
               completedAt={new Date()}
               onDownload={() => {
