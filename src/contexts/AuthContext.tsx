@@ -185,15 +185,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
       setFirebaseUser(firebaseUser);
       
       if (firebaseUser) {
-        // Get user data from Firestore
-        const userRef = doc(db, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userRef);
-        
-        if (userDoc.exists()) {
-          setCurrentUser(userDoc.data() as User);
+        try {
+          // Get user data from Firestore
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data() as User;
+            console.log('User data loaded:', userData);
+            setCurrentUser(userData);
+          } else {
+            console.log('User document does not exist in Firestore');
+            setCurrentUser(null);
+          }
+        } catch (error) {
+          console.error('Error loading user data:', error);
+          setCurrentUser(null);
         }
       } else {
         setCurrentUser(null);

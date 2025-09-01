@@ -55,6 +55,12 @@ function AppContent({
   onRetakeSurvey: () => void;
 }) {
   const { currentUser, loading, logout } = useAuth();
+  
+  console.log('AppContent render:', { 
+    currentUser: currentUser ? 'exists' : 'null', 
+    loading, 
+    userData: currentUser 
+  });
 
   // Protected Route Component
   const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({ 
@@ -82,7 +88,14 @@ function AppContent({
 
 
 
+  console.log('Routing logic:', { 
+    hasUser: !!currentUser, 
+    completedOnboarding: currentUser?.completedOnboarding, 
+    signUpMethod: currentUser?.signUpMethod 
+  });
+
   if (!currentUser) {
+    console.log('No user - showing AuthScreen');
     return (
       <LanguageProvider>
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
@@ -94,12 +107,15 @@ function AppContent({
 
   // Show profile completion screen only for Google users who haven't completed onboarding
   if (currentUser && !currentUser.completedOnboarding && currentUser.signUpMethod === 'google') {
+    console.log('Google user needs profile completion - showing ProfileCompletionScreen');
     return (
       <LanguageProvider>
         <ProfileCompletionScreen />
       </LanguageProvider>
     );
   }
+
+  console.log('User authenticated and onboarded - showing main app');
 
   return (
     <LanguageProvider>
