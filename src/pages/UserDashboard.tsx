@@ -56,6 +56,12 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           
           setUserRuns(validRuns);
           setCertificates(validCertificates);
+          
+          console.log('Dashboard state updated:', { 
+            userRunsLength: validRuns.length, 
+            certificatesLength: validCertificates.length,
+            loading: false 
+          });
         } catch (error) {
           console.error('Error loading user data:', error);
         } finally {
@@ -66,6 +72,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
     
     loadUserData();
   }, [currentUser, getUserSurveyHistory, getUserCertificates]);
+  
+  // Debug state changes
+  useEffect(() => {
+    console.log('UserDashboard state changed:', { 
+      userRunsLength: userRuns.length, 
+      certificatesLength: certificates.length,
+      loading 
+    });
+  }, [userRuns.length, certificates.length, loading]);
   
   // Get real user data
   const latestRun = userRuns[0];
@@ -138,7 +153,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gray-800/50 rounded-xl p-6 text-center">
                 <div className="text-3xl font-bold text-emerald-400 mb-2">
-                  {userRuns.length}
+                  {loading ? '...' : userRuns.length}
                 </div>
                 <div className="text-sm text-gray-400">
                   Surveys Completed
@@ -147,7 +162,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
               
               <div className="bg-gray-800/50 rounded-xl p-6 text-center">
                 <div className="text-3xl font-bold text-yellow-400 mb-2">
-                  {certificates.length}
+                  {loading ? '...' : certificates.length}
                 </div>
                 <div className="text-sm text-gray-400">
                   Certificates Earned

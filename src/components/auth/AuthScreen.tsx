@@ -750,18 +750,10 @@ export const AuthScreen: React.FC = () => {
                   </div>
 
                   <div className="space-y-3 mb-6">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleSocialAuth}
-                      disabled={loading}
-                      className="w-full bg-white/10 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-white/20 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="w-5 h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full"></div>
-                      {t('auth.google')}
-                    </motion.button>
-                    
-
+                    {/* Google sign-in removed */}
+                    <div className="text-center text-gray-500 text-sm">
+                      {language === 'en' ? 'Google sign-in temporarily unavailable' : 'Login com Google temporariamente indisponível'}
+                    </div>
                   </div>
 
                   <div className="text-center space-y-3">
