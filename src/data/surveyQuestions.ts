@@ -1138,27 +1138,27 @@ export const calculateSurveyScore = (responses: SurveyResponse[], user: User): n
   // Apply user-specific multipliers (but cap at max possible score)
   let multiplier = 1.0;
   
-  // Industry-specific multipliers
+  // Industry-specific multipliers (reduced to prevent exceeding max score)
   if (user.industry) {
     if (user.industry.toLowerCase().includes('technology')) {
-      multiplier *= 1.1; // Tech companies get 10% bonus
+      multiplier *= 1.05; // Tech companies get 5% bonus (reduced from 10%)
     } else if (user.industry.toLowerCase().includes('finance')) {
-      multiplier *= 1.05; // Finance gets 5% bonus
+      multiplier *= 1.03; // Finance gets 3% bonus (reduced from 5%)
     } else if (user.industry.toLowerCase().includes('healthcare')) {
-      multiplier *= 1.08; // Healthcare gets 8% bonus
+      multiplier *= 1.04; // Healthcare gets 4% bonus (reduced from 8%)
     }
   }
   
-  // Category-specific multipliers
+  // Category-specific multipliers (reduced to prevent exceeding max score)
   if (user.category === 'government') {
-    multiplier *= 1.15; // Government gets 15% bonus (higher impact)
+    multiplier *= 1.08; // Government gets 8% bonus (reduced from 15%)
   } else if (user.category === 'company_owner') {
-    multiplier *= 1.12; // Company owners get 12% bonus (business impact)
+    multiplier *= 1.06; // Company owners get 6% bonus (reduced from 12%)
   }
   
-  // Location-specific bonuses
+  // Location-specific bonuses (reduced to prevent exceeding max score)
   if (user.state === 'SP' || user.city === 'São Paulo') {
-    multiplier *= 1.05; // São Paulo gets 5% bonus (urban sustainability)
+    multiplier *= 1.02; // São Paulo gets 2% bonus (reduced from 5%)
   }
   
   // Calculate final score but cap it at maximum possible

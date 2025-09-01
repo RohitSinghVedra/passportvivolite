@@ -153,6 +153,9 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         };
       };
       
+      // Calculate actual max score (10 questions × 6 points = 60)
+      const maxScore = 60;
+      
       const text = getCertificateText();
       
             tempDiv.innerHTML = `
@@ -191,7 +194,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
             </p>
             <div style="display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 16px;">
               <span style="font-size: 18px; font-weight: 600; color: #059669;">
-                ${text.score}: ${cert.score}/50
+                ${text.score}: ${cert.score}/${maxScore}
               </span>
             </div>
           </div>
@@ -297,7 +300,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       ctx.fillText(`${cert.badge} ${t(`level.${cert.level}`)}`, 600, 230);
 
       ctx.font = '20px Arial';
-      ctx.fillText(`Score: ${cert.score}/50`, 600, 280);
+      ctx.fillText(`Score: ${cert.score}/60`, 600, 280);
 
       ctx.font = '16px Arial';
       ctx.fillText(`Code: ${cert.certificateCode}`, 600, 330);
@@ -436,7 +439,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
                   {t(`level.${cert.level}`)}
                 </div>
                 <div className="text-emerald-400 font-medium">
-                  Score: {cert.score}/50
+                  Score: {cert.score}/60
                 </div>
               </div>
 
