@@ -10,10 +10,76 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>Passaporte VIVO - Your Climate Action Journey</title>
+    
+    <!-- Prevent flash by hiding content until React loads -->
+    <style>
+      #root {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      #root.loaded {
+        opacity: 1;
+      }
+      /* Certificate route specific styling to prevent flash */
+      .certificate-loading {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      }
+      .certificate-loading-content {
+        text-align: center;
+        color: #065f46;
+      }
+      .certificate-loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid #bbf7d0;
+        border-top: 3px solid #10b981;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Immediately check if this is a certificate route and show appropriate loading
+      (function() {
+        const path = window.location.pathname;
+        if (path.startsWith('/certificate/')) {
+          // Show certificate-specific loading immediately
+          document.body.innerHTML = `
+            <div class="certificate-loading">
+              <div class="certificate-loading-content">
+                <div style="font-size: 48px; margin-bottom: 16px;">🌱</div>
+                <div class="certificate-loading-spinner"></div>
+                <p style="font-weight: 500; margin-bottom: 8px;">Verifying certificate...</p>
+                <p style="font-size: 14px; color: #6b7280;">Please wait while we load your certificate</p>
+              </div>
+            </div>
+          `;
+        }
+        
+        // Mark root as loaded when React takes over
+        window.addEventListener('load', function() {
+          const root = document.getElementById('root');
+          if (root) {
+            setTimeout(() => {
+              root.classList.add('loaded');
+            }, 100);
+          }
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-</Action>

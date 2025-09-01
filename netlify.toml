@@ -5,16 +5,30 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Force certificate routes to be handled first
 [[redirects]]
   from = "/certificate/*"
   to = "/index.html"
   status = 200
   force = true
+  conditions = {Role = ["*"]}
 
+# Handle all other routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Headers for certificate routes
+[[headers]]
+  for = "/certificate/*"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
 
 [dev]
   command = "npm run dev"
