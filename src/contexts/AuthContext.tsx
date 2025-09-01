@@ -4,8 +4,6 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
   User as FirebaseUser
 } from 'firebase/auth';
 import { 
@@ -29,7 +27,6 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, userData: Partial<User>) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   updateUserProfile: (updates: Partial<User>) => Promise<void>;
   // Survey database functions
@@ -118,31 +115,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error('Error signing in:', error);
-      throw error;
-    }
-  };
-
-  // Sign in with Google
-  const signInWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      
-      // Check if user document exists
-      const userRef = doc(db, 'users', result.user.uid);
-      const userSnap = await getDoc(userRef);
-      
-      if (!userSnap.exists()) {
-        // Create new user document for Google sign-in
-        await createUserDocument(result.user, {
-          name: result.user.displayName || '',
-          email: result.user.email!,
-          completedOnboarding: false,
-          signUpMethod: 'google'
-        });
-      }
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
       throw error;
     }
   };
@@ -295,34 +267,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       for (const collectionName of collections) {
         try {
           const sessionsRef = collection(db, collectionName);
-          const q = query(sessionsRef, where('userId', '==', userId));
-          const querySnapshot = await getDocs(q);
           
-          console.log(`Found ${querySnapshot.size} documents in ${collectionName}`);
-          
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            console.log('Document data:', data);
+          // For certificates, we need to check different field names
+          if (collectionName === 'certificates') {
+            // Try different possible field names for user ID
+            const possibleFields = ['userId', 'user_id', 'user', 'uid'];
             
-            // If this is a certificate collection, we need to check if it has survey data
-            if (collectionName === 'certificates') {
-              // Check if certificate has associated survey data
-              if (data.completedAt && data.score !== undefined) {
-                sessions.push({ 
-                  id: doc.id, 
-                  userId: data.userId,
-                  completedAt: data.completedAt?.toDate() || new Date(),
-                  score: data.score,
-                  level: data.level,
-                  responses: [], // Certificates don't have responses
-                  certificateCode: data.certificateCode
-                } as SurveySession);
+            for (const fieldName of possibleFields) {
+              try {
+                const q = query(sessionsRef, where(fieldName, '==', userId));
+                const querySnapshot = await getDocs(q);
+                
+                console.log(`Found ${querySnapshot.size} documents in ${collectionName} with field '${fieldName}'`);
+                
+                querySnapshot.forEach((doc) => {
+                  const data = doc.data();
+                  console.log('Certificate data:', data);
+                  
+                  // Check if certificate has associated survey data
+                  if (data.completedAt && data.score !== undefined) {
+                    sessions.push({ 
+                      id: doc.id, 
+                      userId: data.userId || data.user_id || data.user || data.uid || userId,
+                      completedAt: data.completedAt?.toDate() || new Date(),
+                      score: data.score,
+                      level: data.level,
+                      responses: [], // Certificates don't have responses
+                      certificateCode: data.certificateCode
+                    } as SurveySession);
+                  }
+                });
+                
+                if (sessions.length > 0) {
+                  console.log(`Using data from ${collectionName} with field '${fieldName}'`);
+                  break;
+                }
+              } catch (error) {
+                console.log(`Field '${fieldName}' not found in ${collectionName}:`, error);
               }
-            } else {
-              // Regular survey session
-              sessions.push({ id: doc.id, ...data } as SurveySession);
             }
-          });
+          } else {
+            // Regular survey session collections
+            const q = query(sessionsRef, where('userId', '==', userId));
+            const querySnapshot = await getDocs(q);
+            
+            console.log(`Found ${querySnapshot.size} documents in ${collectionName}`);
+            
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              console.log('Survey data:', data);
+              sessions.push({ id: doc.id, ...data } as SurveySession);
+            });
+          }
           
           if (sessions.length > 0) {
             console.log(`Using data from ${collectionName}`);
@@ -452,7 +448,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     signUp,
     signIn,
-    signInWithGoogle,
     logout,
     updateUserProfile,
     saveSurveyQuestions,

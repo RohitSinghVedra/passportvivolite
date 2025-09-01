@@ -33,7 +33,7 @@ import {
   governmentLevels,
   ageRanges
 } from '../../data/profileOptions';
-import type { User, UserCategory } from '../../types';
+import type { User as UserType, UserCategory } from '../../types';
 
 const features = [
   {
@@ -67,7 +67,7 @@ const stats = [
 
 export const AuthScreen: React.FC = () => {
   const { t, language } = useLanguage();
-  const { signUp, signIn, signInWithGoogle } = useAuth();
+  const { signUp, signIn } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -150,7 +150,7 @@ export const AuthScreen: React.FC = () => {
         }
         
         // Build user data object, only including fields with values
-        const userData: Partial<User> = {
+        const userData: Partial<UserType> = {
           name: name.trim(),
           category: category as UserCategory,
           state: selectedState,
@@ -191,7 +191,8 @@ export const AuthScreen: React.FC = () => {
     setLoading(true);
 
     try {
-      await signInWithGoogle();
+      // Google sign-in removed
+      setError(language === 'en' ? 'Google sign-in is temporarily unavailable' : 'Login com Google temporariamente indisponível');
     } catch (error: any) {
       console.error('Google auth error:', error);
       setError(getErrorMessage(error.code, language));
