@@ -98,7 +98,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       tempDiv.style.left = '-9999px';
       tempDiv.style.top = '-9999px';
       tempDiv.style.width = '1000px';
-      tempDiv.style.height = '900px';
+      tempDiv.style.height = '1000px';
       tempDiv.style.backgroundColor = '#f0fdf4';
       tempDiv.style.padding = '40px';
       tempDiv.style.borderRadius = '24px';
@@ -154,7 +154,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       const text = getCertificateText();
       
       tempDiv.innerHTML = `
-        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 8px solid #bbf7d0; border-radius: 24px; padding: 40px; max-width: 1000px; margin: 0 auto; height: 900px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 8px solid #bbf7d0; border-radius: 24px; padding: 40px; max-width: 1000px; margin: 0 auto; height: 1000px; display: flex; flex-direction: column; justify-content: space-between;">
           <!-- Header -->
           <div style="text-align: center; margin-bottom: 24px;">
             <div style="font-size: 40px; margin-bottom: 12px;">🌱</div>
@@ -251,7 +251,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         backgroundColor: '#f0fdf4',
         scale: 2,
         width: 1000,
-        height: 900,
+        height: 1000,
         useCORS: true,
         allowTaint: true,
         logging: false,

@@ -211,36 +211,6 @@ export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, 
         </div>
       </motion.div>
 
-      {/* Privacy Settings */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-emerald-500/20"
-      >
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-emerald-400" />
-          Privacy & Consent
-        </h2>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-white font-medium">Certificate Visibility</div>
-              <div className="text-sm text-gray-400">Default visibility for new certificates</div>
-            </div>
-            <select
-              value={formData.certificateVisibility}
-              onChange={(e) => setFormData(prev => ({ ...prev, certificateVisibility: e.target.value as 'public' | 'private' }))}
-              className="bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-            >
-              <option value="private">{t('certificate.private')}</option>
-              <option value="public">{t('certificate.public')}</option>
-            </select>
-          </div>
-        </div>
-      </motion.div>
-
       {/* Danger Zone */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

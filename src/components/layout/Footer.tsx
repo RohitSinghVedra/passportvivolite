@@ -5,7 +5,7 @@ export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
 
   return (
-    <footer className="bg-gray-900 text-white py-8 mt-auto lg:block hidden">
+    <footer className="bg-gray-900 text-white py-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Left side - App info */}
