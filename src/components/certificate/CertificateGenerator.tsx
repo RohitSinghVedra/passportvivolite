@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { Award, Share2, Download, QrCode } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import type { User, SurveyResponse } from '../../types';
+import { Ag3roLogo } from '../logos/3AgroLogo';
+import { VedraLabsLogo } from '../logos/VedraLabsLogo';
 
 interface CertificateGeneratorProps {
   user: User;
@@ -157,39 +159,13 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
                          <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200">
                   <div className="text-center">
                     <div className="flex items-center justify-center mb-1">
-                      <img 
-                        src="/logos/3agro-logo.png" 
-                        alt="3Agro" 
-                        className="h-6 w-auto"
-                        onError={(e) => {
-                          // Fallback to text if image fails to load
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling!.style.display = 'block';
-                        }}
-                      />
-                      <div className="text-lg font-bold text-emerald-600" style={{ display: 'none' }}>
-                        3agro
-                      </div>
+                      <Ag3roLogo className="h-6 w-auto" />
                     </div>
                     <p className="text-xs text-gray-500">Product Owner</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center mb-1">
-                      <img 
-                        src="/logos/vedra-labs-logo.png" 
-                        alt="Vedra Labs" 
-                        className="h-6 w-auto"
-                        onError={(e) => {
-                          // Fallback to text if image fails to load
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling!.style.display = 'block';
-                        }}
-                      />
-                      <div className="text-sm font-semibold text-blue-600" style={{ display: 'none' }}>
-                        Vedra Labs
-                      </div>
+                      <VedraLabsLogo className="h-6 w-auto" />
                     </div>
                     <p className="text-xs text-gray-500">Developed by</p>
                   </div>

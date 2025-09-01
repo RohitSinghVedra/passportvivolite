@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLanguage } from '../../hooks/useLanguage';
+import { Ag3roLogo } from '../logos/3AgroLogo';
+import { VedraLabsLogo } from '../logos/VedraLabsLogo';
 
 export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
@@ -33,20 +35,7 @@ export const Footer: React.FC = () => {
                     {/* 3agro Logo */}
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
-                        <img 
-                          src="/logos/3agro-logo.png" 
-                          alt="3Agro" 
-                          className="h-8 w-auto"
-                          onError={(e) => {
-                            // Fallback to text if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.nextElementSibling!.style.display = 'block';
-                          }}
-                        />
-                        <div className="text-2xl font-bold text-emerald-400" style={{ display: 'none' }}>
-                          3agro
-                        </div>
+                        <Ag3roLogo className="h-8 w-auto" />
                       </div>
                       <p className="text-xs text-gray-400">
                         {language === 'en' ? 'Product Owner' : 'Proprietário do Produto'}
@@ -59,20 +48,7 @@ export const Footer: React.FC = () => {
                     {/* Vedra Labs Logo */}
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
-                        <img 
-                          src="/logos/vedra-labs-logo.png" 
-                          alt="Vedra Labs" 
-                          className="h-8 w-auto"
-                          onError={(e) => {
-                            // Fallback to text if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.nextElementSibling!.style.display = 'block';
-                          }}
-                        />
-                        <div className="text-lg font-semibold text-blue-400" style={{ display: 'none' }}>
-                          Vedra Labs
-                        </div>
+                        <VedraLabsLogo className="h-8 w-auto" />
                       </div>
                       <p className="text-xs text-gray-400">
                         {language === 'en' ? 'Developed by' : 'Desenvolvido por'}
