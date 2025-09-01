@@ -107,7 +107,7 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
                 <Lightbulb className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-emerald-700 mb-1">
-                    Climate Fact
+                    {t('survey.climate_fact')}
                   </div>
                   <p className="text-sm text-emerald-600">
                     {question.fact[language]}
@@ -133,7 +133,7 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
             disabled={!currentResponse}
             className="flex items-center gap-2 px-6 py-3 bg-white text-emerald-600 rounded-xl font-medium hover:bg-emerald-50 transform hover:scale-105 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            {currentQuestion === surveyQuestions.length - 1 ? t('complete') : t('next')}
+            {currentQuestion === questions.length - 1 ? t('survey.complete') : t('survey.next')}
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>

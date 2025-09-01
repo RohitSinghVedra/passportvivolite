@@ -86,6 +86,9 @@ export const translations: Record<string, Record<Language, string>> = {
   'survey.subtitle': { en: 'Answer 10 questions to discover your climate impact', pt: 'Responda 10 perguntas para descobrir seu impacto climático' },
   'survey.question': { en: 'Question', pt: 'Pergunta' },
   'survey.select': { en: 'Select an option...', pt: 'Selecione uma opção...' },
+  'survey.next': { en: 'Next', pt: 'Próximo' },
+  'survey.complete': { en: 'Complete', pt: 'Completar' },
+  'survey.climate_fact': { en: 'Climate Fact', pt: 'Fato Climático' },
 
   // Results
   'results.title': { en: 'Your Climate Role', pt: 'Seu Papel Climático' },
