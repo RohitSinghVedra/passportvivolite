@@ -5,6 +5,7 @@ import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { Breadcrumbs } from './Breadcrumbs';
+import { Footer } from './Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,10 +15,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 flex flex-col">
       <Header />
       
-      <div className="flex">
+      <div className="flex flex-1">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block">
           <Sidebar />
@@ -46,6 +47,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="lg:hidden">
         <MobileNav />
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

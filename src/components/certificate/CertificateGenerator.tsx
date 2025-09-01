@@ -137,21 +137,33 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-end">
-          <div className="text-sm text-gray-500">
-            <p>Issued: {formatDate(completedAt)}</p>
-            <p>Code: {certificateCode}</p>
-          </div>
-          <div className="text-right">
-            <img 
-              src={generateQRCode(`${window.location.origin}/certificate/${certificateCode}`)}
-              alt="QR Code"
-              className="w-16 h-16"
-            />
-            <p className="text-xs text-gray-500 mt-1">Scan to verify</p>
-          </div>
-        </div>
+                 {/* Footer */}
+         <div className="flex justify-between items-end">
+           <div className="text-sm text-gray-500">
+             <p>Issued: {formatDate(completedAt)}</p>
+             <p>Code: {certificateCode}</p>
+           </div>
+           <div className="text-right">
+             <img 
+               src={generateQRCode(`${window.location.origin}/certificate/${certificateCode}`)}
+               alt="QR Code"
+               className="w-16 h-16"
+             />
+             <p className="text-xs text-gray-500 mt-1">Scan to verify</p>
+           </div>
+         </div>
+
+         {/* Company Logos */}
+         <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200">
+           <div className="text-center">
+             <div className="text-lg font-bold text-emerald-600">3agro</div>
+             <p className="text-xs text-gray-500">Product Owner</p>
+           </div>
+           <div className="text-center">
+             <div className="text-sm font-semibold text-blue-600">Vedra Labs</div>
+             <p className="text-xs text-gray-500">Developed by</p>
+           </div>
+         </div>
       </div>
 
       {/* Action Buttons */}
