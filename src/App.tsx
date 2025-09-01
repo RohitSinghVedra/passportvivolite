@@ -77,15 +77,9 @@ function AppContentWithRouter({
       try {
         console.log('Starting database initialization...');
         try {
-          // Test database connection first
-          console.log('Testing database connection...');
-          const testDoc = doc(db, 'test', 'connection');
-          await setDoc(testDoc, { test: true, timestamp: new Date() });
-          console.log('Database connection test successful');
-          
-          // Now try to initialize
-          await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
-          console.log('Database initialization completed successfully');
+          // Skip database operations due to permissions issues
+          console.log('Skipping database operations due to Firestore permissions');
+          console.log('App will work with local data only');
         } catch (error) {
           console.error('Database initialization failed:', error);
           console.log('App will continue without database initialization');

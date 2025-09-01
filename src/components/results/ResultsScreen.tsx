@@ -68,62 +68,85 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
     // Analyze responses to determine areas of improvement
     const lowScoreResponses = responses.filter(r => r.points <= 2);
     const highScoreResponses = responses.filter(r => r.points >= 4);
+    const perfectResponses = responses.filter(r => r.points === 6);
     
-    // Score-based recommendations
-    if (score < 30) {
+    console.log('Response analysis:', {
+      total: responses.length,
+      lowScore: lowScoreResponses.length,
+      highScore: highScoreResponses.length,
+      perfect: perfectResponses.length,
+      score,
+      percentage
+    });
+    
+    // Score-based recommendations with more specific thresholds
+    if (percentage < 40) {
       recommendations.push({
         id: 'score-low-1',
         title: { en: 'Start with Basic Actions', pt: 'Comece com Ações Básicas' },
         description: { 
-          en: 'Focus on simple daily habits like turning off lights, reducing water usage, and recycling.',
-          pt: 'Concentre-se em hábitos diários simples como desligar as luzes, reduzir o uso de água e reciclar.'
+          en: `Your score of ${percentage}% shows room for improvement. Focus on simple daily habits like turning off lights, reducing water usage, and recycling.`,
+          pt: `Sua pontuação de ${percentage}% mostra espaço para melhoria. Concentre-se em hábitos diários simples como desligar as luzes, reduzir o uso de água e reciclar.`
         },
         priority: 'high',
         category: [category]
       });
-    } else if (score < 50) {
+    } else if (percentage < 70) {
       recommendations.push({
         id: 'score-medium-1',
         title: { en: 'Expand Your Impact', pt: 'Expanda Seu Impacto' },
         description: { 
-          en: 'Consider energy-efficient appliances, sustainable transportation, and community involvement.',
-          pt: 'Considere eletrodomésticos eficientes, transporte sustentável e envolvimento comunitário.'
+          en: `With ${percentage}%, you're making progress! Consider energy-efficient appliances, sustainable transportation, and community involvement.`,
+          pt: `Com ${percentage}%, você está progredindo! Considere eletrodomésticos eficientes, transporte sustentável e envolvimento comunitário.`
+        },
+        priority: 'high',
+        category: [category]
+      });
+    } else if (percentage < 90) {
+      recommendations.push({
+        id: 'score-high-1',
+        title: { en: 'Lead by Example', pt: 'Lidere pelo Exemplo' },
+        description: { 
+          en: `Excellent ${percentage}%! Share your knowledge, mentor others, and advocate for systemic change in your community.`,
+          pt: `Excelente ${percentage}%! Compartilhe seu conhecimento, oriente outros e defenda mudanças sistêmicas em sua comunidade.`
         },
         priority: 'high',
         category: [category]
       });
     } else {
       recommendations.push({
-        id: 'score-high-1',
-        title: { en: 'Lead by Example', pt: 'Lidere pelo Exemplo' },
+        id: 'score-perfect-1',
+        title: { en: 'Climate Champion', pt: 'Campeão Climático' },
         description: { 
-          en: 'Share your knowledge, mentor others, and advocate for systemic change in your community.',
-          pt: 'Compartilhe seu conhecimento, oriente outros e defenda mudanças sistêmicas em sua comunidade.'
+          en: `Perfect ${percentage}%! You're a climate action leader. Inspire others and drive systemic change in your organization and community.`,
+          pt: `Perfeito ${percentage}%! Você é um líder em ação climática. Inspire outros e promova mudanças sistêmicas em sua organização e comunidade.`
         },
         priority: 'high',
         category: [category]
       });
     }
     
-    // Response-based recommendations
-    if (lowScoreResponses.length > highScoreResponses.length) {
+    // Response-based recommendations with specific counts
+    if (lowScoreResponses.length > 0) {
       recommendations.push({
         id: 'improvement-1',
         title: { en: 'Focus on Improvement Areas', pt: 'Foque nas Áreas de Melhoria' },
         description: { 
-          en: `You have ${lowScoreResponses.length} areas that need attention. Consider taking specific actions in these areas.`,
-          pt: `Você tem ${lowScoreResponses.length} áreas que precisam de atenção. Considere tomar ações específicas nessas áreas.`
+          en: `You have ${lowScoreResponses.length} areas that need attention. Focus on these specific areas to improve your overall impact.`,
+          pt: `Você tem ${lowScoreResponses.length} áreas que precisam de atenção. Concentre-se nessas áreas específicas para melhorar seu impacto geral.`
         },
         priority: 'high',
         category: [category]
       });
-    } else if (highScoreResponses.length > lowScoreResponses.length) {
+    }
+    
+    if (perfectResponses.length > 0) {
       recommendations.push({
         id: 'excellence-1',
         title: { en: 'Maintain Excellence', pt: 'Mantenha a Excelência' },
         description: { 
-          en: `Great job! You're doing well in ${highScoreResponses.length} areas. Keep up the good work and share your knowledge.`,
-          pt: `Ótimo trabalho! Você está indo bem em ${highScoreResponses.length} áreas. Continue o bom trabalho e compartilhe seu conhecimento.`
+          en: `Outstanding! You excelled in ${perfectResponses.length} areas. Keep up the excellent work and share your expertise with others.`,
+          pt: `Excepcional! Você se destacou em ${perfectResponses.length} áreas. Continue o excelente trabalho e compartilhe sua experiência com outros.`
         },
         priority: 'medium',
         category: [category]
@@ -136,8 +159,8 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         id: 'business-1',
         title: { en: 'Business Sustainability', pt: 'Sustentabilidade Empresarial' },
         description: { 
-          en: 'Consider implementing ESG policies, sustainable supply chains, and green business practices.',
-          pt: 'Considere implementar políticas ESG, cadeias de suprimentos sustentáveis e práticas empresariais verdes.'
+          en: `As a company owner with ${percentage}%, consider implementing ESG policies, sustainable supply chains, and green business practices.`,
+          pt: `Como proprietário de empresa com ${percentage}%, considere implementar políticas ESG, cadeias de suprimentos sustentáveis e práticas empresariais verdes.`
         },
         priority: 'high',
         category: [category]
@@ -147,8 +170,19 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         id: 'education-1',
         title: { en: 'Educational Impact', pt: 'Impacto Educacional' },
         description: { 
-          en: 'Join environmental clubs, take sustainability courses, and organize campus green initiatives.',
-          pt: 'Participe de clubes ambientais, faça cursos de sustentabilidade e organize iniciativas verdes no campus.'
+          en: `With your ${percentage}% score, join environmental clubs, take sustainability courses, and organize campus green initiatives.`,
+          pt: `Com sua pontuação de ${percentage}%, participe de clubes ambientais, faça cursos de sustentabilidade e organize iniciativas verdes no campus.`
+        },
+        priority: 'high',
+        category: [category]
+      });
+    } else if (category === 'government') {
+      recommendations.push({
+        id: 'government-1',
+        title: { en: 'Policy Leadership', pt: 'Liderança em Políticas' },
+        description: { 
+          en: `With ${percentage}%, you can drive policy changes. Advocate for sustainable regulations and green infrastructure projects.`,
+          pt: `Com ${percentage}%, você pode impulsionar mudanças políticas. Defenda regulamentações sustentáveis e projetos de infraestrutura verde.`
         },
         priority: 'high',
         category: [category]
