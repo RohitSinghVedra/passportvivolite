@@ -13,13 +13,31 @@ interface UserDashboardProps {
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   const { t, language } = useLanguage();
-  const { currentUser } = useAuth();
+  const { currentUser, getUserSurveyHistory } = useAuth();
   const [personalizedFact, setPersonalizedFact] = useState<PersonalizedFact | null>(null);
   const [isLoadingFact, setIsLoadingFact] = useState(false);
+  const [userRuns, setUserRuns] = useState<any[]>([]);
+  const [certificates, setCertificates] = useState<any[]>([]);
   
-  // Get real user data (for now, we'll use the user prop but this will be replaced with real Firestore data)
-  const userCertificates = currentUser?.certificates || [];
-  const userRuns = currentUser?.surveyRuns || [];
+  // Load user data from database
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (currentUser) {
+        try {
+          const runs = await getUserSurveyHistory(currentUser.id);
+          setUserRuns(runs);
+          // For now, we'll assume certificates are the same as runs
+          setCertificates(runs);
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      }
+    };
+    
+    loadUserData();
+  }, [currentUser, getUserSurveyHistory]);
+  
+  // Get real user data
   const latestRun = userRuns[0];
   
   // Load personalized fact
@@ -178,10 +196,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             </h3>
           </div>
           <div className="text-3xl font-bold text-emerald-400 mb-1">
-            {user.score || 0}/50
+            {currentUser?.score || 0}/50
           </div>
           <div className="text-sm text-gray-400">
-            {user.score ? `${Math.round((user.score / 50) * 100)}% complete` : 'Not assessed'}
+            {currentUser?.score ? `${Math.round((currentUser.score / 50) * 100)}% complete` : 'Not assessed'}
           </div>
         </motion.div>
 
@@ -198,10 +216,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             </h3>
           </div>
           <div className="text-3xl font-bold text-yellow-400 mb-1">
-            {userCertificates.length}
+            {certificates.length}
           </div>
           <div className="text-sm text-gray-400">
-            {userCertificates.filter(c => c.visibility === 'public').length} public
+            {certificates.filter(c => c.visibility === 'public').length} public
           </div>
         </motion.div>
 

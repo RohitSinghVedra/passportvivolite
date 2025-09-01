@@ -240,8 +240,8 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           badge,
           grade,
           percentage,
-          certificateCode,
-          completedAt,
+          certificateCode: code,
+          completedAt: new Date(),
           category: currentUser!.category
         });
         
@@ -253,7 +253,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         console.log('Saving certificate data...');
         await saveCertificate({
           userId: currentUser!.uid,
-          certificateCode,
+          certificateCode: code,
           userName: currentUser!.name,
           category: currentUser!.category,
           city: currentUser!.city,

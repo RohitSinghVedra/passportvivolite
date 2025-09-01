@@ -27,8 +27,13 @@ export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, 
     certificateVisibility: user.certificateVisibility
   });
 
-  const handleSave = () => {
-    onUpdateUser(formData);
+  const handleSave = async () => {
+    try {
+      await updateUserProfile(formData);
+      onUpdateUser(formData);
+    } catch (error) {
+      console.error('Error saving settings:', error);
+    }
   };
 
   const handleDeleteConfirm = () => {
