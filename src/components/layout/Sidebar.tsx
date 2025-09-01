@@ -26,7 +26,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const userNavItems = [
     { path: '/me', icon: Home, label: t('nav.dashboard') },
     { path: '/me/certificates', icon: Award, label: t('nav.certificates') },
-    { path: '/me/history', icon: History, label: t('nav.history') },
     { path: '/me/settings', icon: Settings, label: t('nav.settings') }
   ];
 

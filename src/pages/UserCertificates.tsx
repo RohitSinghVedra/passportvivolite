@@ -58,7 +58,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
     setShowMenu(null);
   };
 
-  const handleDownload = (cert: Certificate) => {
+  const handleDownload = (cert: any) => {
     // Create certificate image
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -88,22 +88,22 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
     ctx.fillText(`Score: ${cert.score}/50`, 400, 300);
 
     ctx.font = '16px Arial';
-    ctx.fillText(`Code: ${cert.code}`, 400, 350);
+    ctx.fillText(`Code: ${cert.certificateCode}`, 400, 350);
 
     const link = document.createElement('a');
-    link.download = `passaporte-vivo-${cert.code}.png`;
+    link.download = `passaporte-vivo-${cert.certificateCode}.png`;
     link.href = canvas.toDataURL();
     link.click();
   };
 
-  const handleShare = (cert: Certificate) => {
-    const text = `Check out my climate certificate from Passaporte VIVO! ${cert.badge} ${t(`level.${cert.level}`)} - Code: ${cert.code}`;
+  const handleShare = (cert: any) => {
+    const text = `Check out my climate certificate from Passaporte VIVO! ${cert.badge} ${t(`level.${cert.level}`)} - Code: ${cert.certificateCode}`;
     
     if (navigator.share) {
       navigator.share({
         title: t('certificate.title'),
         text,
-        url: `${window.location.origin}/certificate/${cert.code}`
+        url: `${window.location.origin}/certificate/${cert.certificateCode}`
       }).catch(() => {
         const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
         window.open(shareUrl, '_blank');
@@ -170,9 +170,9 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{cert.badge}</span>
                   <div>
-                    <div className="font-semibold text-white">{cert.code}</div>
+                    <div className="font-semibold text-white">{cert.certificateCode}</div>
                     <div className="text-sm text-gray-400">
-                      {cert.issuedAt.toLocaleDateString()}
+                      {cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
