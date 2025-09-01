@@ -500,7 +500,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setCurrentUser(convertedUserData);
           } else {
             console.log('User document not found in Firestore for:', firebaseUser.uid);
-            setCurrentUser(null);
+            console.log('Creating new user document...');
+            
+            // Create a new user document with basic data
+            const newUserDoc = {
+              id: firebaseUser.uid,
+              email: firebaseUser.email!,
+              name: firebaseUser.displayName || firebaseUser.email!.split('@')[0],
+              createdAt: new Date(),
+              lastActivity: new Date(),
+              completedOnboarding: true,
+              surveyCompleted: false,
+              certificateVisibility: 'public' as const,
+              role: 'user' as const,
+              category: 'Individual',
+              state: 'SP',
+              city: 'São Paulo',
+              ageRange: '26-35'
+            };
+            
+            await setDoc(userRef, newUserDoc);
+            console.log('New user document created successfully');
+            setCurrentUser(newUserDoc as User);
           }
         } catch (error) {
           console.error('Error loading user data from Firestore:', error);
