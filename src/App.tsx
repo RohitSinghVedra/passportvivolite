@@ -264,7 +264,7 @@ function AppContentWithRouter({
         </ProtectedRoute>
       } />
 
-      {/* Certificate Verification Route (Public) */}
+      {/* Certificate Verification Route (Public) - Must be before catch-all routes */}
       <Route path="/certificate/:code" element={<CertificateVerification />} />
 
       {/* Default Routes */}

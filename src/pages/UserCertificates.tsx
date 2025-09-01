@@ -64,52 +64,143 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
     window.open(certificateUrl, '_blank');
   };
 
-  const handleDownload = (cert: any) => {
-    // Create certificate image with same styling as generated certificate
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const handleDownload = async (cert: any) => {
+    try {
+      // Import html2canvas dynamically
+      const html2canvas = await import('html2canvas');
+      
+      // Create a temporary div with the certificate
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.width = '1200px';
+      tempDiv.style.height = '800px';
+      tempDiv.style.backgroundColor = '#f0fdf4';
+      tempDiv.style.padding = '40px';
+      tempDiv.style.borderRadius = '24px';
+      tempDiv.style.border = '8px solid #bbf7d0';
+      
+      // Create certificate content using the same component
+      const certificateData = {
+        user: {
+          name: cert.userName,
+          category: cert.category,
+          city: cert.city,
+          state: cert.state,
+          ageRange: cert.ageRange
+        },
+        score: cert.score,
+        level: cert.level,
+        badge: cert.badge,
+        grade: cert.grade,
+        percentage: cert.percentage,
+        completedAt: cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt),
+        certificateCode: cert.certificateCode
+      };
+      
+      // Create certificate HTML
+      tempDiv.innerHTML = `
+        <div style="text-align: center; font-family: Arial, sans-serif;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🌱</div>
+          <h1 style="font-size: 48px; font-weight: bold; color: #065f46; margin-bottom: 8px;">Passaporte VIVO</h1>
+          <p style="font-size: 24px; color: #059669; font-weight: 500;">Climate Action Certificate</p>
+          
+          <div style="margin: 32px 0;">
+            <div style="font-size: 96px; margin-bottom: 16px;">${cert.badge}</div>
+            <h2 style="font-size: 32px; font-weight: bold; color: #1f2937; margin-bottom: 8px;">${t(`level.${cert.level}`)}</h2>
+            <p style="color: #6b7280; margin-bottom: 16px;">This certificate is awarded to</p>
+            <p style="font-size: 24px; font-weight: bold; color: #047857; margin-bottom: 8px;">${cert.userName}</p>
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">${cert.category === 'company_owner' ? 'Company Owner' : cert.category === 'student' ? 'Student' : cert.category === 'government' ? 'Government Official' : cert.category === 'individual' ? 'Individual' : 'Professional'}</p>
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">${cert.city}, ${cert.state} • Age: ${cert.ageRange}</p>
+            <p style="color: #6b7280; margin-bottom: 16px;">for completing the Climate Action Assessment</p>
+            <div style="font-size: 20px; font-weight: 600; color: #059669;">Score: ${cert.score}/50</div>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: end; margin-top: 32px;">
+            <div style="font-size: 14px; color: #6b7280;">
+              <p>Issued: ${cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}</p>
+              <p>Code: ${cert.certificateCode}</p>
+            </div>
+            <div style="text-align: right;">
+              <div style="width: 64px; height: 64px; background-color: #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6b7280;">QR</div>
+              <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Scan to verify</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px;">
+            <div style="text-align: center;">
+              <div style="font-size: 18px; font-weight: bold; color: #34d399;">3agro</div>
+              <p style="font-size: 12px; color: #9ca3af; font-weight: 500;">Product Owner</p>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 14px; font-weight: 600; color: #60a5fa;">Vedra Labs</div>
+              <p style="font-size: 12px; color: #9ca3af; font-weight: 500;">Developed by</p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(tempDiv);
+      
+      // Generate canvas
+      const canvas = await html2canvas.default(tempDiv, {
+        backgroundColor: '#f0fdf4',
+        scale: 2,
+        width: 1200,
+        height: 800,
+        useCORS: true
+      });
+      
+      // Remove temporary div
+      document.body.removeChild(tempDiv);
+      
+      // Download
+      const link = document.createElement('a');
+      link.download = `passaporte-vivo-${cert.certificateCode}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    } catch (error) {
+      console.error('Error generating certificate:', error);
+      // Fallback to simple canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    canvas.width = 1200;
-    canvas.height = 800;
+      canvas.width = 1200;
+      canvas.height = 800;
 
-    // Create gradient background (same as generated certificate)
-    const gradient = ctx.createLinearGradient(0, 0, 1200, 800);
-    gradient.addColorStop(0, '#0f2a19');
-    gradient.addColorStop(1, '#081a10');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 1200, 800);
+      const gradient = ctx.createLinearGradient(0, 0, 1200, 800);
+      gradient.addColorStop(0, '#f0fdf4');
+      gradient.addColorStop(1, '#ecfdf5');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 1200, 800);
 
-    // Add certificate content
-    ctx.fillStyle = '#e6fff0';
-    ctx.font = 'bold 48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Climate Role Certificate', 600, 100);
+      ctx.fillStyle = '#065f46';
+      ctx.font = 'bold 48px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Passaporte VIVO', 600, 100);
 
-    ctx.font = '32px Arial';
-    ctx.fillText(cert.userName, 600, 180);
+      ctx.font = '32px Arial';
+      ctx.fillText(cert.userName, 600, 180);
 
-    ctx.font = '24px Arial';
-    ctx.fillText(`${cert.badge} ${t(`level.${cert.level}`)}`, 600, 230);
+      ctx.font = '24px Arial';
+      ctx.fillText(`${cert.badge} ${t(`level.${cert.level}`)}`, 600, 230);
 
-    ctx.font = '20px Arial';
-    ctx.fillText(`Score: ${cert.score}/50`, 600, 280);
+      ctx.font = '20px Arial';
+      ctx.fillText(`Score: ${cert.score}/50`, 600, 280);
 
-    ctx.font = '16px Arial';
-    ctx.fillText(`Code: ${cert.certificateCode}`, 600, 330);
+      ctx.font = '16px Arial';
+      ctx.fillText(`Code: ${cert.certificateCode}`, 600, 330);
 
-    ctx.font = '14px Arial';
-    ctx.fillText(`Issued: ${cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}`, 600, 360);
+      ctx.font = '14px Arial';
+      ctx.fillText(`Issued: ${cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}`, 600, 360);
 
-    // Add logos (placeholder for now)
-    ctx.fillStyle = '#00c853';
-    ctx.font = '12px Arial';
-    ctx.fillText('Passaporte VIVO', 600, 750);
-
-    const link = document.createElement('a');
-    link.download = `passaporte-vivo-${cert.certificateCode}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
+      const link = document.createElement('a');
+      link.download = `passaporte-vivo-${cert.certificateCode}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
   };
 
   const handleShare = (cert: any) => {

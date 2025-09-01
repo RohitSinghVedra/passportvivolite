@@ -286,14 +286,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Get user survey history
   const getUserSurveyHistory = async (userId: string): Promise<SurveySession[]> => {
     try {
-      const sessionsRef = collection(db, 'surveySessions');
-      const q = query(sessionsRef, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
+      console.log('Fetching survey history for user:', userId);
       
-      const sessions: SurveySession[] = [];
-      querySnapshot.forEach((doc) => {
-        sessions.push({ id: doc.id, ...doc.data() } as SurveySession);
-      });
+      // Try multiple collections where survey data might be stored
+      const collections = ['surveySessions', 'survey_results', 'surveys', 'userSurveys'];
+      let sessions: SurveySession[] = [];
+      
+      for (const collectionName of collections) {
+        try {
+          const sessionsRef = collection(db, collectionName);
+          const q = query(sessionsRef, where('userId', '==', userId));
+          const querySnapshot = await getDocs(q);
+          
+          console.log(`Found ${querySnapshot.size} documents in ${collectionName}`);
+          
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log('Survey data:', data);
+            sessions.push({ id: doc.id, ...data } as SurveySession);
+          });
+          
+          if (sessions.length > 0) {
+            console.log(`Using data from ${collectionName}`);
+            break;
+          }
+        } catch (error) {
+          console.log(`Collection ${collectionName} not found or error:`, error);
+        }
+      }
       
       // Sort by completedAt in memory to avoid index requirements
       sessions.sort((a, b) => {
@@ -302,6 +322,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return dateB.getTime() - dateA.getTime();
       });
       
+      console.log('Final sessions count:', sessions.length);
       return sessions;
     } catch (error) {
       console.error('Error getting user survey history:', error);
