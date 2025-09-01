@@ -69,6 +69,23 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       // Import html2canvas dynamically
       const html2canvas = await import('html2canvas');
       
+      // Preload images to ensure they're available
+      const preloadImages = async () => {
+        const imageUrls = ['/logos/3agro-logo.png', '/logos/vedra-labs-logo.png'];
+        const promises = imageUrls.map(url => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = resolve;
+            img.onerror = resolve; // Don't fail if image doesn't load
+            img.src = url;
+          });
+        });
+        await Promise.all(promises);
+      };
+      
+      await preloadImages();
+      
       // Create a temporary div with the certificate
       const tempDiv = document.createElement('div');
       tempDiv.style.position = 'absolute';
@@ -187,13 +204,13 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           </div>
 
           <!-- Company Logos -->
-          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px; margin-top: auto;">
             <div style="text-align: center;">
               <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
                 <img 
                   src="/logos/3agro-logo.png" 
                   alt="3Agro" 
-                  style="height: 40px; width: auto;"
+                  style="height: 40px; width: auto; max-width: 120px;"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
                 />
                 <div style="font-size: 20px; font-weight: bold; color: #34d399; display: none;">3agro</div>
@@ -207,7 +224,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
                 <img 
                   src="/logos/vedra-labs-logo.png" 
                   alt="Vedra Labs" 
-                  style="height: 40px; width: auto;"
+                  style="height: 40px; width: auto; max-width: 120px;"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
                 />
                 <div style="font-size: 16px; font-weight: 600; color: #60a5fa; display: none;">Vedra Labs</div>
@@ -230,7 +247,9 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         height: 800,
         useCORS: true,
         allowTaint: true,
-        logging: false
+        logging: false,
+        imageTimeout: 15000,
+        removeContainer: true
       });
       
       // Remove temporary div
