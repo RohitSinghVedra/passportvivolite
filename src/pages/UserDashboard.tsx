@@ -147,10 +147,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           
           <div className="space-y-3">
             <h4 className="text-lg font-medium text-white">
-              {personalizedFact.title}
+              {personalizedFact.title[language]}
             </h4>
             <p className="text-emerald-100 leading-relaxed">
-              {personalizedFact.content}
+              {personalizedFact.content[language]}
             </p>
             {personalizedFact.source && (
               <p className="text-xs text-emerald-300/70">
