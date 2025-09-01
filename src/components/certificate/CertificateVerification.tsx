@@ -74,46 +74,11 @@ export const CertificateVerification: React.FC = () => {
           
           setCertificate(certificate);
         } else {
-          // If no certificate found in database, show a fallback for testing
-          console.log('Certificate not found in database, showing fallback');
-          const fallbackCertificate: CertificateData = {
-            user: {
-              name: "Rohit Singh",
-              category: "company_owner",
-              city: "Rondonópolis",
-              state: "MT",
-              ageRange: "46-55"
-            },
-            score: 39,
-            level: "aware",
-            badge: "🌱",
-            grade: "B",
-            percentage: 65,
-            completedAt: new Date(),
-            certificateCode: code
-          };
-          setCertificate(fallbackCertificate);
+          setError('Certificate not found');
         }
       } catch (error) {
         console.error('Error fetching certificate:', error);
-        // Show fallback certificate for testing
-        const fallbackCertificate: CertificateData = {
-          user: {
-            name: "Rohit Singh",
-            category: "company_owner",
-            city: "Rondonópolis",
-            state: "MT",
-            ageRange: "46-55"
-          },
-          score: 39,
-          level: "aware",
-          badge: "🌱",
-          grade: "B",
-          percentage: 65,
-          completedAt: new Date(),
-          certificateCode: code
-        };
-        setCertificate(fallbackCertificate);
+        setError('Error loading certificate');
       } finally {
         setLoading(false);
       }

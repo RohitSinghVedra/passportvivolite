@@ -235,7 +235,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         await saveSurveySession({
           userId: currentUser!.uid,
           responses,
-          score: surveyScore,
+          score: score,
           level,
           badge,
           grade,
