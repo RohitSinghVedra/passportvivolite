@@ -118,7 +118,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      console.log('Attempting to sign in with email:', email);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Sign in successful for user:', result.user.uid);
     } catch (error) {
       console.error('Error signing in:', error);
       throw error;
@@ -161,7 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Delete user account and all associated data
-  const deleteAccount = async (password?: string) => {
+  const deleteAccount = async () => {
     if (!currentUser) throw new Error('No user logged in');
     
     try {
@@ -195,33 +197,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Commit all deletions
       await batch.commit();
 
-      // Delete Firebase Auth user
+      // Try to delete Firebase Auth user, but don't let it break the process
       if (auth.currentUser) {
         try {
-          // Try to delete without re-authentication first
           await deleteUser(auth.currentUser);
+          console.log('Firebase Auth user deleted successfully');
         } catch (error: any) {
-          console.log('Delete user failed, might need re-authentication:', error.message);
+          console.log('Firebase Auth user deletion failed:', error.message);
           
-          // If deletion fails due to recent authentication requirement, 
-          // we'll just sign out and let the user know
+          // If deletion fails, just sign out normally
           if (error.code === 'auth/requires-recent-login') {
-            await signOut(auth);
-            setCurrentUser(null);
-            throw new Error('Account deletion requires recent login. Please sign in again and try deleting your account.');
+            console.log('User needs recent login for deletion, signing out instead');
           }
           
-          // For other errors, just sign out
+          // Sign out normally without throwing error
           await signOut(auth);
-          setCurrentUser(null);
-          throw error;
         }
       }
 
       // Clear local state
       setCurrentUser(null);
       
-      console.log('Account and all data deleted successfully');
+      console.log('Account data deleted successfully');
     } catch (error) {
       console.error('Error deleting account:', error);
       throw error;
@@ -479,11 +476,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Auth state listener
   useEffect(() => {
+    console.log('Setting up auth state listener...');
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('Auth state changed:', firebaseUser ? 'User logged in' : 'User logged out');
+      console.log('Auth state changed:', firebaseUser ? `User logged in (${firebaseUser.uid})` : 'User logged out');
       
       if (firebaseUser) {
         try {
+          console.log('Loading user data from Firestore for:', firebaseUser.uid);
           const userRef = doc(db, 'users', firebaseUser.uid);
           const userSnap = await getDoc(userRef);
           
@@ -497,20 +496,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               lastActivity: userData.lastActivity?.toDate() || new Date()
             };
             
-            console.log('User data loaded:', convertedUserData);
+            console.log('User data loaded successfully:', convertedUserData);
             setCurrentUser(convertedUserData);
           } else {
-            console.log('User document not found');
+            console.log('User document not found in Firestore for:', firebaseUser.uid);
             setCurrentUser(null);
           }
         } catch (error) {
-          console.error('Error loading user data:', error);
+          console.error('Error loading user data from Firestore:', error);
           setCurrentUser(null);
         }
       } else {
+        console.log('No Firebase user, setting currentUser to null');
         setCurrentUser(null);
       }
       
+      console.log('Setting loading to false');
       setLoading(false);
     });
 
