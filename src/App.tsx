@@ -70,7 +70,7 @@ function AppContentWithRouter({
     setSurveyScore(0);
   };
 
-  const { currentUser, loading, logout, getSurveyQuestions, saveSurveyQuestions } = useAuth();
+  const { currentUser, loading, logout, getSurveyQuestions, saveSurveyQuestions, deleteAccount } = useAuth();
   
   // Initialize database when app starts (non-blocking)
   useEffect(() => {
@@ -217,9 +217,15 @@ function AppContentWithRouter({
                 // Handle user updates
                 console.log('User updates:', updates);
               }}
-              onDeleteAccount={() => {
-                // Handle account deletion
-                console.log('Account deletion requested');
+              onDeleteAccount={async () => {
+                try {
+                  await deleteAccount();
+                  // Redirect to login page after successful deletion
+                  navigate('/');
+                } catch (error) {
+                  console.error('Failed to delete account:', error);
+                  alert('Failed to delete account. Please try again.');
+                }
               }}
             />
           </Layout>

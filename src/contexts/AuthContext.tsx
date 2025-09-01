@@ -4,7 +4,8 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  User as FirebaseUser
+  User as FirebaseUser,
+  deleteUser
 } from 'firebase/auth';
 import { 
   doc, 
@@ -17,7 +18,9 @@ import {
   where,
   getDocs,
   orderBy,
-  limit
+  limit,
+  deleteDoc,
+  writeBatch
 } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import type { User, SurveyQuestion, SurveySession, SurveyResponse } from '../types';
@@ -29,6 +32,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUserProfile: (updates: Partial<User>) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   // Survey database functions
   saveSurveyQuestions: (questions: SurveyQuestion[]) => Promise<void>;
   getSurveyQuestions: () => Promise<SurveyQuestion[]>;
@@ -150,6 +154,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCurrentUser(prev => prev ? { ...prev, ...filteredUpdates } : null);
     } catch (error) {
       console.error('Error updating user profile:', error);
+      throw error;
+    }
+  };
+
+  // Delete user account and all associated data
+  const deleteAccount = async () => {
+    if (!currentUser) throw new Error('No user logged in');
+    
+    try {
+      const batch = writeBatch(db);
+      const userId = currentUser.id;
+
+      // Delete user's survey sessions
+      const surveySessionsQuery = query(
+        collection(db, 'surveySessions'),
+        where('userId', '==', userId)
+      );
+      const surveySessionsSnapshot = await getDocs(surveySessionsQuery);
+      surveySessionsSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Delete user's certificates
+      const certificatesQuery = query(
+        collection(db, 'certificates'),
+        where('userId', '==', userId)
+      );
+      const certificatesSnapshot = await getDocs(certificatesQuery);
+      certificatesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Delete user document
+      const userRef = doc(db, 'users', userId);
+      batch.delete(userRef);
+
+      // Commit all deletions
+      await batch.commit();
+
+      // Delete Firebase Auth user
+      if (auth.currentUser) {
+        await deleteUser(auth.currentUser);
+      }
+
+      // Clear local state
+      setCurrentUser(null);
+      
+      console.log('Account and all data deleted successfully');
+    } catch (error) {
+      console.error('Error deleting account:', error);
       throw error;
     }
   };
@@ -450,6 +504,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     logout,
     updateUserProfile,
+    deleteAccount,
     saveSurveyQuestions,
     getSurveyQuestions,
     saveSurveySession,

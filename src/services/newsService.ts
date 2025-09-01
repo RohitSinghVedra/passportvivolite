@@ -7,17 +7,11 @@ export interface NewsArticle {
 }
 
 export class NewsService {
-  private static readonly API_KEY = 'your_news_api_key'; // You'll need to get a free API key from newsapi.org
+  private static readonly API_KEY = '48a37799910e472dbdb38043fcb2a53a';
   private static readonly BASE_URL = 'https://newsapi.org/v2';
 
   static async getBrazilianSustainabilityNews(): Promise<NewsArticle[]> {
     try {
-      // For now, we'll use a mock response since we don't have an API key
-      // In production, you would use the actual NewsAPI
-      return this.getMockNews();
-      
-      // Uncomment this when you have an API key:
-      /*
       const response = await fetch(
         `${this.BASE_URL}/everything?` +
         `q=sustentabilidade+brasil+clima&` +
@@ -39,7 +33,6 @@ export class NewsService {
         publishedAt: article.publishedAt,
         source: article.source.name
       }));
-      */
     } catch (error) {
       console.error('Error fetching news:', error);
       return this.getMockNews();
