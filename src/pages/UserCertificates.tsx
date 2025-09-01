@@ -76,8 +76,14 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           return new Promise((resolve, reject) => {
             const img = new Image();
             img.crossOrigin = 'anonymous';
-            img.onload = resolve;
-            img.onerror = resolve; // Don't fail if image doesn't load
+            img.onload = () => {
+              console.log(`Image loaded: ${url}`);
+              resolve(img);
+            };
+            img.onerror = () => {
+              console.log(`Image failed to load: ${url}`);
+              resolve(null);
+            };
             img.src = url;
           });
         });
@@ -98,6 +104,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       tempDiv.style.borderRadius = '24px';
       tempDiv.style.border = '8px solid #bbf7d0';
       tempDiv.style.fontFamily = 'Inter, system-ui, -apple-system, sans-serif';
+      tempDiv.style.overflow = 'hidden';
       
       // Create certificate HTML that matches the CertificateGenerator exactly
       const getBadgeEmoji = (level: string) => {
@@ -204,32 +211,24 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           </div>
 
           <!-- Company Logos -->
-          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px; margin-top: auto;">
-            <div style="text-align: center;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
-                <img 
-                  src="/logos/3agro-logo.png" 
-                  alt="3Agro" 
-                  style="height: 40px; width: auto; max-width: 120px;"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                />
-                <div style="font-size: 20px; font-weight: bold; color: #34d399; display: none;">3agro</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px; margin-top: auto; min-height: 80px;">
+            <div style="text-align: center; flex: 1;">
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 8px; min-height: 40px; background-color: #1f2937; padding: 8px; border-radius: 4px;">
+                <div style="font-size: 24px; font-weight: bold; color: #34d399;">
+                  3agro
+                </div>
               </div>
-              <p style="font-size: 12px; color: #9ca3af; font-weight: 500;">
+              <p style="font-size: 12px; color: #9ca3af; font-weight: 500; margin: 0;">
                 Product Owner
               </p>
             </div>
-            <div style="text-align: center;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
-                <img 
-                  src="/logos/vedra-labs-logo.png" 
-                  alt="Vedra Labs" 
-                  style="height: 40px; width: auto; max-width: 120px;"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                />
-                <div style="font-size: 16px; font-weight: 600; color: #60a5fa; display: none;">Vedra Labs</div>
+            <div style="text-align: center; flex: 1;">
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 8px; min-height: 40px; background-color: #1f2937; padding: 8px; border-radius: 4px;">
+                <div style="font-size: 18px; font-weight: 600; color: #60a5fa;">
+                  Vedra Labs
+                </div>
               </div>
-              <p style="font-size: 12px; color: #9ca3af; font-weight: 500;">
+              <p style="font-size: 12px; color: #9ca3af; font-weight: 500; margin: 0;">
                 Developed by
               </p>
             </div>
