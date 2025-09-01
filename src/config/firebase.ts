@@ -2,15 +2,14 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Your Firebase configuration
-// Replace these with your actual Firebase project credentials
+// Firebase configuration from your Firebase console
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id"
+  apiKey: "AIzaSyBVRj5xqoWuavsa5UZZyQs9bRDWzENF6U",
+  authDomain: "passportvivolite.firebaseapp.com",
+  projectId: "passportvivolite",
+  storageBucket: "passportvivolite.appspot.com",
+  messagingSenderId: "377863015660",
+  appId: "1:377863015660:web:23726dbb7044acfc9d9be5"
 };
 
 // Initialize Firebase
