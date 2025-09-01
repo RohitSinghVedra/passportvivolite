@@ -131,6 +131,17 @@ function AppContentWithRouter({
     signUpMethod: currentUser?.signUpMethod 
   });
 
+  // Check for certificate route first - this should be public
+  const location = window.location.pathname;
+  if (location.startsWith('/certificate/')) {
+    console.log('Certificate route detected - showing CertificateVerification');
+    return (
+      <Routes>
+        <Route path="/certificate/:code" element={<CertificateVerification />} />
+      </Routes>
+    );
+  }
+
   if (!currentUser) {
     console.log('No user - showing AuthScreen');
     return (
@@ -263,9 +274,6 @@ function AppContentWithRouter({
           </Layout>
         </ProtectedRoute>
       } />
-
-      {/* Certificate Verification Route (Public) - Must be before catch-all routes */}
-      <Route path="/certificate/:code" element={<CertificateVerification />} />
 
       {/* Default Routes - Only redirect if not a certificate route */}
       <Route path="/" element={<Navigate to="/me" replace />} />
