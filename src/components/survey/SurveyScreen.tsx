@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
-import { sampleSurveyQuestions, getPersonalizedQuestions } from '../../data/surveyQuestions';
+import { sampleSurveyQuestions, getPersonalizedQuestions, calculateSurveyScore } from '../../data/surveyQuestions';
 import { useAuth } from '../../contexts/AuthContext';
 import type { SurveyResponse } from '../../types';
 
 interface SurveyScreenProps {
-  onComplete: (responses: SurveyResponse[]) => void;
+  onComplete: (responses: SurveyResponse[], score: number) => void;
 }
 
 export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
@@ -38,7 +38,9 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
       setCurrentQuestion(currentQuestion + 1);
       setShowFact(false);
     } else {
-      onComplete(responses);
+      // Calculate personalized score
+      const score = calculateSurveyScore(responses, currentUser!);
+      onComplete(responses, score);
     }
   };
 

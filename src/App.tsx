@@ -26,8 +26,13 @@ import type { SurveyResponse } from './types';
 function App() {
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
 
-  const handleSurveyComplete = (surveyResponses: SurveyResponse[]) => {
+  const handleSurveyComplete = (surveyResponses: SurveyResponse[], score: number) => {
     setResponses(surveyResponses);
+    // Update user with survey results
+    if (currentUser) {
+      // This would typically update the user in the database
+      console.log('Survey completed with score:', score);
+    }
   };
 
   const handleRetakeSurvey = () => {
@@ -51,7 +56,7 @@ function AppContent({
   onRetakeSurvey 
 }: { 
   responses: SurveyResponse[];
-  onSurveyComplete: (responses: SurveyResponse[]) => void;
+  onSurveyComplete: (responses: SurveyResponse[], score: number) => void;
   onRetakeSurvey: () => void;
 }) {
   const { currentUser, loading, logout } = useAuth();
