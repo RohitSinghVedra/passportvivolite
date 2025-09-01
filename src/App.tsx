@@ -8,6 +8,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { MobileNav } from './components/layout/MobileNav';
 import { Breadcrumbs } from './components/layout/Breadcrumbs';
 import { AuthScreen } from './components/auth/AuthScreen';
+import { ProfileCompletionScreen } from './components/auth/ProfileCompletionScreen';
 import { OnboardingScreen } from './components/onboarding/OnboardingScreen';
 import { SurveyScreen } from './components/survey/SurveyScreen';
 import { ResultsScreen } from './components/results/ResultsScreen';
@@ -118,12 +119,21 @@ function AppContent({
     );
   }
 
+  // Show profile completion screen for users who haven't completed onboarding
+  if (currentUser && !currentUser.completedOnboarding) {
+    return (
+      <LanguageProvider>
+        <ProfileCompletionScreen />
+      </LanguageProvider>
+    );
+  }
+
   return (
     <LanguageProvider>
       <Router>
         <Routes>
           {/* Public Routes */}
-          <Route path="/auth" element={<AuthScreen onAuth={handleAuth} />} />
+          <Route path="/auth" element={<AuthScreen />} />
           
           {/* Survey Flow */}
           <Route path="/survey" element={
@@ -135,7 +145,7 @@ function AppContent({
           <Route path="/results" element={
             <Layout>
               <ResultsScreen 
-                category={user.category}
+                category={currentUser!.category}
                 responses={responses}
                 onGenerateCertificate={() => {}}
               />

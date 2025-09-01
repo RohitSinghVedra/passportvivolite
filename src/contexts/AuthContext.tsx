@@ -62,7 +62,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       createdAt: new Date(),
       lastActivity: new Date(),
       certificateVisibility: userData.certificateVisibility || 'private',
-      role: userData.role || 'user'
+      role: userData.role || 'user',
+      // Enhanced profile fields
+      organizationName: userData.organizationName,
+      position: userData.position,
+      companySize: userData.companySize,
+      industry: userData.industry,
+      educationLevel: userData.educationLevel,
+      governmentLevel: userData.governmentLevel,
+      sustainabilityInterests: userData.sustainabilityInterests
     };
 
     await setDoc(userRef, user);
@@ -102,11 +110,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userDoc = await getDoc(userRef);
       
       if (!userDoc.exists()) {
-        // Create new user document for Google sign-in
-        await createUserDocument(result.user, {
+        // Create new user document for Google sign-in with basic data
+        // User will need to complete profile later
+        const basicUser = await createUserDocument(result.user, {
           name: result.user.displayName || result.user.email!.split('@')[0],
-          email: result.user.email!
+          email: result.user.email!,
+          completedOnboarding: false // Mark as needing profile completion
         });
+        setCurrentUser(basicUser);
       }
     } catch (error) {
       console.error('Error signing in with Google:', error);

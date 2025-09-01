@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { User, Mail, MapPin, Calendar, Globe, Shield, Trash2, AlertTriangle } from 'lucide-react';
+import { User, Mail, MapPin, Calendar, Globe, Shield, Trash2, AlertTriangle, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 import { LanguageToggle } from '../components/LanguageToggle';
+import { UserProfileDisplay } from '../components/user/UserProfileDisplay';
+import { useAuth } from '../contexts/AuthContext';
 import type { User as UserType, UserCategory } from '../types';
 
 interface UserSettingsProps {
@@ -12,8 +14,10 @@ interface UserSettingsProps {
 }
 
 export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, onDeleteAccount }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { updateUserProfile } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'profile' | 'settings'>('profile');
   const [formData, setFormData] = useState({
     name: user.name,
     category: user.category,
@@ -46,12 +50,42 @@ export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, 
         {t('nav.settings')}
       </h1>
 
-      {/* Profile Settings */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-emerald-500/20"
-      >
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 bg-gray-800/50 rounded-xl p-1">
+        <button
+          onClick={() => setActiveTab('profile')}
+          className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+            activeTab === 'profile'
+              ? 'bg-emerald-500 text-white'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          {language === 'en' ? 'Profile' : 'Perfil'}
+        </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+            activeTab === 'settings'
+              ? 'bg-emerald-500 text-white'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          {language === 'en' ? 'Settings' : 'Configurações'}
+        </button>
+      </div>
+
+      {/* Profile Tab */}
+      {activeTab === 'profile' && (
+        <UserProfileDisplay user={user} />
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === 'settings' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-emerald-500/20"
+        >
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <User className="w-5 h-5 text-emerald-400" />
           Profile Information
@@ -149,6 +183,7 @@ export const UserSettings: React.FC<UserSettingsProps> = ({ user, onUpdateUser, 
           </button>
         </div>
       </motion.div>
+      )}
 
       {/* Language Settings */}
       <motion.div

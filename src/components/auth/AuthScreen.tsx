@@ -179,19 +179,14 @@ export const AuthScreen: React.FC = () => {
     }
   };
 
-  const handleSocialAuth = async (provider: 'google' | 'apple') => {
+  const handleSocialAuth = async () => {
     setError('');
     setLoading(true);
 
     try {
-      if (provider === 'google') {
-        await signInWithGoogle();
-      } else {
-        // Apple auth would be implemented here
-        throw new Error(language === 'en' ? 'Apple sign-in not implemented yet' : 'Login com Apple ainda não implementado');
-      }
+      await signInWithGoogle();
     } catch (error: any) {
-      console.error('Social auth error:', error);
+      console.error('Google auth error:', error);
       setError(getErrorMessage(error.code, language));
     } finally {
       setLoading(false);
@@ -750,7 +745,7 @@ export const AuthScreen: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleSocialAuth('google')}
+                      onClick={handleSocialAuth}
                       disabled={loading}
                       className="w-full bg-white/10 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-white/20 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -758,16 +753,7 @@ export const AuthScreen: React.FC = () => {
                       {t('auth.google')}
                     </motion.button>
                     
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleSocialAuth('apple')}
-                      disabled={loading}
-                      className="w-full bg-black/50 backdrop-blur-sm border border-gray-600/50 text-white py-3 rounded-xl font-medium hover:bg-black/70 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="w-5 h-5 bg-white rounded-sm"></div>
-                      {t('auth.apple')}
-                    </motion.button>
+
                   </div>
 
                   <div className="text-center space-y-3">
