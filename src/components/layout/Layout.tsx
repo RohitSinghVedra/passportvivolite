@@ -28,7 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         
         {/* Main Content */}
         <div className="flex-1 lg:ml-64">
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-40 lg:pb-8">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-8">
             <Breadcrumbs />
             <AnimatePresence mode="wait">
               <motion.div
@@ -52,6 +52,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       {/* Footer */}
       <Footer />
+      
+      {/* Mobile Navigation Spacer */}
+      <div className="lg:hidden h-16"></div>
     </div>
   );
 };
