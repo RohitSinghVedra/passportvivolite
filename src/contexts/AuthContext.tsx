@@ -63,7 +63,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       createdAt: new Date(),
       lastActivity: new Date(),
       certificateVisibility: userData.certificateVisibility || 'private',
-      role: userData.role || 'user'
+      role: userData.role || 'user',
+      signUpMethod: userData.signUpMethod || 'email'
     };
 
     // Add optional fields only if they have values
@@ -122,7 +123,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const basicUser = await createUserDocument(result.user, {
           name: result.user.displayName || result.user.email!.split('@')[0],
           email: result.user.email!,
-          completedOnboarding: false // Mark as needing profile completion
+          completedOnboarding: false, // Mark as needing profile completion
+          signUpMethod: 'google'
         });
         setCurrentUser(basicUser);
       }

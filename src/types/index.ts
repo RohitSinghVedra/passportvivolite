@@ -24,6 +24,8 @@ export interface User {
   sustainabilityInterests?: string[];
   organizationName?: string;
   position?: string;
+  // Sign-up method tracking
+  signUpMethod?: 'email' | 'google';
 }
 
 export type UserCategory = 'student' | 'employee' | 'company_owner' | 'government';

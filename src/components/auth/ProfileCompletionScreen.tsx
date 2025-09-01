@@ -11,6 +11,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
+import { LanguageToggle } from '../LanguageToggle';
 import { useAuth } from '../../contexts/AuthContext';
 import { brazilianStates, getCitiesByState } from '../../data/brazilianStates';
 import { 
@@ -270,12 +271,28 @@ export const ProfileCompletionScreen: React.FC = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 max-w-md w-full text-center"
-        >
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
+        {/* Header with Language Toggle */}
+        <div className="flex justify-between items-center p-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg p-2">
+              <CheckCircle className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-white">Passaporte VIVO</h1>
+              <p className="text-xs text-emerald-300">Profile Complete!</p>
+            </div>
+          </div>
+          <LanguageToggle />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 max-w-md w-full text-center"
+          >
           <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">
             {language === 'en' ? 'Profile Complete!' : 'Perfil Completo!'}
@@ -294,18 +311,35 @@ export const ProfileCompletionScreen: React.FC = () => {
           >
             {language === 'en' ? 'Go to Dashboard' : 'Ir para o Painel'}
           </motion.button>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 max-w-2xl w-full"
-      >
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
+      {/* Header with Language Toggle */}
+      <div className="flex justify-between items-center p-6">
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg p-2">
+            <User className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white">Passaporte VIVO</h1>
+            <p className="text-xs text-emerald-300">Complete Your Profile</p>
+          </div>
+        </div>
+        <LanguageToggle />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 max-w-2xl w-full"
+        >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">
             {language === 'en' ? 'Complete Your Profile' : 'Complete Seu Perfil'}
@@ -440,7 +474,8 @@ export const ProfileCompletionScreen: React.FC = () => {
             )}
           </motion.button>
         </form>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

@@ -156,7 +156,9 @@ export const AuthScreen: React.FC = () => {
           state: selectedState,
           city: selectedCity,
           ageRange,
-          language: language as 'en' | 'pt'
+          language: language as 'en' | 'pt',
+          completedOnboarding: true, // Email signup users complete onboarding immediately
+          signUpMethod: 'email'
         };
 
         // Add optional fields only if they have values

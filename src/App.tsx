@@ -119,8 +119,8 @@ function AppContent({
     );
   }
 
-  // Show profile completion screen for users who haven't completed onboarding
-  if (currentUser && !currentUser.completedOnboarding) {
+  // Show profile completion screen only for Google users who haven't completed onboarding
+  if (currentUser && !currentUser.completedOnboarding && currentUser.signUpMethod === 'google') {
     return (
       <LanguageProvider>
         <ProfileCompletionScreen />
