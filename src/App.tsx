@@ -267,7 +267,7 @@ function AppContentWithRouter({
       {/* Certificate Verification Route (Public) - Must be before catch-all routes */}
       <Route path="/certificate/:code" element={<CertificateVerification />} />
 
-      {/* Default Routes */}
+      {/* Default Routes - Only redirect if not a certificate route */}
       <Route path="/" element={<Navigate to="/me" replace />} />
       <Route path="*" element={<Navigate to="/me" replace />} />
     </Routes>

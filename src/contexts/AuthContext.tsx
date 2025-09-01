@@ -289,7 +289,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Fetching survey history for user:', userId);
       
       // Try multiple collections where survey data might be stored
-      const collections = ['surveySessions', 'survey_results', 'surveys', 'userSurveys'];
+      const collections = ['surveySessions', 'survey_results', 'surveys', 'userSurveys', 'certificates'];
       let sessions: SurveySession[] = [];
       
       for (const collectionName of collections) {
@@ -302,8 +302,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           querySnapshot.forEach((doc) => {
             const data = doc.data();
-            console.log('Survey data:', data);
-            sessions.push({ id: doc.id, ...data } as SurveySession);
+            console.log('Document data:', data);
+            
+            // If this is a certificate collection, we need to check if it has survey data
+            if (collectionName === 'certificates') {
+              // Check if certificate has associated survey data
+              if (data.completedAt && data.score !== undefined) {
+                sessions.push({ 
+                  id: doc.id, 
+                  userId: data.userId,
+                  completedAt: data.completedAt?.toDate() || new Date(),
+                  score: data.score,
+                  level: data.level,
+                  responses: [], // Certificates don't have responses
+                  certificateCode: data.certificateCode
+                } as SurveySession);
+              }
+            } else {
+              // Regular survey session
+              sessions.push({ id: doc.id, ...data } as SurveySession);
+            }
           });
           
           if (sessions.length > 0) {

@@ -80,28 +80,11 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       tempDiv.style.padding = '40px';
       tempDiv.style.borderRadius = '24px';
       tempDiv.style.border = '8px solid #bbf7d0';
+      tempDiv.style.fontFamily = 'Arial, sans-serif';
       
-      // Create certificate content using the same component
-      const certificateData = {
-        user: {
-          name: cert.userName,
-          category: cert.category,
-          city: cert.city,
-          state: cert.state,
-          ageRange: cert.ageRange
-        },
-        score: cert.score,
-        level: cert.level,
-        badge: cert.badge,
-        grade: cert.grade,
-        percentage: cert.percentage,
-        completedAt: cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt),
-        certificateCode: cert.certificateCode
-      };
-      
-      // Create certificate HTML
+      // Create certificate HTML that matches the view exactly
       tempDiv.innerHTML = `
-        <div style="text-align: center; font-family: Arial, sans-serif;">
+        <div style="text-align: center;">
           <div style="font-size: 48px; margin-bottom: 16px;">🌱</div>
           <h1 style="font-size: 48px; font-weight: bold; color: #065f46; margin-bottom: 8px;">Passaporte VIVO</h1>
           <p style="font-size: 24px; color: #059669; font-weight: 500;">Climate Action Certificate</p>
@@ -123,7 +106,11 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
               <p>Code: ${cert.certificateCode}</p>
             </div>
             <div style="text-align: right;">
-              <div style="width: 64px; height: 64px; background-color: #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6b7280;">QR</div>
+              <img 
+                src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`${window.location.origin}/certificate/${cert.certificateCode}`)}"
+                alt="QR Code"
+                style="width: 64px; height: 64px;"
+              />
               <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Scan to verify</p>
             </div>
           </div>
@@ -149,7 +136,8 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         scale: 2,
         width: 1200,
         height: 800,
-        useCORS: true
+        useCORS: true,
+        allowTaint: true
       });
       
       // Remove temporary div

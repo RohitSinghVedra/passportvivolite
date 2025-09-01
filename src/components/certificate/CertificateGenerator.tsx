@@ -138,19 +138,21 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({ cert
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex justify-between items-end">
-        <div className="text-sm text-gray-500">
-          <p>{text.issued}: {formatDate(certificate.completedAt)}</p>
-          <p>{text.code}: {certificate.certificateCode}</p>
-        </div>
-        <div className="text-right">
-          <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-            QR
-          </div>
-          <p className="text-xs text-gray-500 mt-1">{text.scanToVerify}</p>
-        </div>
-      </div>
+             {/* Footer */}
+       <div className="flex justify-between items-end">
+         <div className="text-sm text-gray-500">
+           <p>{text.issued}: {formatDate(certificate.completedAt)}</p>
+           <p>{text.code}: {certificate.certificateCode}</p>
+         </div>
+         <div className="text-right">
+           <img 
+             src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`${window.location.origin}/certificate/${certificate.certificateCode}`)}`}
+             alt="QR Code"
+             className="w-16 h-16"
+           />
+           <p className="text-xs text-gray-500 mt-1">{text.scanToVerify}</p>
+         </div>
+       </div>
 
       {/* Company Logos */}
       <div className="flex justify-between items-center mt-8 pt-4 border-t border-emerald-200 bg-gray-900 p-4 rounded-lg">
