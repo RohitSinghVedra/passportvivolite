@@ -233,7 +233,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         // Save survey session
         console.log('Saving survey session...');
         await saveSurveySession({
-          userId: currentUser!.uid,
+          userId: currentUser.id,
           responses,
           score: score,
           level,
@@ -242,30 +242,30 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           percentage,
           certificateCode: code,
           completedAt: new Date(),
-          category: currentUser!.category
+          category: currentUser.category
         });
         
         // Update user's survey results
         console.log('Updating user survey results...');
-        await updateUserSurveyResults(currentUser!.uid, score, level, badge);
+        await updateUserSurveyResults(currentUser.id, score, level, badge);
         
         // Save certificate data
         console.log('Saving certificate data...');
         await saveCertificate({
-          userId: currentUser!.uid,
+          userId: currentUser.id,
           certificateCode: code,
-          userName: currentUser!.name,
-          category: currentUser!.category,
-          city: currentUser!.city,
-          state: currentUser!.state,
-          ageRange: currentUser!.ageRange,
+          userName: currentUser.name,
+          category: currentUser.category,
+          city: currentUser.city,
+          state: currentUser.state,
+          ageRange: currentUser.ageRange,
           score: score,
           level,
           badge,
           grade,
           percentage,
           completedAt: new Date(),
-          visibility: currentUser!.certificateVisibility || 'private'
+          visibility: currentUser.certificateVisibility || 'public'
         });
         
         setIsSaved(true);

@@ -86,7 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       lastActivity: new Date(),
       completedOnboarding: false,
       surveyCompleted: false,
-      certificateVisibility: 'private' as const,
+      certificateVisibility: 'public' as const,
       role: 'user' as const,
       ...filteredUserData
     };
@@ -346,9 +346,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const userSnap = await getDoc(userRef);
           
           if (userSnap.exists()) {
-            const userData = userSnap.data() as User;
-            console.log('User data loaded:', userData);
-            setCurrentUser(userData);
+            const userData = userSnap.data() as any;
+            
+            // Convert Firestore timestamps to Date objects
+            const convertedUserData: User = {
+              ...userData,
+              createdAt: userData.createdAt?.toDate() || new Date(),
+              lastActivity: userData.lastActivity?.toDate() || new Date()
+            };
+            
+            console.log('User data loaded:', convertedUserData);
+            setCurrentUser(convertedUserData);
           } else {
             console.log('User document not found');
             setCurrentUser(null);
