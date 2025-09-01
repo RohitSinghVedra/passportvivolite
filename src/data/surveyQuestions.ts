@@ -493,6 +493,126 @@ export const sampleSurveyQuestions: SurveyQuestion[] = [
     isActive: true
   },
 
+  {
+    id: 'tech_remote_work_1',
+    category: ['employee', 'company_owner'],
+    industry: ['technology', 'software', 'tech'],
+    difficulty: 'beginner',
+    question: {
+      en: 'What is your company\'s approach to remote work and digital collaboration?',
+      pt: 'Qual é a abordagem da sua empresa para trabalho remoto e colaboração digital?'
+    },
+    options: [
+      {
+        value: 'no_remote',
+        label: { en: 'No remote work allowed', pt: 'Trabalho remoto não permitido' },
+        points: 0,
+        explanation: { en: 'Remote work can significantly reduce commuting emissions', pt: 'Trabalho remoto pode reduzir significativamente as emissões de deslocamento' }
+      },
+      {
+        value: 'hybrid_model',
+        label: { en: 'Hybrid model (part remote, part office)', pt: 'Modelo híbrido (parte remoto, parte escritório)' },
+        points: 3
+      },
+      {
+        value: 'fully_remote',
+        label: { en: 'Fully remote with digital tools', pt: 'Totalmente remoto com ferramentas digitais' },
+        points: 5
+      },
+      {
+        value: 'digital_first',
+        label: { en: 'Digital-first approach with sustainability focus', pt: 'Abordagem digital-first com foco em sustentabilidade' },
+        points: 7
+      }
+    ],
+    fact: {
+      en: 'Tech companies with remote work policies reduce their carbon footprint by 54% per employee annually.',
+      pt: 'Empresas de tecnologia com políticas de trabalho remoto reduzem sua pegada de carbono em 54% por funcionário anualmente.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  {
+    id: 'tech_development_1',
+    category: ['employee', 'company_owner'],
+    industry: ['technology', 'software', 'tech'],
+    difficulty: 'intermediate',
+    question: {
+      en: 'How does your development team approach sustainable software practices?',
+      pt: 'Como sua equipe de desenvolvimento aborda práticas de software sustentável?'
+    },
+    options: [
+      {
+        value: 'no_consideration',
+        label: { en: 'No sustainability consideration', pt: 'Sem consideração de sustentabilidade' },
+        points: 0,
+        explanation: { en: 'Sustainable software practices can reduce energy consumption significantly', pt: 'Práticas de software sustentável podem reduzir o consumo de energia significativamente' }
+      },
+      {
+        value: 'basic_optimization',
+        label: { en: 'Basic code optimization', pt: 'Otimização básica de código' },
+        points: 2
+      },
+      {
+        value: 'green_development',
+        label: { en: 'Green development practices', pt: 'Práticas de desenvolvimento verde' },
+        points: 4
+      },
+      {
+        value: 'sustainable_architecture',
+        label: { en: 'Sustainable architecture and design patterns', pt: 'Arquitetura sustentável e padrões de design' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Sustainable software development can reduce server energy consumption by 40% and improve performance by 25%.',
+      pt: 'Desenvolvimento de software sustentável pode reduzir o consumo de energia do servidor em 40% e melhorar o desempenho em 25%.'
+    },
+    priority: 2,
+    isActive: true
+  },
+
+  {
+    id: 'tech_data_1',
+    category: ['employee', 'company_owner'],
+    industry: ['technology', 'software', 'tech'],
+    difficulty: 'intermediate',
+    question: {
+      en: 'How does your company manage data storage and processing efficiency?',
+      pt: 'Como sua empresa gerencia eficiência de armazenamento e processamento de dados?'
+    },
+    options: [
+      {
+        value: 'no_optimization',
+        label: { en: 'No data optimization', pt: 'Sem otimização de dados' },
+        points: 0,
+        explanation: { en: 'Data optimization can significantly reduce energy consumption', pt: 'Otimização de dados pode reduzir significativamente o consumo de energia' }
+      },
+      {
+        value: 'basic_optimization',
+        label: { en: 'Basic data optimization', pt: 'Otimização básica de dados' },
+        points: 2
+      },
+      {
+        value: 'advanced_optimization',
+        label: { en: 'Advanced data optimization and compression', pt: 'Otimização avançada e compressão de dados' },
+        points: 4
+      },
+      {
+        value: 'green_data',
+        label: { en: 'Green data practices with minimal footprint', pt: 'Práticas de dados verdes com pegada mínima' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Optimized data storage can reduce energy consumption by 60% and improve system performance by 30%.',
+      pt: 'Armazenamento de dados otimizado pode reduzir o consumo de energia em 60% e melhorar o desempenho do sistema em 30%.'
+    },
+    priority: 2,
+    isActive: true
+  },
+
   // ===== FINANCE INDUSTRY QUESTIONS =====
   {
     id: 'finance_esg_1',
@@ -531,6 +651,207 @@ export const sampleSurveyQuestions: SurveyQuestion[] = [
       pt: 'Investimentos ESG no Brasil cresceram 156% em 2023, com 23% de retornos maiores que investimentos tradicionais.'
     },
     priority: 2,
+    isActive: true
+  },
+
+  // ===== GENERAL QUESTIONS FOR ALL CATEGORIES =====
+  {
+    id: 'general_transport_1',
+    category: ['student', 'employee', 'company_owner', 'government'],
+    difficulty: 'beginner',
+    question: {
+      en: 'How do you typically commute to work or school?',
+      pt: 'Como você normalmente se desloca para o trabalho ou escola?'
+    },
+    options: [
+      {
+        value: 'car',
+        label: { en: 'Personal car', pt: 'Carro pessoal' },
+        points: 0,
+        explanation: { en: 'Consider carpooling or public transport to reduce emissions', pt: 'Considere carona solidária ou transporte público para reduzir emissões' }
+      },
+      {
+        value: 'public',
+        label: { en: 'Public transportation', pt: 'Transporte público' },
+        points: 4
+      },
+      {
+        value: 'bike',
+        label: { en: 'Bicycle', pt: 'Bicicleta' },
+        points: 6
+      },
+      {
+        value: 'walk',
+        label: { en: 'Walking', pt: 'A pé' },
+        points: 6
+      },
+      {
+        value: 'carpool',
+        label: { en: 'Carpooling', pt: 'Carona solidária' },
+        points: 3
+      }
+    ],
+    fact: {
+      en: 'Sustainable transport reduces CO2 emissions by 40% compared to driving alone.',
+      pt: 'Transporte sustentável reduz emissões de CO2 em 40% em comparação com dirigir sozinho.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  {
+    id: 'general_energy_1',
+    category: ['student', 'employee', 'company_owner', 'government'],
+    difficulty: 'beginner',
+    question: {
+      en: 'How energy-efficient is your home or workplace?',
+      pt: 'Quão eficiente em energia é sua casa ou local de trabalho?'
+    },
+    options: [
+      {
+        value: 'not_efficient',
+        label: { en: 'Not energy efficient', pt: 'Não é eficiente em energia' },
+        points: 0,
+        explanation: { en: 'Energy efficiency can reduce costs by 20-30%', pt: 'Eficiência energética pode reduzir custos em 20-30%' }
+      },
+      {
+        value: 'basic_efficiency',
+        label: { en: 'Basic efficiency (LED lights, automatic switches)', pt: 'Eficiência básica (luzes LED, interruptores automáticos)' },
+        points: 2
+      },
+      {
+        value: 'advanced_efficiency',
+        label: { en: 'Advanced efficiency (smart systems, renewable energy)', pt: 'Eficiência avançada (sistemas inteligentes, energia renovável)' },
+        points: 4
+      },
+      {
+        value: 'carbon_neutral',
+        label: { en: 'Carbon-neutral operations', pt: 'Operações neutras em carbono' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Energy-efficient buildings in Brazil save an average of R$ 15,000 annually in energy costs.',
+      pt: 'Edifícios eficientes em energia no Brasil economizam em média R$ 15.000 anualmente em custos de energia.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  {
+    id: 'general_waste_1',
+    category: ['student', 'employee', 'company_owner', 'government'],
+    difficulty: 'beginner',
+    question: {
+      en: 'How do you handle waste and recycling?',
+      pt: 'Como você lida com resíduos e reciclagem?'
+    },
+    options: [
+      {
+        value: 'no_separation',
+        label: { en: 'No separation - throw everything together', pt: 'Sem separação - jogo tudo junto' },
+        points: 0,
+        explanation: { en: 'Start with basic recycling - paper, plastic, and organic waste', pt: 'Comece com reciclagem básica - papel, plástico e resíduos orgânicos' }
+      },
+      {
+        value: 'basic_recycling',
+        label: { en: 'Basic recycling (paper, plastic)', pt: 'Reciclagem básica (papel, plástico)' },
+        points: 3
+      },
+      {
+        value: 'comprehensive',
+        label: { en: 'Comprehensive separation (paper, plastic, organic, electronics)', pt: 'Separação abrangente (papel, plástico, orgânico, eletrônicos)' },
+        points: 5
+      },
+      {
+        value: 'zero_waste',
+        label: { en: 'Zero waste approach - minimize all waste', pt: 'Abordagem lixo zero - minimizar todos os resíduos' },
+        points: 7
+      }
+    ],
+    fact: {
+      en: 'Proper waste separation can reduce landfill waste by 60% and recover valuable materials.',
+      pt: 'Separação adequada de resíduos pode reduzir resíduos em aterros em 60% e recuperar materiais valiosos.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  {
+    id: 'general_consumption_1',
+    category: ['student', 'employee', 'company_owner', 'government'],
+    difficulty: 'beginner',
+    question: {
+      en: 'How do you approach sustainable consumption?',
+      pt: 'Como você aborda o consumo sustentável?'
+    },
+    options: [
+      {
+        value: 'no_consideration',
+        label: { en: 'No environmental consideration', pt: 'Sem consideração ambiental' },
+        points: 0,
+        explanation: { en: 'Sustainable consumption can reduce environmental impact significantly', pt: 'Consumo sustentável pode reduzir o impacto ambiental significativamente' }
+      },
+      {
+        value: 'avoid_waste',
+        label: { en: 'Avoid waste and overconsumption', pt: 'Evitar desperdício e superconsumo' },
+        points: 2
+      },
+      {
+        value: 'choose_sustainable',
+        label: { en: 'Choose sustainable products when possible', pt: 'Escolher produtos sustentáveis quando possível' },
+        points: 4
+      },
+      {
+        value: 'minimal_consumption',
+        label: { en: 'Minimal consumption lifestyle', pt: 'Estilo de vida de consumo mínimo' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Sustainable consumption can reduce your carbon footprint by 30% and save money.',
+      pt: 'Consumo sustentável pode reduzir sua pegada de carbono em 30% e economizar dinheiro.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  {
+    id: 'general_awareness_1',
+    category: ['student', 'employee', 'company_owner', 'government'],
+    difficulty: 'beginner',
+    question: {
+      en: 'How informed are you about environmental issues?',
+      pt: 'Quão informado você está sobre questões ambientais?'
+    },
+    options: [
+      {
+        value: 'not_informed',
+        label: { en: 'Not very informed', pt: 'Não muito informado' },
+        points: 0,
+        explanation: { en: 'Education is the first step to making positive changes', pt: 'Educação é o primeiro passo para fazer mudanças positivas' }
+      },
+      {
+        value: 'basic_knowledge',
+        label: { en: 'Basic knowledge of environmental issues', pt: 'Conhecimento básico de questões ambientais' },
+        points: 2
+      },
+      {
+        value: 'well_informed',
+        label: { en: 'Well informed about environmental topics', pt: 'Bem informado sobre tópicos ambientais' },
+        points: 4
+      },
+      {
+        value: 'actively_learning',
+        label: { en: 'Actively learning and staying updated', pt: 'Aprendendo ativamente e mantendo-se atualizado' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Environmental awareness has increased 67% among Brazilians in the last 5 years.',
+      pt: 'A consciência ambiental aumentou 67% entre os brasileiros nos últimos 5 anos.'
+    },
+    priority: 1,
     isActive: true
   },
 
@@ -743,19 +1064,13 @@ export const sampleSurveyQuestions: SurveyQuestion[] = [
 export const getPersonalizedQuestions = (user: User, count: number = 10): SurveyQuestion[] => {
   let relevantQuestions: SurveyQuestion[] = [];
   
-  // Filter questions based on user category
+  // Step 1: Get category-specific questions (always include these)
   const categoryQuestions = sampleSurveyQuestions.filter(q => 
-    q.category.includes(user.category)
+    q.category.includes(user.category) && !q.industry // Only general category questions
   );
   relevantQuestions.push(...categoryQuestions);
 
-  // Filter questions based on location
-  const locationQuestions = sampleSurveyQuestions.filter(q => 
-    q.location && (q.location.includes(user.state) || q.location.includes(user.city))
-  );
-  relevantQuestions.push(...locationQuestions);
-
-  // Filter questions based on industry
+  // Step 2: Get industry-specific questions (only if user has industry)
   if (user.industry) {
     const industryQuestions = sampleSurveyQuestions.filter(q => 
       q.industry && q.industry.some(ind => 
@@ -765,7 +1080,13 @@ export const getPersonalizedQuestions = (user: User, count: number = 10): Survey
     relevantQuestions.push(...industryQuestions);
   }
 
-  // Filter questions based on interests
+  // Step 3: Get location-specific questions
+  const locationQuestions = sampleSurveyQuestions.filter(q => 
+    q.location && (q.location.includes(user.state) || q.location.includes(user.city))
+  );
+  relevantQuestions.push(...locationQuestions);
+
+  // Step 4: Get interest-based questions
   if (user.sustainabilityInterests) {
     user.sustainabilityInterests.forEach(interest => {
       const interestQuestions = sampleSurveyQuestions.filter(q => 
@@ -775,14 +1096,27 @@ export const getPersonalizedQuestions = (user: User, count: number = 10): Survey
     });
   }
 
-  // Remove duplicates and sort by priority
+  // Step 5: Remove duplicates and sort by priority
   const uniqueQuestions = relevantQuestions.filter((q, index, self) => 
     index === self.findIndex(question => question.id === q.id)
   );
 
   const sortedQuestions = uniqueQuestions.sort((a, b) => b.priority - a.priority);
 
-  // Return the requested number of questions
+  // Step 6: Ensure we have at least 10 questions
+  if (sortedQuestions.length < count) {
+    // Add more general questions to reach the minimum
+    const generalQuestions = sampleSurveyQuestions.filter(q => 
+      !sortedQuestions.find(existing => existing.id === q.id)
+    );
+    const additionalQuestions = generalQuestions
+      .sort((a, b) => b.priority - a.priority)
+      .slice(0, count - sortedQuestions.length);
+    
+    sortedQuestions.push(...additionalQuestions);
+  }
+
+  // Return exactly the requested number of questions
   return sortedQuestions.slice(0, count);
 };
 
