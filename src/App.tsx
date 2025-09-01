@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider } from './components/LanguageProvider';
@@ -63,11 +63,13 @@ function AppContent({
   const { currentUser, loading, logout, getSurveyQuestions, saveSurveyQuestions } = useAuth();
   
   // Initialize database when app starts (non-blocking)
-  React.useEffect(() => {
+  useEffect(() => {
     const initDB = async () => {
       try {
         console.log('Starting automatic database initialization...');
-        await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
+        // Temporarily disable database initialization to avoid connection issues
+        // await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
+        console.log('Database initialization disabled for now - using local questions');
       } catch (error) {
         console.error('Error initializing database:', error);
         // App continues to work with local questions

@@ -12,47 +12,13 @@ interface SurveyScreenProps {
 
 export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
   const { t, language } = useLanguage();
-  const { currentUser, saveSurveySession, updateUserSurveyResults } = useAuth();
+  const { currentUser } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [showFact, setShowFact] = useState(false);
-  const [questions, setQuestions] = useState<SurveyQuestion[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // Load questions from database or fallback to local questions
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        if (currentUser) {
-          const personalizedQuestions = getPersonalizedQuestions(currentUser, 10);
-          setQuestions(personalizedQuestions);
-        } else {
-          setQuestions(sampleSurveyQuestions);
-        }
-      } catch (error) {
-        console.error('Error loading questions from database, using local questions:', error);
-        // Fallback to local questions if database fails
-        if (currentUser) {
-          const personalizedQuestions = getPersonalizedQuestions(currentUser, 10);
-          setQuestions(personalizedQuestions);
-        } else {
-          setQuestions(sampleSurveyQuestions);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadQuestions();
-  }, [currentUser]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 flex items-center justify-center">
-        <div className="text-white text-lg">Loading survey...</div>
-      </div>
-    );
-  }
+  // Use local questions for now to avoid database connection issues
+  const questions = currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
 
   const question = questions[currentQuestion];
   const currentResponse = responses.find(r => r.questionId === question.id);
@@ -68,40 +34,14 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
     setShowFact(true);
   };
 
-  const handleNext = async () => {
+  const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setShowFact(false);
     } else {
-      try {
-        // Calculate personalized score
-        const score = calculateSurveyScore(responses, currentUser!);
-        const { level, badge } = getLevelFromScore(score);
-        
-        // Save survey session to database
-        if (currentUser) {
-          const sessionData = {
-            userId: currentUser.id,
-            questions: questions.map(q => q.id),
-            responses,
-            score,
-            level,
-            badge,
-            completedAt: new Date(),
-            personalizedFacts: questions.map(q => q.fact[language])
-          };
-          
-          await saveSurveySession(sessionData);
-          await updateUserSurveyResults(currentUser.id, score, level, badge);
-        }
-        
-        onComplete(responses, score);
-      } catch (error) {
-        console.error('Error saving survey results:', error);
-        // Still complete the survey even if saving fails
-        const score = calculateSurveyScore(responses, currentUser!);
-        onComplete(responses, score);
-      }
+      // Calculate personalized score
+      const score = calculateSurveyScore(responses, currentUser!);
+      onComplete(responses, score);
     }
   };
 
