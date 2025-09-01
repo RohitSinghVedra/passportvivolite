@@ -4,7 +4,7 @@ import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration from your Firebase console
 const firebaseConfig = {
-  apiKey: "AIzaSyBTvRj5XqoWUavaa5UZZyYgSbRDWzENf0U",
+  apiKey: "AIzaSyBTvRj5xqoWUavaa5UZZyYgSbRDWZENf0U",
   authDomain: "passportvivolite.firebaseapp.com",
   projectId: "passportvivolite",
   storageBucket: "passportvivolite.appspot.com",
