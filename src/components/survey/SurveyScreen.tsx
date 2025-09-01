@@ -19,7 +19,33 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
 
   // Use memoized questions to ensure consistency throughout the survey
   const questions = useMemo(() => {
-    return currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
+    const selectedQuestions = currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
+    
+    // Ensure we always have exactly 10 questions
+    if (selectedQuestions.length !== 10) {
+      console.warn(`Expected 10 questions but got ${selectedQuestions.length}. Adding fallback questions.`);
+      
+      if (selectedQuestions.length < 10) {
+        // Add more questions to reach 10
+        const additionalQuestions = sampleSurveyQuestions.filter(q => 
+          !selectedQuestions.find(existing => existing.id === q.id)
+        ).slice(0, 10 - selectedQuestions.length);
+        selectedQuestions.push(...additionalQuestions);
+      } else {
+        // Take only first 10 questions
+        selectedQuestions.splice(10);
+      }
+    }
+    
+    console.log('Survey questions loaded:', {
+      totalQuestions: selectedQuestions.length,
+      userCategory: currentUser?.category,
+      userIndustry: currentUser?.industry,
+      userLocation: `${currentUser?.state}, ${currentUser?.city}`,
+      questionIds: selectedQuestions.map(q => q.id)
+    });
+    
+    return selectedQuestions;
   }, [currentUser?.id, currentUser?.category, currentUser?.industry, currentUser?.state, currentUser?.city, currentUser?.sustainabilityInterests]);
 
   const question = questions[currentQuestion];

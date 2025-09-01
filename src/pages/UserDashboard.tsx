@@ -191,7 +191,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                   {loading ? '...' : latestRun ? latestRun.badge || '🌱' : '🌱'}
                 </div>
                 <div className="text-2xl font-bold text-emerald-400 mb-1">
-                  {loading ? '...' : latestRun ? `${latestRun.score}/50` : '0/50'}
+                  {loading ? '...' : latestRun ? `${latestRun.score}/60` : '0/60'}
                 </div>
                 <div className="text-sm text-emerald-300 mb-2">
                   {loading ? 'Loading...' : latestRun ? t(`level.${latestRun.level}`) : 'Beginner'}
@@ -207,7 +207,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                     <div className="w-full bg-gray-700/50 rounded-full h-2">
                       <motion.div 
                         initial={{ width: 0 }}
-                        animate={{ width: `${(latestRun.score / 50) * 100}%` }}
+                        animate={{ width: `${(latestRun.score / 60) * 100}%` }}
                         transition={{ duration: 1, delay: 0.8 }}
                         className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full"
                       ></motion.div>
@@ -250,17 +250,17 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                   ⭐
                 </div>
                 <div className="text-2xl font-bold text-blue-400 mb-1">
-                  {currentUser?.level ? t(`level.${currentUser.level}`) : 'Beginner'}
+                  {latestRun ? t(`level.${latestRun.level}`) : (currentUser?.level ? t(`level.${currentUser.level}`) : 'Beginner')}
                 </div>
                 <div className="text-sm text-blue-300 mb-3">
                   Current Level
                 </div>
-                {currentUser?.level && (
+                {(latestRun?.level || currentUser?.level) && (
                   <div className="text-xs text-blue-400 font-medium">
-                    {currentUser.level === 'champion' ? 'Elite Status!' : 
-                     currentUser.level === 'leader' ? 'Leading the Way!' :
-                     currentUser.level === 'active' ? 'Active Participant!' :
-                     currentUser.level === 'aware' ? 'Climate Conscious!' : 'Getting Started!'}
+                    {(latestRun?.level || currentUser?.level) === 'champion' ? 'Elite Status!' : 
+                     (latestRun?.level || currentUser?.level) === 'leader' ? 'Leading the Way!' :
+                     (latestRun?.level || currentUser?.level) === 'active' ? 'Active Participant!' :
+                     (latestRun?.level || currentUser?.level) === 'aware' ? 'Climate Conscious!' : 'Getting Started!'}
                   </div>
                 )}
               </motion.div>
@@ -377,7 +377,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                             {run.completedAt instanceof Date ? run.completedAt.toLocaleDateString() : new Date(run.completedAt).toLocaleDateString()}
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
-                            <span>Score: {run.score}/50</span>
+                            <span>Score: {run.score}/60</span>
                             <span>•</span>
                             <span>{t(`level.${run.level}`)}</span>
                           </div>
