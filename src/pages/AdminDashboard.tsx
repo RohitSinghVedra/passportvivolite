@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Users, 
@@ -11,38 +11,12 @@ import {
   Shield,
   Download,
   Search,
-  Filter,
-  Database
+  Filter
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { mockAnalytics } from '../data/mockData';
-import { populateDatabase, checkDatabase } from '../utils/populateDatabase';
 
 export const AdminDashboard: React.FC = () => {
-  const [dbStatus, setDbStatus] = useState<{ questionsCount: number; sessionsCount: number } | null>(null);
-  const [isPopulating, setIsPopulating] = useState(false);
-
-  const handlePopulateDatabase = async () => {
-    setIsPopulating(true);
-    try {
-      await populateDatabase();
-      await checkDatabaseStatus();
-    } catch (error) {
-      console.error('Error populating database:', error);
-    } finally {
-      setIsPopulating(false);
-    }
-  };
-
-  const checkDatabaseStatus = async () => {
-    try {
-      const status = await checkDatabase();
-      setDbStatus(status);
-    } catch (error) {
-      console.error('Error checking database status:', error);
-    }
-  };
-
   const stats = [
     {
       icon: Users,
@@ -110,43 +84,14 @@ export const AdminDashboard: React.FC = () => {
             <Search className="w-4 h-4" />
             Search Users
           </Link>
-          <button 
-            onClick={handlePopulateDatabase}
-            disabled={isPopulating}
-            className="bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 disabled:opacity-50"
-          >
-            <Database className="w-4 h-4" />
-            {isPopulating ? 'Populating...' : 'Populate Database'}
-          </button>
-          <button 
-            onClick={checkDatabaseStatus}
-            className="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2"
-          >
+          <button className="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2">
             <Download className="w-4 h-4" />
-            Check DB Status
+            Export Data
           </button>
         </div>
       </div>
 
-      {/* Database Status */}
-      {dbStatus && (
-        <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Database className="w-5 h-5" />
-            Database Status
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <div className="text-2xl font-bold text-emerald-400">{dbStatus.questionsCount}</div>
-              <div className="text-gray-400 text-sm">Survey Questions</div>
-            </div>
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <div className="text-2xl font-bold text-blue-400">{dbStatus.sessionsCount}</div>
-              <div className="text-gray-400 text-sm">Survey Sessions</div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

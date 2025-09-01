@@ -30,8 +30,14 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
           setQuestions(sampleSurveyQuestions);
         }
       } catch (error) {
-        console.error('Error loading questions:', error);
-        setQuestions(sampleSurveyQuestions);
+        console.error('Error loading questions from database, using local questions:', error);
+        // Fallback to local questions if database fails
+        if (currentUser) {
+          const personalizedQuestions = getPersonalizedQuestions(currentUser, 10);
+          setQuestions(personalizedQuestions);
+        } else {
+          setQuestions(sampleSurveyQuestions);
+        }
       } finally {
         setLoading(false);
       }

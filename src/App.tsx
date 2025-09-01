@@ -62,16 +62,19 @@ function AppContent({
 }) {
   const { currentUser, loading, logout, getSurveyQuestions, saveSurveyQuestions } = useAuth();
   
-  // Initialize database when app starts
+  // Initialize database when app starts (non-blocking)
   React.useEffect(() => {
     const initDB = async () => {
       try {
+        console.log('Starting automatic database initialization...');
         await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
       } catch (error) {
         console.error('Error initializing database:', error);
+        // App continues to work with local questions
       }
     };
     
+    // Run initialization in background, don't block app startup
     initDB();
   }, [getSurveyQuestions, saveSurveyQuestions]);
   

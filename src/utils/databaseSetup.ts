@@ -31,18 +31,35 @@ export const initializeDatabase = async (
   saveSurveyQuestions: (questions: SurveyQuestion[]) => Promise<void>
 ) => {
   try {
-    const hasQuestions = await checkDatabaseStatus(getSurveyQuestions);
+    console.log('Checking database initialization status...');
+    
+    // Try to get questions from database
+    let hasQuestions = false;
+    try {
+      hasQuestions = await checkDatabaseStatus(getSurveyQuestions);
+    } catch (error) {
+      console.log('Database not accessible, will populate on first use');
+      hasQuestions = false;
+    }
     
     if (!hasQuestions) {
-      console.log('Database is empty, populating with survey questions...');
-      await populateSurveyQuestions(saveSurveyQuestions);
-      return true;
+      console.log('Database is empty or not accessible, populating with survey questions...');
+      try {
+        await populateSurveyQuestions(saveSurveyQuestions);
+        console.log('Database populated successfully!');
+        return true;
+      } catch (error) {
+        console.error('Failed to populate database:', error);
+        // Don't throw error, app can still work with local questions
+        return false;
+      }
     } else {
-      console.log('Database already has questions');
+      console.log('Database already has questions, skipping population');
       return false;
     }
   } catch (error) {
-    console.error('Error initializing database:', error);
-    throw error;
+    console.error('Error during database initialization:', error);
+    // Don't throw error, app can still work with local questions
+    return false;
   }
 };
