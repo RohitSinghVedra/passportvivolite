@@ -1163,12 +1163,14 @@ export const calculateSurveyScore = (responses: SurveyResponse[], user: User): n
 
 // Function to determine level based on score
 export const getLevelFromScore = (score: number): { level: string; badge: string } => {
-  if (score >= 50) {
-    return { level: 'expert', badge: '🏆' };
-  } else if (score >= 35) {
-    return { level: 'advanced', badge: '⭐' };
+  if (score >= 80) {
+    return { level: 'champion', badge: '🏆' };
+  } else if (score >= 60) {
+    return { level: 'leader', badge: '🌟' };
+  } else if (score >= 40) {
+    return { level: 'active', badge: '⚡' };
   } else if (score >= 20) {
-    return { level: 'intermediate', badge: '🌱' };
+    return { level: 'aware', badge: '🌱' };
   } else {
     return { level: 'beginner', badge: '🌿' };
   }

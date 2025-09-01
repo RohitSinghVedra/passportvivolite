@@ -44,7 +44,53 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   };
 
   const badgeEmoji = getBadgeEmoji(level);
-  const categoryRecommendations = recommendations[category].slice(0, 4);
+  
+  // Get dynamic recommendations based on score and responses
+  const getDynamicRecommendations = () => {
+    const baseRecommendations = recommendations[category].slice(0, 2);
+    
+    // Add score-based recommendations
+    let scoreBasedRecommendations = [];
+    
+    if (score < 30) {
+      scoreBasedRecommendations.push({
+        id: 'score-low-1',
+        title: { en: 'Start with Basic Actions', pt: 'Comece com Ações Básicas' },
+        description: { 
+          en: 'Focus on simple daily habits like turning off lights, reducing water usage, and recycling.',
+          pt: 'Concentre-se em hábitos diários simples como desligar as luzes, reduzir o uso de água e reciclar.'
+        },
+        priority: 'high',
+        category: [category]
+      });
+    } else if (score < 50) {
+      scoreBasedRecommendations.push({
+        id: 'score-medium-1',
+        title: { en: 'Expand Your Impact', pt: 'Expanda Seu Impacto' },
+        description: { 
+          en: 'Consider energy-efficient appliances, sustainable transportation, and community involvement.',
+          pt: 'Considere eletrodomésticos eficientes, transporte sustentável e envolvimento comunitário.'
+        },
+        priority: 'high',
+        category: [category]
+      });
+    } else {
+      scoreBasedRecommendations.push({
+        id: 'score-high-1',
+        title: { en: 'Lead by Example', pt: 'Lidere pelo Exemplo' },
+        description: { 
+          en: 'Share your knowledge, mentor others, and advocate for systemic change in your community.',
+          pt: 'Compartilhe seu conhecimento, oriente outros e defenda mudanças sistêmicas em sua comunidade.'
+        },
+        priority: 'high',
+        category: [category]
+      });
+    }
+    
+    return [...baseRecommendations, ...scoreBasedRecommendations];
+  };
+  
+  const categoryRecommendations = getDynamicRecommendations();
 
   // Save survey results to database when component mounts
   useEffect(() => {
@@ -66,7 +112,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         const code = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
         setCertificateCode(code);
 
-        // Save survey session
+        // Save survey session and update user results in parallel for better performance
         const sessionData = {
           userId: currentUser.id,
           questions: responses.map(r => r.questionId),
@@ -79,11 +125,13 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           certificateCode: code
         };
         
-        console.log('Saving survey session...', sessionData);
-        await saveSurveySession(sessionData);
+        console.log('Saving survey session and updating user results in parallel...');
         
-        console.log('Updating user survey results...', { userId: currentUser.id, score, level, badge });
-        await updateUserSurveyResults(currentUser.id, score, level, badge);
+        // Run both operations in parallel for better performance
+        await Promise.all([
+          saveSurveySession(sessionData),
+          updateUserSurveyResults(currentUser.id, score, level, badge)
+        ]);
         
         setIsSaved(true);
         console.log('Survey results saved successfully!');

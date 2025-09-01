@@ -6,6 +6,7 @@ import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Footer } from './Footer';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,10 +14,11 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const { currentUser, logout } = useAuth();
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 flex flex-col">
-      <Header />
+      <Header user={currentUser} onLogout={logout} />
       
       <div className="flex flex-1">
         {/* Desktop Sidebar */}
