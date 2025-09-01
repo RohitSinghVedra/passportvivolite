@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider } from './components/LanguageProvider';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { Header } from './components/layout/Header';
-import { Sidebar } from './components/layout/Sidebar';
-import { MobileNav } from './components/layout/MobileNav';
+import { Layout } from './components/layout/Layout';
 import { Breadcrumbs } from './components/layout/Breadcrumbs';
 import { AuthScreen } from './components/auth/AuthScreen';
 import { ProfileCompletionScreen } from './components/auth/ProfileCompletionScreen';
@@ -82,32 +80,7 @@ function AppContent({
     return <>{children}</>;
   };
 
-  // Layout Component
-  const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
-      <Header user={currentUser} onLogout={logout} />
-      <div className="flex">
-        {currentUser && <Sidebar user={currentUser} />}
-        <main className="flex-1 lg:ml-0">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 lg:pb-8">
-            <Breadcrumbs />
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={location.pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </main>
-      </div>
-      <MobileNav />
-    </div>
-  );
+
 
   if (!currentUser) {
     return (
