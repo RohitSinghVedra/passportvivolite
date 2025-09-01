@@ -222,9 +222,19 @@ function AppContentWithRouter({
                   await deleteAccount();
                   // Redirect to login page after successful deletion
                   navigate('/');
-                } catch (error) {
+                } catch (error: any) {
                   console.error('Failed to delete account:', error);
-                  alert('Failed to delete account. Please try again.');
+                  
+                  // Show a more user-friendly error message
+                  let errorMessage = 'Failed to delete account. Please try again.';
+                  
+                  if (error.message.includes('requires recent login')) {
+                    errorMessage = 'For security reasons, please sign out and sign in again before deleting your account.';
+                  } else if (error.message.includes('network')) {
+                    errorMessage = 'Network error. Please check your connection and try again.';
+                  }
+                  
+                  alert(errorMessage);
                 }
               }}
             />

@@ -5,7 +5,9 @@ import {
   signOut, 
   onAuthStateChanged,
   User as FirebaseUser,
-  deleteUser
+  deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from 'firebase/auth';
 import { 
   doc, 
@@ -159,7 +161,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Delete user account and all associated data
-  const deleteAccount = async () => {
+  const deleteAccount = async (password?: string) => {
     if (!currentUser) throw new Error('No user logged in');
     
     try {
@@ -195,7 +197,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Delete Firebase Auth user
       if (auth.currentUser) {
-        await deleteUser(auth.currentUser);
+        try {
+          // Try to delete without re-authentication first
+          await deleteUser(auth.currentUser);
+        } catch (error: any) {
+          console.log('Delete user failed, might need re-authentication:', error.message);
+          
+          // If deletion fails due to recent authentication requirement, 
+          // we'll just sign out and let the user know
+          if (error.code === 'auth/requires-recent-login') {
+            await signOut(auth);
+            setCurrentUser(null);
+            throw new Error('Account deletion requires recent login. Please sign in again and try deleting your account.');
+          }
+          
+          // For other errors, just sign out
+          await signOut(auth);
+          setCurrentUser(null);
+          throw error;
+        }
       }
 
       // Clear local state
