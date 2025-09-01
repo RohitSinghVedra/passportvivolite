@@ -462,13 +462,65 @@ export const AuthScreen: React.FC = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
-                      className="text-xl md:text-2xl text-emerald-100 mb-8 max-w-3xl mx-auto leading-relaxed"
+                      className="text-lg md:text-xl text-emerald-100 mb-8 max-w-4xl mx-auto leading-relaxed"
                     >
                       {language === 'en' 
-                        ? 'Every individual matters in the climate journey. Whether you\'re a student shaping tomorrow\'s policies, an employee driving workplace sustainability, a business owner implementing green practices, or a government administrator crafting environmental legislation — your actions create ripple effects that transform communities, institutions, and ultimately our planet. Map your unique climate impact and discover how your role contributes to Brazil\'s sustainable future.'
-                        : 'Cada indivíduo importa na jornada climática. Seja você um estudante moldando as políticas de amanhã, um funcionário promovendo sustentabilidade no trabalho, um empresário implementando práticas verdes, ou um administrador público criando legislação ambiental — suas ações criam efeitos multiplicadores que transformam comunidades, instituições e, em última instância, nosso planeta. Mapeie seu impacto climático único e descubra como seu papel contribui para o futuro sustentável do Brasil.'
+                        ? 'Discover your unique role in Brazil\'s climate transition. Take our comprehensive assessment to understand your environmental impact and receive personalized recommendations for sustainable action.'
+                        : 'Descubra seu papel único na transição climática do Brasil. Faça nossa avaliação abrangente para entender seu impacto ambiental e receber recomendações personalizadas para ação sustentável.'
                       }
                     </motion.p>
+
+                    {/* Company Logos Section */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.5 }}
+                      className="flex items-center justify-center gap-8 mb-8"
+                    >
+                      <div className="text-center">
+                        <div className="flex items-center justify-center mb-2">
+                                                     <img 
+                             src="/logos/3agro-logo.png" 
+                             alt="3Agro" 
+                             className="h-10 w-auto"
+                             onError={(e) => {
+                               const target = e.target as HTMLImageElement;
+                               target.style.display = 'none';
+                               (target.nextElementSibling as HTMLElement).style.display = 'block';
+                             }}
+                           />
+                          <div className="text-2xl font-bold text-emerald-400" style={{ display: 'none' }}>
+                            3agro
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          Product Owner
+                        </p>
+                      </div>
+                      
+                      <div className="w-px h-10 bg-gray-600"></div>
+                      
+                      <div className="text-center">
+                        <div className="flex items-center justify-center mb-2">
+                                                     <img 
+                             src="/logos/vedra-labs-logo.png" 
+                             alt="Vedra Labs" 
+                             className="h-10 w-auto"
+                             onError={(e) => {
+                               const target = e.target as HTMLImageElement;
+                               target.style.display = 'none';
+                               (target.nextElementSibling as HTMLElement).style.display = 'block';
+                             }}
+                           />
+                          <div className="text-xl font-semibold text-blue-400" style={{ display: 'none' }}>
+                            Vedra Labs
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          Developed by
+                        </p>
+                      </div>
+                    </motion.div>
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -484,7 +536,6 @@ export const AuthScreen: React.FC = () => {
                       >
                         <Play className="w-6 h-6" />
                         {language === 'en' ? 'Start Your Journey' : 'Comece Sua Jornada'}
-                        <ArrowRight className="w-6 h-6" />
                       </motion.button>
                     </motion.div>
                   </motion.div>
