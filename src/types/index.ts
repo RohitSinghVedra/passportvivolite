@@ -35,8 +35,14 @@ export type Language = 'en' | 'pt';
 export interface PersonalizedFact {
   id: string;
   category: string;
-  title: string;
-  content: string;
+  title: {
+    en: string;
+    pt: string;
+  };
+  content: {
+    en: string;
+    pt: string;
+  };
   source?: string;
   relevance: string[];
   priority: number;

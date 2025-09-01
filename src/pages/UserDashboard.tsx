@@ -40,7 +40,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   };
 
   const handleShare = () => {
-    const text = `I completed my climate assessment with Passaporte VIVO and earned ${user.badge} ${user.level ? t(`level.${user.level}`) : ''} level!`;
+    const badge = user.badge || '🌱';
+    const level = user.level ? t(`level.${user.level}`) : t('level.beginner');
+    const text = `I completed my climate assessment with Passaporte VIVO and earned ${badge} ${level} level!`;
     
     if (navigator.share) {
       navigator.share({
@@ -71,7 +73,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             <h1 className="text-3xl font-bold text-white mb-2">
               {t('dashboard.welcome')}, {user.name}
             </h1>
-            {latestRun && (
+            {latestRun && user.badge && user.level && (
               <div className="flex items-center gap-3">
                 <span className="text-emerald-300">
                   {t('dashboard.latest_level')}:
@@ -79,7 +81,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{user.badge}</span>
                   <span className="text-lg font-semibold text-white">
-                    {user.level ? t(`level.${user.level}`) : ''}
+                    {t(`level.${user.level}`)}
                   </span>
                 </div>
               </div>
