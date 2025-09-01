@@ -50,19 +50,40 @@ export interface PersonalizedFact {
 
 export interface SurveyQuestion {
   id: string;
+  category: UserCategory[];        // Which user types see this
+  industry?: string[];            // Industry-specific questions
+  location?: string[];            // Location-specific questions
+  interests?: string[];           // Interest-based questions
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   question: Record<Language, string>;
   options: Array<{
     value: string;
     label: Record<Language, string>;
     points: number;
+    explanation?: Record<Language, string>;
   }>;
   fact: Record<Language, string>;
+  hint?: Record<Language, string>;
+  priority: number;
+  isActive: boolean;
 }
 
 export interface SurveyResponse {
   questionId: string;
   selectedValue: string;
   points: number;
+}
+
+export interface SurveySession {
+  id: string;
+  userId: string;
+  questions: string[];           // Question IDs used
+  responses: SurveyResponse[];
+  score: number;
+  level: string;
+  badge: string;
+  completedAt: Date;
+  personalizedFacts: string[];   // Facts shown during survey
 }
 
 export interface SurveyRun {

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
-import { surveyQuestions } from '../../data/surveyQuestions';
+import { sampleSurveyQuestions, getPersonalizedQuestions } from '../../data/surveyQuestions';
+import { useAuth } from '../../contexts/AuthContext';
 import type { SurveyResponse } from '../../types';
 
 interface SurveyScreenProps {
@@ -11,11 +12,14 @@ interface SurveyScreenProps {
 
 export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
   const { t, language } = useLanguage();
+  const { currentUser } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [showFact, setShowFact] = useState(false);
 
-  const question = surveyQuestions[currentQuestion];
+  // Get personalized questions for the current user
+  const questions = currentUser ? getPersonalizedQuestions(currentUser, 10) : sampleSurveyQuestions;
+  const question = questions[currentQuestion];
   const currentResponse = responses.find(r => r.questionId === question.id);
 
   const handleAnswer = (value: string, points: number) => {
@@ -30,7 +34,7 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < surveyQuestions.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setShowFact(false);
     } else {
@@ -45,7 +49,7 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
     }
   };
 
-  const progress = ((currentQuestion + 1) / surveyQuestions.length) * 100;
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-4">
@@ -74,7 +78,7 @@ export const SurveyScreen: React.FC<SurveyScreenProps> = ({ onComplete }) => {
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 mb-6">
           <div className="mb-6">
             <div className="text-sm text-emerald-600 font-medium mb-2">
-              {t('survey.question')} {currentQuestion + 1} / {surveyQuestions.length}
+              {t('survey.question')} {currentQuestion + 1} / {questions.length}
             </div>
             <h2 className="text-xl font-bold text-gray-800 mb-6">
               {question.question[language]}

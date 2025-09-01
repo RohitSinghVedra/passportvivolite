@@ -1,334 +1,426 @@
-import type { SurveyQuestion } from '../types';
+import type { User, UserCategory, Language } from '../types';
 
-export const surveyQuestions: SurveyQuestion[] = [
+export interface SurveyQuestion {
+  id: string;
+  category: UserCategory[];        // Which user types see this
+  industry?: string[];            // Industry-specific questions
+  location?: string[];            // Location-specific questions
+  interests?: string[];           // Interest-based questions
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  question: {
+    en: string;
+    pt: string;
+  };
+  options: Array<{
+    value: string;
+    label: { en: string; pt: string };
+    points: number;
+    explanation?: { en: string; pt: string };
+  }>;
+  fact: {
+    en: string;
+    pt: string;
+  };
+  hint?: {
+    en: string;
+    pt: string;
+  };
+  priority: number;
+  isActive: boolean;
+}
+
+export interface SurveySession {
+  id: string;
+  userId: string;
+  questions: string[];           // Question IDs used
+  responses: SurveyResponse[];
+  score: number;
+  level: string;
+  badge: string;
+  completedAt: Date;
+  personalizedFacts: string[];   // Facts shown during survey
+}
+
+export interface SurveyResponse {
+  questionId: string;
+  selectedValue: string;
+  points: number;
+}
+
+// Sample questions for different user types and scenarios
+export const sampleSurveyQuestions: SurveyQuestion[] = [
+  // ===== STUDENT QUESTIONS =====
   {
-    id: '1',
+    id: 'student_education_1',
+    category: ['student'],
+    difficulty: 'beginner',
     question: {
-      en: 'How do you currently commute to work/school?',
-      pt: 'Como você atualmente se desloca para o trabalho/escola?'
+      en: 'How often do you use public transportation to get to your educational institution?',
+      pt: 'Com que frequência você usa transporte público para ir à sua instituição educacional?'
+    },
+    options: [
+      {
+        value: 'never',
+        label: { en: 'Never', pt: 'Nunca' },
+        points: 0,
+        explanation: { en: 'Consider trying public transport to reduce your carbon footprint', pt: 'Considere experimentar o transporte público para reduzir sua pegada de carbono' }
+      },
+      {
+        value: 'rarely',
+        label: { en: 'Rarely (1-2 times per week)', pt: 'Raramente (1-2 vezes por semana)' },
+        points: 2
+      },
+      {
+        value: 'sometimes',
+        label: { en: 'Sometimes (3-4 times per week)', pt: 'Às vezes (3-4 vezes por semana)' },
+        points: 4
+      },
+      {
+        value: 'often',
+        label: { en: 'Often (5+ times per week)', pt: 'Frequentemente (5+ vezes por semana)' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Students who use public transport reduce their carbon footprint by 40% compared to driving.',
+      pt: 'Estudantes que usam transporte público reduzem sua pegada de carbono em 40% em comparação com dirigir.'
+    },
+    hint: {
+      en: 'Public transport in São Paulo prevents 1.2 million tons of CO2 emissions annually.',
+      pt: 'O transporte público em São Paulo previne 1,2 milhão de toneladas de emissões de CO2 anualmente.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  // ===== EMPLOYEE QUESTIONS =====
+  {
+    id: 'employee_workplace_1',
+    category: ['employee'],
+    difficulty: 'beginner',
+    question: {
+      en: 'Does your workplace have a sustainability policy or environmental initiatives?',
+      pt: 'Seu local de trabalho tem uma política de sustentabilidade ou iniciativas ambientais?'
+    },
+    options: [
+      {
+        value: 'no',
+        label: { en: 'No', pt: 'Não' },
+        points: 0,
+        explanation: { en: 'Consider suggesting sustainability initiatives to your employer', pt: 'Considere sugerir iniciativas de sustentabilidade ao seu empregador' }
+      },
+      {
+        value: 'basic',
+        label: { en: 'Basic recycling program', pt: 'Programa básico de reciclagem' },
+        points: 2
+      },
+      {
+        value: 'moderate',
+        label: { en: 'Moderate initiatives (energy saving, waste reduction)', pt: 'Iniciativas moderadas (economia de energia, redução de resíduos)' },
+        points: 4
+      },
+      {
+        value: 'comprehensive',
+        label: { en: 'Comprehensive sustainability program', pt: 'Programa abrangente de sustentabilidade' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: '65% of Brazilian employees now work in companies with environmental policies.',
+      pt: '65% dos funcionários brasileiros agora trabalham em empresas com políticas ambientais.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  // ===== COMPANY OWNER QUESTIONS =====
+  {
+    id: 'owner_business_1',
+    category: ['company_owner'],
+    difficulty: 'intermediate',
+    question: {
+      en: 'What percentage of your business operations use renewable energy sources?',
+      pt: 'Que porcentagem das suas operações comerciais usa fontes de energia renovável?'
+    },
+    options: [
+      {
+        value: '0',
+        label: { en: '0% - No renewable energy', pt: '0% - Sem energia renovável' },
+        points: 0,
+        explanation: { en: 'Consider exploring renewable energy options to reduce costs and environmental impact', pt: 'Considere explorar opções de energia renovável para reduzir custos e impacto ambiental' }
+      },
+      {
+        value: '25',
+        label: { en: '1-25%', pt: '1-25%' },
+        points: 2
+      },
+      {
+        value: '50',
+        label: { en: '26-50%', pt: '26-50%' },
+        points: 4
+      },
+      {
+        value: '75',
+        label: { en: '51-75%', pt: '51-75%' },
+        points: 6
+      },
+      {
+        value: '100',
+        label: { en: '76-100%', pt: '76-100%' },
+        points: 8
+      }
+    ],
+    fact: {
+      en: 'Brazilian companies with strong ESG practices show 23% higher profitability.',
+      pt: 'Empresas brasileiras com fortes práticas ESG mostram 23% maior lucratividade.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  // ===== GOVERNMENT QUESTIONS =====
+  {
+    id: 'government_policy_1',
+    category: ['government'],
+    difficulty: 'advanced',
+    question: {
+      en: 'How involved are you in implementing environmental policies in your government role?',
+      pt: 'Como você está envolvido na implementação de políticas ambientais em sua função governamental?'
+    },
+    options: [
+      {
+        value: 'not_involved',
+        label: { en: 'Not involved in environmental policies', pt: 'Não envolvido em políticas ambientais' },
+        points: 0,
+        explanation: { en: 'Consider advocating for environmental initiatives in your department', pt: 'Considere defender iniciativas ambientais em seu departamento' }
+      },
+      {
+        value: 'aware',
+        label: { en: 'Aware of policies but not directly involved', pt: 'Ciente das políticas, mas não diretamente envolvido' },
+        points: 2
+      },
+      {
+        value: 'participating',
+        label: { en: 'Participating in policy implementation', pt: 'Participando da implementação de políticas' },
+        points: 4
+      },
+      {
+        value: 'leading',
+        label: { en: 'Leading environmental policy initiatives', pt: 'Liderando iniciativas de políticas ambientais' },
+        points: 6
+      }
+    ],
+    fact: {
+      en: 'Brazilian environmental policies have prevented 2.3 million tons of CO2 emissions annually since 2020.',
+      pt: 'Políticas ambientais brasileiras evitaram 2,3 milhões de toneladas de emissões de CO2 anualmente desde 2020.'
+    },
+    priority: 1,
+    isActive: true
+  },
+
+  // ===== LOCATION-SPECIFIC QUESTIONS =====
+  {
+    id: 'sp_transport_1',
+    category: ['student', 'employee'],
+    location: ['SP', 'São Paulo'],
+    difficulty: 'beginner',
+    question: {
+      en: 'How do you primarily commute in São Paulo?',
+      pt: 'Como você se desloca principalmente em São Paulo?'
     },
     options: [
       {
         value: 'car',
-        label: { en: 'Personal car', pt: 'Carro próprio' },
-        points: 1
+        label: { en: 'Personal car', pt: 'Carro pessoal' },
+        points: 0,
+        explanation: { en: 'São Paulo\'s public transport system prevents 1.2 million tons of CO2 emissions annually', pt: 'O sistema de transporte público de São Paulo previne 1,2 milhão de toneladas de emissões de CO2 anualmente' }
       },
       {
-        value: 'public',
-        label: { en: 'Public transportation', pt: 'Transporte público' },
-        points: 3
+        value: 'metro',
+        label: { en: 'Metro/Subway', pt: 'Metrô' },
+        points: 5
+      },
+      {
+        value: 'bus',
+        label: { en: 'Bus', pt: 'Ônibus' },
+        points: 4
       },
       {
         value: 'bike',
-        label: { en: 'Bicycle or walking', pt: 'Bicicleta ou caminhada' },
-        points: 5
+        label: { en: 'Bicycle', pt: 'Bicicleta' },
+        points: 6
       },
       {
-        value: 'remote',
-        label: { en: 'Work/study from home', pt: 'Trabalho/estudo de casa' },
-        points: 4
+        value: 'walk',
+        label: { en: 'Walking', pt: 'A pé' },
+        points: 6
       }
     ],
     fact: {
-      en: 'Public transport reduces CO2 emissions by up to 45% compared to individual cars.',
-      pt: 'O transporte público reduz as emissões de CO2 em até 45% comparado a carros individuais.'
-    }
+      en: 'São Paulo aims to be carbon neutral by 2050 and has already reduced emissions by 20% since 2015.',
+      pt: 'São Paulo visa ser neutra em carbono até 2050 e já reduziu as emissões em 20% desde 2015.'
+    },
+    priority: 2,
+    isActive: true
   },
+
+  // ===== INDUSTRY-SPECIFIC QUESTIONS =====
   {
-    id: '2',
+    id: 'tech_energy_1',
+    category: ['employee', 'company_owner'],
+    industry: ['technology', 'tech'],
+    difficulty: 'intermediate',
     question: {
-      en: 'How often do you consume meat?',
-      pt: 'Com que frequência você consome carne?'
+      en: 'What type of energy does your tech company primarily use for data centers?',
+      pt: 'Que tipo de energia sua empresa de tecnologia usa principalmente para data centers?'
     },
     options: [
       {
-        value: 'daily',
-        label: { en: 'Daily', pt: 'Diariamente' },
-        points: 1
+        value: 'fossil',
+        label: { en: 'Fossil fuel-based energy', pt: 'Energia baseada em combustíveis fósseis' },
+        points: 0,
+        explanation: { en: 'Tech companies can reduce energy costs by 30% by switching to renewable sources', pt: 'Empresas de tecnologia podem reduzir custos de energia em 30% mudando para fontes renováveis' }
       },
       {
-        value: 'few-times-week',
-        label: { en: 'Few times a week', pt: 'Algumas vezes por semana' },
-        points: 2
-      },
-      {
-        value: 'weekly',
-        label: { en: 'Once a week', pt: 'Uma vez por semana' },
+        value: 'mixed',
+        label: { en: 'Mixed energy sources', pt: 'Fontes de energia mistas' },
         points: 3
-      },
-      {
-        value: 'rarely',
-        label: { en: 'Rarely or never', pt: 'Raramente ou nunca' },
-        points: 5
-      }
-    ],
-    fact: {
-      en: 'Reducing meat consumption by 50% can lower your carbon footprint by 20%.',
-      pt: 'Reduzir o consumo de carne em 50% pode diminuir sua pegada de carbono em 20%.'
-    }
-  },
-  {
-    id: '3',
-    question: {
-      en: 'How do you handle electronic waste?',
-      pt: 'Como você lida com resíduos eletrônicos?'
-    },
-    options: [
-      {
-        value: 'trash',
-        label: { en: 'Regular trash', pt: 'Lixo comum' },
-        points: 1
-      },
-      {
-        value: 'store',
-        label: { en: 'Return to stores', pt: 'Devolvo às lojas' },
-        points: 3
-      },
-      {
-        value: 'recycle',
-        label: { en: 'Specialized recycling', pt: 'Reciclagem especializada' },
-        points: 5
-      },
-      {
-        value: 'donate',
-        label: { en: 'Donate or repair', pt: 'Doo ou conserto' },
-        points: 4
-      }
-    ],
-    fact: {
-      en: 'Only 3% of electronic waste in Brazil is properly recycled.',
-      pt: 'Apenas 3% do lixo eletrônico no Brasil é reciclado adequadamente.'
-    }
-  },
-  {
-    id: '4',
-    question: {
-      en: 'What\'s your approach to energy consumption?',
-      pt: 'Qual é sua abordagem ao consumo de energia?'
-    },
-    options: [
-      {
-        value: 'no-attention',
-        label: { en: 'I don\'t pay attention', pt: 'Não presto atenção' },
-        points: 1
-      },
-      {
-        value: 'sometimes',
-        label: { en: 'Sometimes turn off lights', pt: 'Às vezes apago as luzes' },
-        points: 2
-      },
-      {
-        value: 'conscious',
-        label: { en: 'Very conscious about usage', pt: 'Muito consciente sobre o uso' },
-        points: 4
       },
       {
         value: 'renewable',
-        label: { en: 'Use renewable energy', pt: 'Uso energia renovável' },
-        points: 5
+        label: { en: 'Primarily renewable energy', pt: 'Primariamente energia renovável' },
+        points: 6
+      },
+      {
+        value: 'carbon_neutral',
+        label: { en: 'Carbon-neutral operations', pt: 'Operações neutras em carbono' },
+        points: 8
       }
     ],
     fact: {
-      en: 'LED bulbs use 75% less energy than traditional incandescent bulbs.',
-      pt: 'Lâmpadas LED usam 75% menos energia que lâmpadas incandescentes tradicionais.'
-    }
+      en: 'São Paulo tech companies use 40% renewable energy on average.',
+      pt: 'Empresas de tecnologia de São Paulo usam 40% de energia renovável em média.'
+    },
+    priority: 2,
+    isActive: true
   },
+
+  // ===== INTEREST-BASED QUESTIONS =====
   {
-    id: '5',
+    id: 'carbon_footprint_1',
+    category: ['student', 'employee', 'company_owner', 'government'],
+    interests: ['Carbon Footprint Reduction'],
+    difficulty: 'beginner',
     question: {
-      en: 'How do you handle plastic consumption?',
-      pt: 'Como você lida com o consumo de plástico?'
+      en: 'How do you track your personal or organizational carbon footprint?',
+      pt: 'Como você rastreia sua pegada de carbono pessoal ou organizacional?'
     },
     options: [
       {
-        value: 'no-change',
-        label: { en: 'No special effort', pt: 'Nenhum esforço especial' },
-        points: 1
+        value: 'not_tracking',
+        label: { en: 'Not tracking at all', pt: 'Não rastreando de forma alguma' },
+        points: 0,
+        explanation: { en: 'Tracking is the first step to reduction. Consider using carbon footprint calculators', pt: 'O rastreamento é o primeiro passo para a redução. Considere usar calculadoras de pegada de carbono' }
       },
       {
-        value: 'some-reduction',
-        label: { en: 'Try to reduce sometimes', pt: 'Tento reduzir às vezes' },
+        value: 'basic',
+        label: { en: 'Basic awareness of activities', pt: 'Consciência básica das atividades' },
         points: 2
       },
       {
-        value: 'reusable',
-        label: { en: 'Use reusable bags/bottles', pt: 'Uso sacolas/garrafas reutilizáveis' },
+        value: 'manual',
+        label: { en: 'Manual tracking of key activities', pt: 'Rastreamento manual de atividades-chave' },
         points: 4
       },
       {
-        value: 'zero-waste',
-        label: { en: 'Actively avoid single-use plastic', pt: 'Evito ativamente plástico descartável' },
-        points: 5
+        value: 'automated',
+        label: { en: 'Automated tracking system', pt: 'Sistema de rastreamento automatizado' },
+        points: 6
+      },
+      {
+        value: 'comprehensive',
+        label: { en: 'Comprehensive carbon management', pt: 'Gestão abrangente de carbono' },
+        points: 8
       }
     ],
     fact: {
-      en: 'Brazil produces 11.3 million tons of plastic waste annually.',
-      pt: 'O Brasil produz 11,3 milhões de toneladas de resíduos plásticos anualmente.'
-    }
-  },
-  {
-    id: '6',
-    question: {
-      en: 'How engaged are you with environmental issues?',
-      pt: 'Qual seu engajamento com questões ambientais?'
+      en: 'Brazilians can reduce their carbon footprint by 40% through simple lifestyle changes.',
+      pt: 'Brasileiros podem reduzir sua pegada de carbono em 40% através de mudanças simples no estilo de vida.'
     },
-    options: [
-      {
-        value: 'not-interested',
-        label: { en: 'Not particularly interested', pt: 'Não particularmente interessado' },
-        points: 1
-      },
-      {
-        value: 'aware',
-        label: { en: 'Aware but not active', pt: 'Consciente mas não ativo' },
-        points: 2
-      },
-      {
-        value: 'active',
-        label: { en: 'Actively seek information', pt: 'Busco informações ativamente' },
-        points: 4
-      },
-      {
-        value: 'advocate',
-        label: { en: 'Advocate and educate others', pt: 'Defendo e educo outros' },
-        points: 5
-      }
-    ],
-    fact: {
-      en: 'Environmental awareness has increased 67% among Brazilians in the last 5 years.',
-      pt: 'A consciência ambiental aumentou 67% entre os brasileiros nos últimos 5 anos.'
-    }
-  },
-  {
-    id: '7',
-    question: {
-      en: 'What\'s your water usage approach?',
-      pt: 'Qual é sua abordagem ao uso da água?'
-    },
-    options: [
-      {
-        value: 'unlimited',
-        label: { en: 'Use without restriction', pt: 'Uso sem restrição' },
-        points: 1
-      },
-      {
-        value: 'moderate',
-        label: { en: 'Moderate usage', pt: 'Uso moderado' },
-        points: 3
-      },
-      {
-        value: 'conservation',
-        label: { en: 'Active conservation practices', pt: 'Práticas ativas de conservação' },
-        points: 4
-      },
-      {
-        value: 'rainwater',
-        label: { en: 'Rainwater harvesting', pt: 'Coleta de água da chuva' },
-        points: 5
-      }
-    ],
-    fact: {
-      en: 'Brazil has 12% of the world\'s fresh water but faces increasing scarcity in urban areas.',
-      pt: 'O Brasil tem 12% da água doce mundial, mas enfrenta crescente escassez em áreas urbanas.'
-    }
-  },
-  {
-    id: '8',
-    question: {
-      en: 'How do you approach sustainable consumption?',
-      pt: 'Como você aborda o consumo sustentável?'
-    },
-    options: [
-      {
-        value: 'buy-new',
-        label: { en: 'Always buy new products', pt: 'Sempre compro produtos novos' },
-        points: 1
-      },
-      {
-        value: 'quality',
-        label: { en: 'Buy quality items that last', pt: 'Compro itens de qualidade duráveis' },
-        points: 3
-      },
-      {
-        value: 'second-hand',
-        label: { en: 'Often buy second-hand', pt: 'Frequentemente compro usado' },
-        points: 4
-      },
-      {
-        value: 'minimal',
-        label: { en: 'Minimize consumption', pt: 'Minimizo o consumo' },
-        points: 5
-      }
-    ],
-    fact: {
-      en: 'Extending product lifespan by just 1 year reduces environmental impact by 20%.',
-      pt: 'Estender a vida útil de produtos em apenas 1 ano reduz o impacto ambiental em 20%.'
-    }
-  },
-  {
-    id: '9',
-    question: {
-      en: 'How involved are you in community environmental actions?',
-      pt: 'Qual seu envolvimento em ações ambientais comunitárias?'
-    },
-    options: [
-      {
-        value: 'not-involved',
-        label: { en: 'Not involved', pt: 'Não envolvido' },
-        points: 1
-      },
-      {
-        value: 'occasional',
-        label: { en: 'Occasional participation', pt: 'Participação ocasional' },
-        points: 2
-      },
-      {
-        value: 'regular',
-        label: { en: 'Regular participation', pt: 'Participação regular' },
-        points: 4
-      },
-      {
-        value: 'organize',
-        label: { en: 'Organize community initiatives', pt: 'Organizo iniciativas comunitárias' },
-        points: 5
-      }
-    ],
-    fact: {
-      en: 'Community-led environmental projects are 3x more likely to succeed long-term.',
-      pt: 'Projetos ambientais liderados pela comunidade têm 3x mais chances de sucesso a longo prazo.'
-    }
-  },
-  {
-    id: '10',
-    question: {
-      en: 'What\'s your stance on climate technology adoption?',
-      pt: 'Qual sua posição sobre adoção de tecnologias climáticas?'
-    },
-    options: [
-      {
-        value: 'not-interested',
-        label: { en: 'Not interested in new tech', pt: 'Não interessado em novas tecnologias' },
-        points: 1
-      },
-      {
-        value: 'skeptical',
-        label: { en: 'Skeptical but open', pt: 'Cético mas aberto' },
-        points: 2
-      },
-      {
-        value: 'early-adopter',
-        label: { en: 'Early adopter of green tech', pt: 'Adotante precoce de tecnologia verde' },
-        points: 4
-      },
-      {
-        value: 'advocate',
-        label: { en: 'Advocate for climate tech', pt: 'Defensor de tecnologia climática' },
-        points: 5
-      }
-    ],
-    fact: {
-      en: 'Green technology adoption in Brazil has grown 156% since 2020.',
-      pt: 'A adoção de tecnologia verde no Brasil cresceu 156% desde 2020.'
-    }
+    priority: 2,
+    isActive: true
   }
 ];
+
+// Function to get personalized questions for a user
+export const getPersonalizedQuestions = (user: User, count: number = 10): SurveyQuestion[] => {
+  let relevantQuestions: SurveyQuestion[] = [];
+  
+  // Filter questions based on user category
+  const categoryQuestions = sampleSurveyQuestions.filter(q => 
+    q.category.includes(user.category)
+  );
+  relevantQuestions.push(...categoryQuestions);
+
+  // Filter questions based on location
+  const locationQuestions = sampleSurveyQuestions.filter(q => 
+    q.location && (q.location.includes(user.state) || q.location.includes(user.city))
+  );
+  relevantQuestions.push(...locationQuestions);
+
+  // Filter questions based on industry
+  if (user.industry) {
+    const industryQuestions = sampleSurveyQuestions.filter(q => 
+      q.industry && q.industry.some(ind => 
+        user.industry!.toLowerCase().includes(ind.toLowerCase())
+      )
+    );
+    relevantQuestions.push(...industryQuestions);
+  }
+
+  // Filter questions based on interests
+  if (user.sustainabilityInterests) {
+    user.sustainabilityInterests.forEach(interest => {
+      const interestQuestions = sampleSurveyQuestions.filter(q => 
+        q.interests && q.interests.includes(interest)
+      );
+      relevantQuestions.push(...interestQuestions);
+    });
+  }
+
+  // Remove duplicates and sort by priority
+  const uniqueQuestions = relevantQuestions.filter((q, index, self) => 
+    index === self.findIndex(question => question.id === q.id)
+  );
+
+  const sortedQuestions = uniqueQuestions.sort((a, b) => b.priority - a.priority);
+
+  // Return the requested number of questions
+  return sortedQuestions.slice(0, count);
+};
+
+// Function to get questions by difficulty
+export const getQuestionsByDifficulty = (
+  questions: SurveyQuestion[], 
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+): SurveyQuestion[] => {
+  return questions.filter(q => q.difficulty === difficulty);
+};
+
+// Function to calculate survey score
+export const calculateSurveyScore = (responses: SurveyResponse[]): number => {
+  return responses.reduce((total, response) => total + response.points, 0);
+};
+
+// Function to determine level based on score
+export const getLevelFromScore = (score: number): { level: string; badge: string } => {
+  if (score >= 40) {
+    return { level: 'expert', badge: '🏆' };
+  } else if (score >= 25) {
+    return { level: 'advanced', badge: '⭐' };
+  } else if (score >= 15) {
+    return { level: 'intermediate', badge: '🌱' };
+  } else {
+    return { level: 'beginner', badge: '🌿' };
+  }
+};
