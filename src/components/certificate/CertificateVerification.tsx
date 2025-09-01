@@ -27,34 +27,64 @@ export const CertificateVerification: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // For now, we'll create a mock certificate since database is not working
-    // In a real implementation, this would fetch from database
-    if (code) {
-      // Simulate loading
-      setTimeout(() => {
-        const mockCertificate: CertificateData = {
-          user: {
-            name: "Rohit Singh",
-            category: "company_owner",
-            city: "Rondonópolis",
-            state: "MT",
-            ageRange: "46-55"
-          },
-          score: 60,
-          level: "leader",
-          badge: "🌟",
-          grade: "A+",
-          percentage: 100,
-          completedAt: new Date(),
-          certificateCode: code
-        };
-        setCertificate(mockCertificate);
+    const fetchCertificate = async () => {
+      if (!code) {
+        setError('Invalid certificate code');
         setLoading(false);
-      }, 1000);
-    } else {
-      setError('Invalid certificate code');
-      setLoading(false);
-    }
+        return;
+      }
+
+      try {
+        // Import Firebase functions dynamically
+        const { collection, query, where, getDocs } = await import('firebase/firestore');
+        const { db } = await import('../../config/firebase');
+        
+        // Fetch certificate from database
+        const certificatesRef = collection(db, 'certificates');
+        const q = query(certificatesRef, where('certificateCode', '==', code));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const certDoc = querySnapshot.docs[0];
+          const certData = certDoc.data();
+          
+          // Check if certificate is public or if user has access
+          if (certData.visibility === 'private') {
+            setError('This certificate is private and cannot be viewed');
+            setLoading(false);
+            return;
+          }
+          
+          const certificate: CertificateData = {
+            user: {
+              name: certData.userName || "Unknown",
+              category: certData.category || "individual",
+              city: certData.city || "Unknown",
+              state: certData.state || "Unknown",
+              ageRange: certData.ageRange || "Unknown"
+            },
+            score: certData.score || 0,
+            level: certData.level || "beginner",
+            badge: certData.badge || "🌿",
+            grade: certData.grade || "F",
+            percentage: certData.percentage || 0,
+            completedAt: certData.completedAt?.toDate() || new Date(),
+            certificateCode: code
+          };
+          
+          setCertificate(certificate);
+        } else {
+          setError('Certificate not found');
+        }
+      } catch (error) {
+        console.error('Error fetching certificate:', error);
+        setError('Error loading certificate');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCertificate();
   }, [code]);
 
   const getBadgeEmoji = (level: string) => {

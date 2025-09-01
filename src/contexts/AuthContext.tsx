@@ -38,6 +38,22 @@ interface AuthContextType {
   saveSurveySession: (session: Omit<SurveySession, 'id'>) => Promise<string>;
   getUserSurveyHistory: (userId: string) => Promise<SurveySession[]>;
   updateUserSurveyResults: (userId: string, score: number, level: string, badge: string) => Promise<void>;
+  saveCertificate: (certificateData: {
+    userId: string;
+    certificateCode: string;
+    userName: string;
+    category: string;
+    city: string;
+    state: string;
+    ageRange: string;
+    score: number;
+    level: string;
+    badge: string;
+    grade: string;
+    percentage: number;
+    completedAt: Date;
+    visibility: 'public' | 'private';
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -282,6 +298,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Save certificate data
+  const saveCertificate = async (certificateData: {
+    userId: string;
+    certificateCode: string;
+    userName: string;
+    category: string;
+    city: string;
+    state: string;
+    ageRange: string;
+    score: number;
+    level: string;
+    badge: string;
+    grade: string;
+    percentage: number;
+    completedAt: Date;
+    visibility: 'public' | 'private';
+  }) => {
+    try {
+      const certificatesRef = collection(db, 'certificates');
+      await addDoc(certificatesRef, {
+        ...certificateData,
+        createdAt: new Date()
+      });
+      
+      console.log('Certificate saved with code:', certificateData.certificateCode);
+    } catch (error) {
+      console.error('Error saving certificate:', error);
+      throw error;
+    }
+  };
+
   // Auth state listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -326,7 +373,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSurveyQuestions,
     saveSurveySession,
     getUserSurveyHistory,
-    updateUserSurveyResults
+    updateUserSurveyResults,
+    saveCertificate
   };
 
   return (

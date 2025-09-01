@@ -20,7 +20,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   onGenerateCertificate 
 }) => {
   const { t, language } = useLanguage();
-  const { currentUser, saveSurveySession, updateUserSurveyResults } = useAuth();
+  const { currentUser, saveSurveySession, updateUserSurveyResults, saveCertificate } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [certificateCode, setCertificateCode] = useState<string>('');
@@ -230,12 +230,46 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           certificateCode: code
         };
         
-        // Temporarily disable database operations due to Firestore permissions
-        console.log('Database operations temporarily disabled - please update Firestore rules');
-        console.log('Survey results ready for certificate generation (database save disabled)');
+        // Save survey session
+        console.log('Saving survey session...');
+        await saveSurveySession({
+          userId: currentUser!.uid,
+          responses,
+          score: surveyScore,
+          level,
+          badge,
+          grade,
+          percentage,
+          certificateCode,
+          completedAt,
+          category: currentUser!.category
+        });
+        
+        // Update user's survey results
+        console.log('Updating user survey results...');
+        await updateUserSurveyResults(currentUser!.uid, surveyScore, level, badge);
+        
+        // Save certificate data
+        console.log('Saving certificate data...');
+        await saveCertificate({
+          userId: currentUser!.uid,
+          certificateCode,
+          userName: currentUser!.name,
+          category: currentUser!.category,
+          city: currentUser!.city,
+          state: currentUser!.state,
+          ageRange: currentUser!.ageRange,
+          score: surveyScore,
+          level,
+          badge,
+          grade,
+          percentage,
+          completedAt: new Date(),
+          visibility: currentUser!.certificateVisibility || 'private'
+        });
         
         setIsSaved(true);
-        console.log('Survey results ready for certificate generation (database save disabled)');
+        console.log('Survey results and certificate saved successfully!');
       } catch (error) {
         console.error('Error saving survey results:', error);
         // Still mark as saved to allow certificate generation
