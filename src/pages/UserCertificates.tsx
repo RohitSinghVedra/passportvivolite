@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Award, Eye, Download, Share2, Globe, Lock, MoreVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
@@ -12,6 +13,7 @@ interface UserCertificatesProps {
 export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
   const { t } = useLanguage();
   const { currentUser, getUserCertificates } = useAuth();
+  const navigate = useNavigate();
   const [certificates, setCertificates] = useState<any[]>([]);
   const [showMenu, setShowMenu] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -370,7 +372,10 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-medium transition-colors">
+            <button 
+              onClick={() => navigate('/survey')}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-medium transition-colors"
+            >
               {t('dashboard.start_assessment')}
             </button>
           </motion.div>

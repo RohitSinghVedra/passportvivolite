@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Award, BarChart3, History, TrendingUp, Eye, Download, Share2, Lightbulb, RefreshCw } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Award, BarChart3, History, TrendingUp, Eye, Download, Share2, Lightbulb, RefreshCw, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 import { useAuth } from '../contexts/AuthContext';
@@ -15,6 +15,7 @@ interface UserDashboardProps {
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   const { t, language } = useLanguage();
   const { currentUser, getUserSurveyHistory, getUserCertificates } = useAuth();
+  const navigate = useNavigate();
   const [personalizedFact, setPersonalizedFact] = useState<PersonalizedFact | null>(null);
   const [isLoadingFact, setIsLoadingFact] = useState(false);
   const [userRuns, setUserRuns] = useState<any[]>([]);
@@ -264,6 +265,27 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                 )}
               </motion.div>
             </div>
+          </motion.div>
+
+          {/* Start Assessment Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-center"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/survey')}
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto"
+            >
+              <Play className="w-5 h-5" />
+              {t('dashboard.start_assessment')}
+            </motion.button>
+            <p className="text-gray-400 text-sm mt-3">
+              Take a new assessment to improve your climate action score
+            </p>
           </motion.div>
 
           {/* Personalized Climate Fact */}
