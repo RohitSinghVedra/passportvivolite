@@ -113,32 +113,48 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         }).format(date);
       };
       
+      const getCertificateText = () => {
+        return {
+          title: 'Climate Action Certificate',
+          subtitle: 'Passaporte VIVO',
+          awardedTo: 'This certificate is awarded to',
+          forCompleting: 'for completing the Climate Action Assessment',
+          score: 'Score',
+          issued: 'Issued',
+          code: 'Code',
+          verified: 'Verified',
+          scanToVerify: 'Scan to verify'
+        };
+      };
+      
+      const text = getCertificateText();
+      
       tempDiv.innerHTML = `
         <div style="text-align: center;">
           <!-- Header -->
           <div style="margin-bottom: 32px;">
             <div style="font-size: 48px; margin-bottom: 16px;">🌱</div>
-            <h1 style="font-size: 48px; font-weight: bold; color: #065f46; margin-bottom: 8px;">Passaporte VIVO</h1>
-            <p style="font-size: 24px; color: #059669; font-weight: 500;">Climate Action Certificate</p>
+            <h1 style="font-size: 48px; font-weight: bold; color: #065f46; margin-bottom: 8px;">${text.subtitle}</h1>
+            <p style="font-size: 24px; color: #059669; font-weight: 500;">${text.title}</p>
           </div>
           
           <!-- Main Content -->
           <div style="margin-bottom: 32px;">
             <div style="font-size: 96px; margin-bottom: 16px;">${getBadgeEmoji(cert.level)}</div>
             <h2 style="font-size: 32px; font-weight: bold; color: #1f2937; margin-bottom: 8px;">${t(`level.${cert.level}`)}</h2>
-            <p style="color: #6b7280; margin-bottom: 16px;">This certificate is awarded to</p>
+            <p style="color: #6b7280; margin-bottom: 16px;">${text.awardedTo}</p>
             <p style="font-size: 24px; font-weight: bold; color: #047857; margin-bottom: 8px;">${cert.userName}</p>
             <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">${getCategoryLabel(cert.category)}</p>
             <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">${cert.city}, ${cert.state} • Age: ${cert.ageRange}</p>
-            <p style="color: #6b7280; margin-bottom: 16px;">for completing the Climate Action Assessment</p>
-            <div style="font-size: 20px; font-weight: 600; color: #059669;">Score: ${cert.score}/50</div>
+            <p style="color: #6b7280; margin-bottom: 16px;">${text.forCompleting}</p>
+            <div style="font-size: 20px; font-weight: 600; color: #059669;">${text.score}: ${cert.score}/50</div>
           </div>
           
           <!-- Footer -->
           <div style="display: flex; justify-content: space-between; align-items: end; margin-top: 32px;">
             <div style="font-size: 14px; color: #6b7280;">
-              <p>Issued: ${formatDate(cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt))}</p>
-              <p>Code: ${cert.certificateCode}</p>
+              <p>${text.issued}: ${formatDate(cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt))}</p>
+              <p>${text.code}: ${cert.certificateCode}</p>
             </div>
             <div style="text-align: right;">
               <img 
@@ -146,7 +162,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
                 alt="QR Code"
                 style="width: 64px; height: 64px;"
               />
-              <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Scan to verify</p>
+              <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">${text.scanToVerify}</p>
             </div>
           </div>
           
