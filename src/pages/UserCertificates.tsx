@@ -98,13 +98,13 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       tempDiv.style.left = '-9999px';
       tempDiv.style.top = '-9999px';
       tempDiv.style.width = '1000px';
-      tempDiv.style.height = '800px';
+      tempDiv.style.height = '900px';
       tempDiv.style.backgroundColor = '#f0fdf4';
       tempDiv.style.padding = '40px';
       tempDiv.style.borderRadius = '24px';
       tempDiv.style.border = '8px solid #bbf7d0';
       tempDiv.style.fontFamily = 'Inter, system-ui, -apple-system, sans-serif';
-      tempDiv.style.overflow = 'hidden';
+      tempDiv.style.overflow = 'visible';
       
       // Create certificate HTML that matches the CertificateGenerator exactly
       const getBadgeEmoji = (level: string) => {
@@ -154,7 +154,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       const text = getCertificateText();
       
       tempDiv.innerHTML = `
-        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 8px solid #bbf7d0; border-radius: 24px; padding: 40px; max-width: 1000px; margin: 0 auto; height: 800px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 8px solid #bbf7d0; border-radius: 24px; padding: 40px; max-width: 1000px; margin: 0 auto; height: 900px; display: flex; flex-direction: column; justify-content: space-between;">
           <!-- Header -->
           <div style="text-align: center; margin-bottom: 24px;">
             <div style="font-size: 40px; margin-bottom: 12px;">🌱</div>
@@ -211,24 +211,24 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
           </div>
 
           <!-- Company Logos -->
-          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #bbf7d0; background-color: #111827; padding: 16px; border-radius: 8px; margin-top: auto; min-height: 80px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 2px solid #bbf7d0; background-color: #111827; padding: 20px; border-radius: 12px; margin-top: auto; min-height: 100px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             <div style="text-align: center; flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 8px; min-height: 40px; background-color: #1f2937; padding: 8px; border-radius: 4px;">
-                <div style="font-size: 24px; font-weight: bold; color: #34d399;">
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px; background-color: #1f2937; padding: 12px; border-radius: 8px; border: 1px solid #374151;">
+                <div style="font-size: 28px; font-weight: bold; color: #34d399; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">
                   3agro
                 </div>
               </div>
-              <p style="font-size: 12px; color: #9ca3af; font-weight: 500; margin: 0;">
+              <p style="font-size: 14px; color: #9ca3af; font-weight: 500; margin: 0;">
                 Product Owner
               </p>
             </div>
             <div style="text-align: center; flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 8px; min-height: 40px; background-color: #1f2937; padding: 8px; border-radius: 4px;">
-                <div style="font-size: 18px; font-weight: 600; color: #60a5fa;">
+              <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; min-height: 50px; background-color: #1f2937; padding: 12px; border-radius: 8px; border: 1px solid #374151;">
+                <div style="font-size: 22px; font-weight: 600; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">
                   Vedra Labs
                 </div>
               </div>
-              <p style="font-size: 12px; color: #9ca3af; font-weight: 500; margin: 0;">
+              <p style="font-size: 14px; color: #9ca3af; font-weight: 500; margin: 0;">
                 Developed by
               </p>
             </div>
@@ -243,7 +243,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         backgroundColor: '#f0fdf4',
         scale: 2,
         width: 1000,
-        height: 800,
+        height: 900,
         useCORS: true,
         allowTaint: true,
         logging: false,
