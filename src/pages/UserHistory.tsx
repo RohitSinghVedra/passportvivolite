@@ -24,7 +24,19 @@ export const UserHistory: React.FC<UserHistoryProps> = ({ user, onRetakeSurvey }
       if (currentUser) {
         try {
           const runs = await getUserSurveyHistory(currentUser.id);
-          setUserRuns(runs);
+          
+          // Filter and validate survey runs
+          const validRuns = runs.filter(run => {
+            return run && 
+                   run.id && 
+                   run.completedAt && 
+                   (run.completedAt instanceof Date || !isNaN(new Date(run.completedAt).getTime()));
+          }).map(run => ({
+            ...run,
+            completedAt: run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)
+          }));
+          
+          setUserRuns(validRuns);
         } catch (error) {
           console.error('Error loading survey history:', error);
         } finally {

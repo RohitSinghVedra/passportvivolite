@@ -22,7 +22,22 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       if (currentUser) {
         try {
           const userCerts = await getUserCertificates(currentUser.id);
-          setCertificates(userCerts);
+          // Filter out any certificates with invalid data and ensure all dates are valid
+          const validCertificates = userCerts.filter(cert => {
+            // Ensure all required fields exist and dates are valid
+            return cert && 
+                   cert.id && 
+                   cert.certificateCode && 
+                   cert.completedAt && 
+                   (cert.completedAt instanceof Date || !isNaN(new Date(cert.completedAt).getTime()));
+          }).map(cert => ({
+            ...cert,
+            // Ensure completedAt is always a valid Date object
+            completedAt: cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt),
+            // Ensure createdAt is always a valid Date object
+            createdAt: cert.createdAt instanceof Date ? cert.createdAt : new Date(cert.createdAt || Date.now())
+          }));
+          setCertificates(validCertificates);
         } catch (error) {
           console.error('Error loading certificates:', error);
         } finally {
@@ -110,7 +125,16 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
         </div>
       </div>
 
-      {certificates.length === 0 ? (
+      {loading ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800/30 rounded-xl p-12 border border-gray-700/50 text-center"
+        >
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading certificates...</p>
+        </motion.div>
+      ) : certificates.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

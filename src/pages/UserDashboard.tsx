@@ -26,8 +26,33 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
         try {
           const runs = await getUserSurveyHistory(currentUser.id);
           const userCerts = await getUserCertificates(currentUser.id);
-          setUserRuns(runs);
-          setCertificates(userCerts);
+          
+          // Filter and validate survey runs
+          const validRuns = runs.filter(run => {
+            return run && 
+                   run.id && 
+                   run.completedAt && 
+                   (run.completedAt instanceof Date || !isNaN(new Date(run.completedAt).getTime()));
+          }).map(run => ({
+            ...run,
+            completedAt: run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)
+          }));
+          
+          // Filter and validate certificates
+          const validCertificates = userCerts.filter(cert => {
+            return cert && 
+                   cert.id && 
+                   cert.certificateCode && 
+                   cert.completedAt && 
+                   (cert.completedAt instanceof Date || !isNaN(new Date(cert.completedAt).getTime()));
+          }).map(cert => ({
+            ...cert,
+            completedAt: cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt),
+            createdAt: cert.createdAt instanceof Date ? cert.createdAt : new Date(cert.createdAt || Date.now())
+          }));
+          
+          setUserRuns(validRuns);
+          setCertificates(validCertificates);
         } catch (error) {
           console.error('Error loading user data:', error);
         }
