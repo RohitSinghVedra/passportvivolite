@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider } from './components/LanguageProvider';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from './config/firebase';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthScreen } from './components/auth/AuthScreen';
 import { ProfileCompletionScreen } from './components/auth/ProfileCompletionScreen';
@@ -75,6 +77,13 @@ function AppContentWithRouter({
       try {
         console.log('Starting database initialization...');
         try {
+          // Test database connection first
+          console.log('Testing database connection...');
+          const testDoc = doc(db, 'test', 'connection');
+          await setDoc(testDoc, { test: true, timestamp: new Date() });
+          console.log('Database connection test successful');
+          
+          // Now try to initialize
           await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
           console.log('Database initialization completed successfully');
         } catch (error) {

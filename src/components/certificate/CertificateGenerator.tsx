@@ -2,8 +2,6 @@ import React, { useRef } from 'react';
 import { Award, Share2, Download, QrCode } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import type { User, SurveyResponse } from '../../types';
-import { Ag3roLogo } from '../logos/3AgroLogo';
-import { VedraLabsLogo } from '../logos/VedraLabsLogo';
 
 interface CertificateGeneratorProps {
   user: User;
@@ -164,14 +162,14 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
                         alt="3Agro" 
                         className="h-6 w-auto"
                         onError={(e) => {
-                          // Fallback to SVG if PNG fails
+                          // Fallback to text if PNG fails
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                           target.nextElementSibling!.style.display = 'block';
                         }}
                       />
-                      <div style={{ display: 'none' }}>
-                        <Ag3roLogo className="h-6 w-auto" />
+                      <div className="text-lg font-bold text-emerald-600" style={{ display: 'none' }}>
+                        3agro
                       </div>
                     </div>
                     <p className="text-xs text-gray-500">Product Owner</p>
@@ -183,14 +181,14 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({
                         alt="Vedra Labs" 
                         className="h-6 w-auto"
                         onError={(e) => {
-                          // Fallback to SVG if PNG fails
+                          // Fallback to text if PNG fails
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                           target.nextElementSibling!.style.display = 'block';
                         }}
                       />
-                      <div style={{ display: 'none' }}>
-                        <VedraLabsLogo className="h-6 w-auto" />
+                      <div className="text-sm font-semibold text-blue-600" style={{ display: 'none' }}>
+                        Vedra Labs
                       </div>
                     </div>
                     <p className="text-xs text-gray-500">Developed by</p>

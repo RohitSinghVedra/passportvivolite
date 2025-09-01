@@ -1132,7 +1132,10 @@ export const getQuestionsByDifficulty = (
 export const calculateSurveyScore = (responses: SurveyResponse[], user: User): number => {
   let baseScore = responses.reduce((total, response) => total + response.points, 0);
   
-  // Apply user-specific multipliers
+  // Calculate maximum possible score (6 points per question)
+  const maxPossibleScore = responses.length * 6;
+  
+  // Apply user-specific multipliers (but cap at max possible score)
   let multiplier = 1.0;
   
   // Industry-specific multipliers
@@ -1158,7 +1161,9 @@ export const calculateSurveyScore = (responses: SurveyResponse[], user: User): n
     multiplier *= 1.05; // São Paulo gets 5% bonus (urban sustainability)
   }
   
-  return Math.round(baseScore * multiplier);
+  // Calculate final score but cap it at maximum possible
+  const finalScore = Math.round(baseScore * multiplier);
+  return Math.min(finalScore, maxPossibleScore);
 };
 
 // Function to determine level based on score
