@@ -73,14 +73,9 @@ function AppContentWithRouter({
   useEffect(() => {
     const initDB = async () => {
       try {
-        console.log('Starting automatic database initialization...');
-        try {
-          await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
-          console.log('Database initialization completed');
-        } catch (error) {
-          console.error('Database initialization failed:', error);
-          // Continue without database initialization
-        }
+        console.log('Database initialization disabled for performance');
+        // Temporarily disabled to prevent 400 errors
+        // await initializeDatabase(getSurveyQuestions, saveSurveyQuestions);
       } catch (error) {
         console.error('Error initializing database:', error);
         // App continues to work with local questions
