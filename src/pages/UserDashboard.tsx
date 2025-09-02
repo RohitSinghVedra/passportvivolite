@@ -22,62 +22,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   const [certificates, setCertificates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  const refreshDashboardData = async () => {
-    if (currentUser) {
-      setLoading(true);
-      try {
-        console.log('Manually refreshing dashboard data...');
-        const runs = await getUserSurveyHistory(currentUser.id);
-        const userCerts = await getUserCertificates(currentUser.id);
-        
-        console.log('Manual refresh - Raw dashboard data:', { 
-          runs: runs.length, 
-          certificates: userCerts.length,
-          runsData: runs,
-          certificatesData: userCerts
-        });
-        
-        // Filter and validate survey runs
-        const validRuns = runs.filter(run => {
-          return run && 
-                 run.id && 
-                 run.completedAt && 
-                 (run.completedAt instanceof Date || !isNaN(new Date(run.completedAt).getTime()));
-        }).map(run => ({
-          ...run,
-          completedAt: run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)
-        }));
-        
-        // Filter and validate certificates
-        const validCertificates = userCerts.filter(cert => {
-          return cert && 
-                 cert.id && 
-                 cert.certificateCode && 
-                 cert.completedAt && 
-                 (cert.completedAt instanceof Date || !isNaN(new Date(cert.completedAt).getTime()));
-        }).map(cert => ({
-          ...cert,
-          completedAt: cert.completedAt instanceof Date ? cert.completedAt : new Date(cert.completedAt),
-          createdAt: cert.createdAt instanceof Date ? cert.createdAt : new Date(cert.createdAt || Date.now())
-        }));
-        
-        console.log('Manual refresh - Processed dashboard data:', { 
-          validRuns: validRuns.length, 
-          validCertificates: validCertificates.length,
-          latestRun: validRuns[0],
-          firstCertificate: validCertificates[0]
-        });
-        
-        setUserRuns(validRuns);
-        setCertificates(validCertificates);
-      } catch (error) {
-        console.error('Error refreshing dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
   // Load user data from database
   useEffect(() => {
     const loadUserData = async () => {
@@ -399,17 +343,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
               <Play className="w-5 h-5" />
               {t('dashboard.start_assessment')}
             </motion.button>
-            <div className="flex gap-4 justify-center mt-4">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={refreshDashboardData}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Refresh Data
-              </motion.button>
-            </div>
             <p className="text-gray-400 text-sm mt-3">
               Take a new assessment to improve your climate action score
             </p>
