@@ -95,11 +95,27 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           });
           
           // Filter and validate survey runs
+          console.log('Raw runs before filtering:', runs);
+          
           const validRuns = runs.filter(run => {
-            return run && 
+            const isValid = run && 
                    run.id && 
                    run.completedAt && 
                    (run.completedAt instanceof Date || !isNaN(new Date(run.completedAt).getTime()));
+            
+            if (!isValid) {
+              console.log('Filtered out run:', {
+                run,
+                hasRun: !!run,
+                hasId: !!run?.id,
+                hasCompletedAt: !!run?.completedAt,
+                completedAtType: typeof run?.completedAt,
+                isDate: run?.completedAt instanceof Date,
+                isValidDate: !isNaN(new Date(run?.completedAt).getTime())
+              });
+            }
+            
+            return isValid;
           }).map(run => ({
             ...run,
             completedAt: run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)
