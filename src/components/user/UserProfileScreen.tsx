@@ -25,7 +25,7 @@ export const UserProfileScreen: React.FC<UserProfileScreenProps> = ({
   const categoryRecommendations = recommendations[user.category!] || [];
 
   const handleShare = () => {
-    const text = `I completed my climate assessment with Passaporte VIVO and earned ${user.badge} ${t(`level.${user.level}`)} level!`;
+            const text = `I completed my climate assessment with Passaporte Verde and earned ${user.badge} ${t(`level.${user.level}`)} level!`;
     const url = window.location.href;
     
     if (navigator.share) {
@@ -72,7 +72,7 @@ export const UserProfileScreen: React.FC<UserProfileScreenProps> = ({
     ctx.fillText(`Score: ${user.score}/${maxScore}`, 400, 300);
 
     const link = document.createElement('a');
-    link.download = 'passaporte-vivo-certificate.png';
+            link.download = 'passaporte-verde-certificate.png';
     link.href = canvas.toDataURL();
     link.click();
   };

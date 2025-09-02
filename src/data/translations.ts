@@ -2,7 +2,7 @@ import type { Language } from '../types';
 
 export const translations: Record<string, Record<Language, string>> = {
   // Navigation & General
-  'app.title': { en: 'Passaporte VIVO', pt: 'Passaporte VIVO' },
+  'app.title': { en: 'Passaporte Verde', pt: 'Passaporte Verde' },
   'app.tagline': { en: 'Your Climate Action Journey', pt: 'Sua Jornada de Ação Climática' },
   'language.en': { en: 'English', pt: 'Inglês' },
   'language.pt': { en: 'Portuguese', pt: 'Português' },
@@ -58,7 +58,7 @@ export const translations: Record<string, Record<Language, string>> = {
   'common.confirm': { en: 'Confirm', pt: 'Confirmar' },
 
   // Authentication
-  'auth.welcome': { en: 'Welcome to Passaporte VIVO', pt: 'Bem-vindo ao Passaporte VIVO' },
+  'auth.welcome': { en: 'Welcome to Passaporte Verde', pt: 'Bem-vindo ao Passaporte Verde' },
   'auth.subtitle': { en: 'Discover your role in Brazil\'s climate transition', pt: 'Descubra seu papel na transição climática do Brasil' },
   'auth.email': { en: 'Email', pt: 'E-mail' },
   'auth.password': { en: 'Password', pt: 'Senha' },
@@ -99,7 +99,7 @@ export const translations: Record<string, Record<Language, string>> = {
   // Certificate
   'certificate.title': { en: 'Climate Role Certificate', pt: 'Certificado de Papel Climático' },
   'certificate.issued': { en: 'Issued on', pt: 'Emitido em' },
-  'certificate.verified': { en: 'Verified by Passaporte VIVO', pt: 'Verificado pelo Passaporte VIVO' },
+  'certificate.verified': { en: 'Verified by Passaporte Verde', pt: 'Verificado pelo Passaporte Verde' },
 
   // Levels
   'level.beginner': { en: 'Climate Beginner', pt: 'Iniciante Climático' },
@@ -173,7 +173,7 @@ export const translations: Record<string, Record<Language, string>> = {
   // Auth & Profile Completion
   'auth.start_journey': { en: 'Start Your Journey', pt: 'Comece Sua Jornada' },
   'auth.get_started': { en: 'Get Started', pt: 'Comece Agora' },
-  'auth.join_passaporte': { en: 'Join Passaporte VIVO', pt: 'Junte-se ao Passaporte VIVO' },
+  'auth.join_passaporte': { en: 'Join Passaporte Verde', pt: 'Junte-se ao Passaporte Verde' },
   'auth.welcome_back': { en: 'Welcome Back', pt: 'Bem-vindo de Volta' },
   'auth.start_climate_journey': { en: 'Start your climate action journey', pt: 'Comece sua jornada de ação climática' },
   'auth.continue_climate_journey': { en: 'Continue your climate journey', pt: 'Continue sua jornada climática' },

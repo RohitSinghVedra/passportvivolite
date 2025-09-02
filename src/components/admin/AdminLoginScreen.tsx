@@ -18,7 +18,7 @@ export const AdminLoginScreen: React.FC<AdminLoginScreenProps> = ({ onAdminAuth,
     e.preventDefault();
     
     // Mock admin credentials
-    if (email === 'admin@passaportevivo.com' && password === 'admin123') {
+          if (email === 'admin@passaporteverde.com' && password === 'admin123') {
       onAdminAuth();
     } else {
       setError('Invalid admin credentials');
@@ -68,7 +68,7 @@ export const AdminLoginScreen: React.FC<AdminLoginScreenProps> = ({ onAdminAuth,
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
-                  placeholder="admin@passaportevivo.com"
+                  placeholder="admin@passaporteverde.com"
                   required
                 />
               </div>
@@ -107,7 +107,7 @@ export const AdminLoginScreen: React.FC<AdminLoginScreenProps> = ({ onAdminAuth,
 
           <div className="mt-6 p-4 bg-slate-50 rounded-xl">
             <p className="text-xs text-slate-600 mb-2">Demo Credentials:</p>
-            <p className="text-xs text-slate-500">Email: admin@passaportevivo.com</p>
+                            <p className="text-xs text-slate-500">Email: admin@passaporteverde.com</p>
             <p className="text-xs text-slate-500">Password: admin123</p>
           </div>
         </div>

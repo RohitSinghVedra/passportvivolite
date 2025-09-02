@@ -27,18 +27,18 @@ export const CertificateScreen: React.FC<CertificateScreenProps> = ({
     if (navigator.share) {
       navigator.share({
         title: t('certificate.title'),
-        text: `${userName} completed their climate assessment with Passaporte VIVO!`,
+        text: `${userName} completed their climate assessment with Passaporte Verde!`,
         url: window.location.href
       }).catch(() => {
         // Fallback if share fails or is denied
-        const text = `${userName} completed their climate assessment with Passaporte VIVO!`;
+        const text = `${userName} completed their climate assessment with Passaporte Verde!`;
         const url = window.location.href;
         const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
         window.open(shareUrl, '_blank');
       });
     } else {
       // Fallback for browsers without Web Share API
-      const text = `${userName} completed their climate assessment with Passaporte VIVO!`;
+              const text = `${userName} completed their climate assessment with Passaporte Verde!`;
       const url = window.location.href;
       const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
       window.open(shareUrl, '_blank');
@@ -84,7 +84,7 @@ export const CertificateScreen: React.FC<CertificateScreenProps> = ({
 
   const generateQRCode = () => {
     // Simplified QR code representation
-    return `https://passaporte-vivo.com/verify/${Math.random().toString(36).substr(2, 9)}`;
+            return `https://passaporte-verde.com/verify/${Math.random().toString(36).substr(2, 9)}`;
   };
 
   return (

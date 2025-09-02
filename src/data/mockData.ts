@@ -79,7 +79,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'admin',
-    email: 'admin@passaportevivo.com',
+    email: 'admin@passaporteverde.com',
     name: 'Admin User',
     category: 'government',
     state: 'DF',

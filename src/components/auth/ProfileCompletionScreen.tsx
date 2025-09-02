@@ -279,7 +279,7 @@ export const ProfileCompletionScreen: React.FC = () => {
               <CheckCircle className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white">Passaporte VIVO</h1>
+              <h1 className="text-lg font-bold text-white">Passaporte Verde</h1>
               <p className="text-xs text-emerald-300">Profile Complete!</p>
             </div>
           </div>
@@ -326,7 +326,7 @@ export const ProfileCompletionScreen: React.FC = () => {
             <User className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">Passaporte VIVO</h1>
+            <h1 className="text-lg font-bold text-white">Passaporte Verde</h1>
             <p className="text-xs text-emerald-300">Complete Your Profile</p>
           </div>
         </div>

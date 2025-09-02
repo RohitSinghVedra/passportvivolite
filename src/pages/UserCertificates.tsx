@@ -142,7 +142,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       const getCertificateText = () => {
         return {
           title: 'Climate Action Certificate',
-          subtitle: 'Passaporte VIVO',
+          subtitle: 'Passaporte Verde',
           awardedTo: 'This certificate is awarded to',
           forCompleting: 'for completing the Climate Action Assessment',
           score: 'Score',
@@ -269,7 +269,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       
       // Download
       const link = document.createElement('a');
-      link.download = `passaporte-vivo-${cert.certificateCode}.png`;
+      link.download = `passaporte-verde-${cert.certificateCode}.png`;
       link.href = canvas.toDataURL();
       link.click();
     } catch (error) {
@@ -291,7 +291,7 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       ctx.fillStyle = '#065f46';
       ctx.font = 'bold 48px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText('Passaporte VIVO', 600, 100);
+              ctx.fillText('Passaporte Verde', 600, 100);
 
       ctx.font = '32px Arial';
       ctx.fillText(cert.userName, 600, 180);
@@ -309,14 +309,14 @@ export const UserCertificates: React.FC<UserCertificatesProps> = ({ user }) => {
       ctx.fillText(`Issued: ${cert.completedAt instanceof Date ? cert.completedAt.toLocaleDateString() : new Date(cert.completedAt).toLocaleDateString()}`, 600, 360);
 
       const link = document.createElement('a');
-      link.download = `passaporte-vivo-${cert.certificateCode}.png`;
+      link.download = `passaporte-verde-${cert.certificateCode}.png`;
       link.href = canvas.toDataURL();
       link.click();
     }
   };
 
   const handleShare = (cert: any) => {
-    const text = `Check out my climate certificate from Passaporte VIVO! ${cert.badge} ${t(`level.${cert.level}`)} - Code: ${cert.certificateCode}`;
+            const text = `Check out my climate certificate from Passaporte Verde! ${cert.badge} ${t(`level.${cert.level}`)} - Code: ${cert.certificateCode}`;
     const shareUrl = `${window.location.origin}/certificate/${cert.certificateCode}`;
     
     if (navigator.share) {

@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
           {/* Left side - App info */}
           <div className="text-center md:text-left mb-4 md:mb-0">
             <h3 className="text-lg font-semibold text-emerald-400 mb-2">
-              Passaporte VIVO
+              Passaporte Verde
             </h3>
             <p className="text-gray-400 text-sm">
               {language === 'en' 

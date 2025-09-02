@@ -71,7 +71,7 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({ cert
     if (language === 'pt') {
       return {
         title: 'Certificado de Ação Climática',
-        subtitle: 'Passaporte VIVO',
+        subtitle: 'Passaporte Verde',
         awardedTo: 'Este certificado é concedido a',
         forCompleting: 'por completar a Avaliação de Ação Climática',
         score: 'Pontuação',
@@ -83,7 +83,7 @@ export const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({ cert
     } else {
       return {
         title: 'Climate Action Certificate',
-        subtitle: 'Passaporte VIVO',
+        subtitle: 'Passaporte Verde',
         awardedTo: 'This certificate is awarded to',
         forCompleting: 'for completing the Climate Action Assessment',
         score: 'Score',

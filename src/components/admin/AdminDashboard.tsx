@@ -52,7 +52,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onView
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'passaporte-vivo-users.csv';
+            link.download = 'passaporte-verde-users.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -68,7 +68,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onView
                 <Shield className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-xl font-bold text-gray-900">
-                Passaporte VIVO Admin
+                Passaporte Verde Admin
               </h1>
             </div>
             

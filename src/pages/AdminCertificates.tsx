@@ -40,7 +40,7 @@ export const AdminCertificates: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'passaporte-vivo-certificates.csv';
+            link.download = 'passaporte-verde-certificates.csv';
     link.click();
     URL.revokeObjectURL(url);
   };

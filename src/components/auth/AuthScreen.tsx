@@ -454,7 +454,7 @@ export const AuthScreen: React.FC = () => {
                         Passaporte
                       </span>
                       <br />
-                      <span className="text-white">VIVO</span>
+                      <span className="text-white">Verde</span>
                     </h1>
                     
                     <motion.p
@@ -568,7 +568,7 @@ export const AuthScreen: React.FC = () => {
                   
                   <h1 className="text-3xl font-bold text-white mb-2">
                     {isSignUp 
-                      ? (language === 'en' ? 'Join Passaporte VIVO' : 'Junte-se ao Passaporte VIVO')
+                      ? (language === 'en' ? 'Join Passaporte Verde' : 'Junte-se ao Passaporte Verde')
                       : (language === 'en' ? 'Welcome Back' : 'Bem-vindo de Volta')
                     }
                   </h1>

@@ -176,7 +176,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   const handleShare = () => {
     const badge = user.badge || '🌱';
     const level = user.level ? t(`level.${user.level}`) : t('level.beginner');
-    const text = `I completed my climate assessment with Passaporte VIVO and earned ${badge} ${level} level!`;
+            const text = `I completed my climate assessment with Passaporte Verde and earned ${badge} ${level} level!`;
     
     if (navigator.share) {
       navigator.share({
