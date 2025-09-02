@@ -98,27 +98,37 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           console.log('Raw runs before filtering:', runs);
           
           const validRuns = runs.filter(run => {
+            // More lenient validation - only check if run exists and has basic data
             const isValid = run && 
-                   run.id && 
-                   run.completedAt && 
-                   (run.completedAt instanceof Date || !isNaN(new Date(run.completedAt).getTime()));
+                   (run.id || run.certificateCode) && 
+                   (run.score !== undefined || run.level);
             
             if (!isValid) {
               console.log('Filtered out run:', {
                 run,
                 hasRun: !!run,
                 hasId: !!run?.id,
-                hasCompletedAt: !!run?.completedAt,
-                completedAtType: typeof run?.completedAt,
-                isDate: run?.completedAt instanceof Date,
-                isValidDate: !isNaN(new Date(run?.completedAt).getTime())
+                hasCertificateCode: !!run?.certificateCode,
+                hasScore: run?.score !== undefined,
+                hasLevel: !!run?.level,
+                score: run?.score,
+                level: run?.level
+              });
+            } else {
+              console.log('Valid run found:', {
+                id: run.id,
+                certificateCode: run.certificateCode,
+                score: run.score,
+                level: run.level,
+                completedAt: run.completedAt
               });
             }
             
             return isValid;
           }).map(run => ({
             ...run,
-            completedAt: run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)
+            completedAt: run.completedAt ? (run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)) : new Date(),
+            id: run.id || run.certificateCode || `run-${Date.now()}`
           }));
           
           // Sort runs by completedAt in descending order (most recent first)
