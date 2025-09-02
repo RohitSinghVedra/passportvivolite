@@ -105,6 +105,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
             completedAt: run.completedAt instanceof Date ? run.completedAt : new Date(run.completedAt)
           }));
           
+          // Sort runs by completedAt in descending order (most recent first)
+          validRuns.sort((a, b) => {
+            const dateA = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
+            const dateB = b.completedAt instanceof Date ? b.completedAt : new Date(b.completedAt);
+            return dateB.getTime() - dateA.getTime();
+          });
+          
           // Filter and validate certificates
           const validCertificates = userCerts.filter(cert => {
             return cert && 
@@ -131,7 +138,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
           console.log('Dashboard state updated:', { 
             userRunsLength: validRuns.length, 
             certificatesLength: validCertificates.length,
-            loading: false 
+            loading: false,
+            firstRun: validRuns[0],
+            lastRun: validRuns[validRuns.length - 1]
           });
         } catch (error) {
           console.error('Error loading user data:', error);
@@ -155,6 +164,18 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
   
   // Get real user data
   const latestRun = userRuns[0];
+  
+  // Debug latestRun
+  useEffect(() => {
+    console.log('Latest run debug:', {
+      userRunsLength: userRuns.length,
+      latestRun: latestRun,
+      latestRunScore: latestRun?.score,
+      latestRunLevel: latestRun?.level,
+      latestRunBadge: latestRun?.badge,
+      latestRunCompletedAt: latestRun?.completedAt
+    });
+  }, [userRuns, latestRun]);
   
   // Get achievement message based on latest score
   const getAchievementMessage = (score: number) => {
