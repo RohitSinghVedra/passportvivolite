@@ -7,12 +7,6 @@ import {
   User, 
   MapPin, 
   Calendar, 
-  ArrowRight,
-  Globe,
-  Award,
-  BarChart3,
-  Users,
-  Sparkles,
   Play,
   AlertCircle,
   Building,
@@ -23,6 +17,7 @@ import {
 import { useLanguage } from '../../hooks/useLanguage';
 import { LanguageToggle } from '../LanguageToggle';
 import { useAuth } from '../../contexts/AuthContext';
+import PartnersSection from '../PartnersSection';
 import { brazilianStates, getCitiesByState } from '../../data/brazilianStates';
 import { 
   companySizes, 
@@ -33,36 +28,6 @@ import {
   ageRanges
 } from '../../data/profileOptions';
 import type { User as UserType, UserCategory } from '../../types';
-
-const features = [
-  {
-    icon: BarChart3,
-    title: { en: 'Climate Assessment', pt: 'Avaliação Climática' },
-    description: { en: 'Discover your environmental impact with our comprehensive 10-question assessment', pt: 'Descubra seu impacto ambiental com nossa avaliação abrangente de 10 perguntas' }
-  },
-  {
-    icon: Award,
-    title: { en: 'Digital Certificates', pt: 'Certificados Digitais' },
-    description: { en: 'Earn verified certificates showcasing your climate action level', pt: 'Ganhe certificados verificados mostrando seu nível de ação climática' }
-  },
-  {
-    icon: Users,
-    title: { en: 'Personalized Insights', pt: 'Insights Personalizados' },
-    description: { en: 'Get tailored recommendations based on your role and location in Brazil', pt: 'Receba recomendações personalizadas baseadas em seu papel e localização no Brasil' }
-  },
-  {
-    icon: Globe,
-    title: { en: 'Community Impact', pt: 'Impacto Comunitário' },
-    description: { en: 'Join thousands of Brazilians taking action for climate change', pt: 'Junte-se a milhares de brasileiros agindo pela mudança climática' }
-  }
-];
-
-const stats = [
-  { value: '1,247', label: { en: 'Active Users', pt: 'Usuários Ativos' } },
-  { value: '892', label: { en: 'Assessments Completed', pt: 'Avaliações Concluídas' } },
-  { value: '856', label: { en: 'Certificates Issued', pt: 'Certificados Emitidos' } },
-  { value: '4.8/5', label: { en: 'User Rating', pt: 'Avaliação dos Usuários' } }
-];
 
 export const AuthScreen: React.FC = () => {
   const { t, language } = useLanguage();
@@ -76,7 +41,6 @@ export const AuthScreen: React.FC = () => {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [ageRange, setAgeRange] = useState('');
-  const [currentFeature, setCurrentFeature] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -91,14 +55,6 @@ export const AuthScreen: React.FC = () => {
   
   // Available cities based on selected state
   const availableCities = selectedState ? getCitiesByState(selectedState) : [];
-
-  // Auto-rotate features
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentFeature((prev) => (prev + 1) % features.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSustainabilityInterestToggle = (interest: string) => {
     setSelectedSustainabilityInterests(prev => 
@@ -185,20 +141,6 @@ export const AuthScreen: React.FC = () => {
     }
   };
 
-  const handleSocialAuth = async () => {
-    setError('');
-    setLoading(true);
-
-    try {
-      // Google sign-in removed
-      setError(language === 'en' ? 'Google sign-in is temporarily unavailable' : 'Login com Google temporariamente indisponível');
-    } catch (error: any) {
-      console.error('Google auth error:', error);
-      setError(getErrorMessage(error.code, language));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Reset city when state changes
   useEffect(() => {
@@ -520,6 +462,9 @@ export const AuthScreen: React.FC = () => {
                         </p>
                       </div>
                     </motion.div>
+
+                    {/* Partners Section */}
+                    <PartnersSection />
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
