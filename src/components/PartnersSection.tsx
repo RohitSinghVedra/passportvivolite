@@ -47,48 +47,35 @@ const PartnersSection: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+      <div className="flex flex-wrap justify-center items-center gap-8 max-w-5xl mx-auto">
         {partners.map((partner, index) => (
           <motion.div
             key={partner.name}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-            whileHover={{ scale: 1.05, y: -5 }}
-            className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 group"
+            whileHover={{ scale: 1.1 }}
+            className="flex items-center justify-center"
           >
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 p-4 bg-gray-700/30 rounded-lg group-hover:bg-emerald-500/20 transition-colors duration-300">
-                <img
-                  src={partner.logo}
-                  alt={partner.name}
-                  className="h-12 w-auto max-w-full object-contain filter brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all duration-300"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const fallback = target.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = 'block';
-                  }}
-                />
-                <div 
-                  className="text-sm font-semibold text-emerald-400" 
-                  style={{ display: 'none' }}
-                >
-                  {partner.name}
-                </div>
-              </div>
+            <img
+              src={partner.logo}
+              alt={partner.name}
+              className="h-16 w-auto max-w-full object-contain filter brightness-0 invert hover:brightness-100 hover:invert-0 transition-all duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'block';
+              }}
+            />
+            <div 
+              className="text-lg font-semibold text-emerald-400" 
+              style={{ display: 'none' }}
+            >
+              {partner.name}
             </div>
           </motion.div>
         ))}
-      </div>
-
-      {/* Decorative elements */}
-      <div className="flex justify-center mt-8">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-        </div>
       </div>
     </motion.div>
   );
