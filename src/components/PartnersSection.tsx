@@ -77,14 +77,6 @@ const PartnersSection: React.FC = () => {
                   {partner.name}
                 </div>
               </div>
-              
-              <h3 className="text-sm font-semibold text-white mb-2 group-hover:text-emerald-300 transition-colors">
-                {partner.name}
-              </h3>
-              
-              <p className="text-xs text-gray-400 group-hover:text-emerald-200 transition-colors">
-                {partner.description[language]}
-              </p>
             </div>
           </motion.div>
         ))}
