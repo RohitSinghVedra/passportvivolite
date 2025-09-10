@@ -60,7 +60,7 @@ const PartnersSection: React.FC = () => {
             <img
               src={partner.logo}
               alt={partner.name}
-              className="h-16 w-auto max-w-full object-contain filter brightness-0 invert hover:brightness-100 hover:invert-0 transition-all duration-300"
+              className="h-20 w-auto max-w-full object-contain filter brightness-0 invert hover:brightness-100 hover:invert-0 transition-all duration-300"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
